@@ -5,7 +5,7 @@ export default function Features() {
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
-              <div className="inline-block rounded-lg bg-gray-100 px-3 py-1 text-sm dark:bg-gray-800">
+              <div className="inline-block rounded-lg bg-gray-200 px-3 py-1 text-sm dark:bg-gray-700">
                 Comprehensive Analysis
               </div>
               <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
@@ -72,7 +72,7 @@ export default function Features() {
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
-              <div className="inline-block rounded-lg bg-gray-100 px-3 py-1 text-sm dark:bg-gray-800">
+              <div className="inline-block rounded-lg bg-gray-200 px-3 py-1 text-sm dark:bg-gray-700">
                 Key Features
               </div>
               <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
