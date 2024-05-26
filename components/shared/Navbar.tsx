@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { GiArtificialIntelligence } from "react-icons/gi";
+import { ModeToggle } from "./ThemeSwitcher";
 export default function Navbar() {
   return (
-    <header className="px-4 lg:px-6 h-14 flex items-center">
+    <header className="px-4 lg:px-6 h-14 flex items-center gap-2">
       <Link className="flex items-center justify-center" href="/">
         <GiArtificialIntelligence className="h-6 w-6" />
         <span className="sr-only">Acme Marketing Optimizer</span>
@@ -33,6 +34,8 @@ export default function Navbar() {
           Contact
         </Link>
       </nav>
+
+      <ModeToggle />
     </header>
   );
 }
