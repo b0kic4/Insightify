@@ -1,6 +1,5 @@
 import Sidebar from "@/components/shared/Sidebar";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { LoginLink } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 
 export default async function ApplicationLayout({

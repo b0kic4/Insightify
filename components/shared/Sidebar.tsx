@@ -4,7 +4,7 @@ import {
   HomeIcon,
   MountainIcon,
   SettingsIcon,
-  UsersIcon,
+  BarChartIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
@@ -45,8 +45,8 @@ export default function Sidebar() {
           className="flex w-full items-center gap-4 rounded-md px-4 py-2 text-gray-400 transition-colors hover:bg-gray-800 hover:text-white group-hover:justify-start"
           href="#"
         >
-          <UsersIcon className="h-5 w-5" />
-          <span className="group-hover:block hidden">Users</span>
+          <BarChartIcon className="h-5 w-5" />
+          <span className="group-hover:block hidden">Improvements</span>
         </Link>
         <Link
           className="flex w-full items-center gap-4 rounded-md px-4 py-2 text-gray-400 transition-colors hover:bg-gray-800 hover:text-white group-hover:justify-start"
