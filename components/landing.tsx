@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import Image from "next/image";
 
 export default async function Landing() {
   const { isAuthenticated } = getKindeServerSession();
@@ -9,7 +10,7 @@ export default async function Landing() {
     <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
       <div className="container px-4 md:px-6">
         <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-          <img
+          <Image
             alt="Hero"
             className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last lg:aspect-square"
             height="550"
@@ -19,12 +20,12 @@ export default async function Landing() {
           <div className="flex flex-col justify-center space-y-4">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                Unlock Your Website's True Potential
+                Unlock Your Website&apos;s True Potential
               </h1>
               <p className="max-w-[600px] text-gray-500 md:text-xl dark:text-gray-400">
                 Our AI-powered marketing optimization tool analyzes your
-                website's design, content, and user experience to uncover hidden
-                opportunities and drive higher conversions.
+                website&apos;s design, content, and user experience to uncover
+                hidden opportunities and drive higher conversions.
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row">

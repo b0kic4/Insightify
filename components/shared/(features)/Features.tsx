@@ -13,9 +13,9 @@ export default function Features() {
               </h2>
               <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
                 Our AI-powered marketing optimization tool provides a detailed,
-                strategic analysis of your website's design, content, and user
-                experience, empowering you to make data-driven decisions that
-                drive higher conversions and better engagement.
+                strategic analysis of your website&apos;s design, content, and
+                user experience, empowering you to make data-driven decisions
+                that drive higher conversions and better engagement.
               </p>
             </div>
           </div>
@@ -33,7 +33,7 @@ export default function Features() {
                   <div className="grid gap-1">
                     <h3 className="text-xl font-bold">Design Analysis</h3>
                     <p className="text-gray-500 dark:text-gray-400">
-                      Our tool examines your website's visual design,
+                      Our tool examines your website&apos;s visual design,
                       identifying areas for improvement to enhance user
                       engagement and conversion rates.
                     </p>
@@ -43,9 +43,9 @@ export default function Features() {
                   <div className="grid gap-1">
                     <h3 className="text-xl font-bold">Content Optimization</h3>
                     <p className="text-gray-500 dark:text-gray-400">
-                      We analyze your website's content, providing strategic
-                      recommendations to make your messaging more compelling and
-                      relatable to your target audience.
+                      We analyze your website&apos;s content, providing
+                      strategic recommendations to make your messaging more
+                      compelling and relatable to your target audience.
                     </p>
                   </div>
                 </li>
@@ -55,9 +55,9 @@ export default function Features() {
                       User Experience Insights
                     </h3>
                     <p className="text-gray-500 dark:text-gray-400">
-                      Our tool evaluates your website's overall user experience,
-                      suggesting layout and navigation improvements to enhance
-                      usability and drive higher conversions.
+                      Our tool evaluates your website&apos;s overall user
+                      experience, suggesting layout and navigation improvements
+                      to enhance usability and drive higher conversions.
                     </p>
                   </div>
                 </li>
@@ -80,7 +80,7 @@ export default function Features() {
               </h2>
               <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
                 Our AI-powered marketing optimization tool provides a suite of
-                features to help you improve your website's performance and
+                features to help you improve your website&apos;s performance and
                 drive more conversions.
               </p>
             </div>

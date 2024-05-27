@@ -12,8 +12,8 @@ export default function Welcome() {
             Welcome to our Application
           </h1>
           <p className="mt-4 text-gray-600 dark:text-gray-400">
-            To access the application, you need to be logged in. If you don't
-            have an account, you can sign up.
+            To access the application, you need to be logged in. If you
+            don&apos;t have an account, you can sign up.
           </p>
           <p className="mt-4 text-gray-600 dark:text-gray-400">
             After creating an account or logging in, you will be redirected to

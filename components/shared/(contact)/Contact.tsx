@@ -11,9 +11,9 @@ export default function Contact() {
             Experience the Power of AI-Driven Website Optimization
           </h2>
           <p className="mx-auto max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-            Our AI-powered marketing optimization tool analyzes your website's
-            design, content, and user experience to uncover hidden opportunities
-            and drive higher conversions.
+            Our AI-powered marketing optimization tool analyzes your
+            website&apos;s design, content, and user experience to uncover
+            hidden opportunities and drive higher conversions.
           </p>
         </div>
         <div className="mx-auto w-full max-w-sm space-y-2">
@@ -29,7 +29,7 @@ export default function Contact() {
             Sign up to experience the power of our AI-driven website
             optimization tool.
             <Link className="underline underline-offset-2" href="#">
-              Terms & Conditions
+              Terms &amp; Conditions
             </Link>
           </p>
         </div>
