@@ -34,9 +34,16 @@ export async function POST(req: Request) {
         console.log(event.data);
         break;
       case "user.created":
-        // handle user created event
-        // e.g add user to database with event.data
         console.log(event.data);
+        await prisma.user.create({
+          data: {
+            id: event.data.user.id,
+            email: event.data.user.email,
+            username: event.data.user.username,
+            firstName: event.data.user.first_name,
+            lastName: event.data.user.last_name,
+          },
+        });
         break;
       default:
         // other events that we don't handle

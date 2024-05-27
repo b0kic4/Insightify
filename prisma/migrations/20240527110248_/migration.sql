@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "username" TEXT,
+ALTER COLUMN "providerId" DROP NOT NULL,
+ALTER COLUMN "picture" DROP NOT NULL,
+ALTER COLUMN "isSuspended" DROP NOT NULL;
