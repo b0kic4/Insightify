@@ -35,7 +35,7 @@ export async function POST(req: Request) {
         break;
       case "user.created":
         console.log(event.data);
-        await prisma.user.create({
+        await prisma?.user.create({
           data: {
             id: event.data.user.id,
             email: event.data.user.email,
