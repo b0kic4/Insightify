@@ -14,14 +14,10 @@ datasource db {
 }
 
 model User {
-  id          String   @unique
-  providerId  String?
-  username    String?
-  email       String   @unique
-  firstName   String
-  lastName    String
-  picture     String?
-  isSuspended Boolean?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @unique
+  email     String   @unique
+  firstName String
+  lastName  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
