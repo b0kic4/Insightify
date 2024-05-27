@@ -39,7 +39,6 @@ export async function POST(req: Request) {
           data: {
             id: event.data.user.id,
             email: event.data.user.email,
-            username: event.data.user.username,
             firstName: event.data.user.first_name,
             lastName: event.data.user.last_name,
           },
