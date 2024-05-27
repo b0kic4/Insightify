@@ -7,6 +7,7 @@ import {
   BarChartIcon,
   HistoryIcon,
 } from "lucide-react";
+import { GiArtificialIntelligence } from "react-icons/gi";
 import Link from "next/link";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { usePathname } from "next/navigation";
@@ -22,9 +23,9 @@ export default function Sidebar() {
         className="flex h-16 w-full items-center justify-center border-b border-gray-800 dark:border-gray-800"
         href="#"
       >
-        <MountainIcon className="h-6 w-6 text-white" />
-        <span className="ml-2 text-lg font-semibold text-white group-hover:block hidden">
-          Acme Inc
+        <GiArtificialIntelligence className="h-6 w-6 text-white" />
+        <span className="ml-2 text-lg font-semibold text-white group-hover:block hidden transition-all">
+          Insightify
         </span>
       </Link>
       <nav className="flex flex-1 flex-col items-start justify-start gap-2 overflow-auto p-4">
@@ -44,7 +45,7 @@ export default function Sidebar() {
         </Link>
         <Link
           className="flex w-full items-center gap-4 rounded-md px-4 py-2 text-gray-400 transition-colors hover:bg-gray-800 hover:text-white group-hover:justify-start"
-          href="#"
+          href="/improvements"
         >
           <BarChartIcon className="h-5 w-5" />
           <span className="group-hover:block hidden">Improvements</span>
@@ -52,7 +53,7 @@ export default function Sidebar() {
 
         <Link
           className="flex w-full items-center gap-4 rounded-md px-4 py-2 text-gray-400 transition-colors hover:bg-gray-800 hover:text-white group-hover:justify-start"
-          href="#"
+          href="/history"
         >
           <HistoryIcon className="h-5 w-5" />
           <span className="group-hover:block hidden">History</span>
@@ -60,13 +61,13 @@ export default function Sidebar() {
 
         <Link
           className="flex w-full items-center gap-4 rounded-md px-4 py-2 text-gray-400 transition-colors hover:bg-gray-800 hover:text-white group-hover:justify-start"
-          href="#"
+          href="/settings"
         >
           <SettingsIcon className="h-5 w-5" />
           <span className="group-hover:block hidden">Settings</span>
         </Link>
       </nav>
-      <div className="flex flex-col items-center p-4 border-t border-gray-800 dark:border-gray-800 w-full">
+      <div className="flex flex-col items-center p-4 border-t border-gray-800 dark:border-gray-800 w-full transition-all">
         {isLoading && !(pathname === "/") && (
           <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-white/50 mx-auto my-2"></div>
         )}
