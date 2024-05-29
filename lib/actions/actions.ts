@@ -2,7 +2,6 @@
 import { FormValues } from "@/components/shared/(improvements-components)/Form";
 
 export async function SendData(data: FormValues) {
-  //
   // NOTE: We can implement here sending
   // data to:
   // 1. backend

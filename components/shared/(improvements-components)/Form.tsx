@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { SendData } from "@/lib/actions/actions";
+import React from "react";
 
 export interface FormValues {
   websiteUrl: string;
@@ -21,13 +21,81 @@ export default function Form() {
     reset,
   } = useForm<FormValues>();
 
-  const onSubmit = async (data: FormValues) => {
-    try {
-      await SendData(data);
-      reset();
-    } catch (error) {
-      console.error("Failed to send data:", error);
+  const [socket, setSocket] = React.useState<WebSocket | null>(null);
+  const [loading, setLoading] = React.useState(false);
+
+  const env = process.env.NODE_ENV;
+  const wsUrl =
+    env === "development"
+      ? "ws://localhost:4000/analysis/ws"
+      : "ws://your-heroku-app.herokuapp.com/analysis/ws";
+
+  console.log("ws url: ", wsUrl);
+
+  React.useEffect(() => {
+    const ws = new WebSocket(wsUrl);
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (typeof data === "object" && data !== null && "type" in data) {
+          console.log("Data received:", data);
+
+          switch (data.type) {
+            case "status":
+              setLoading(true);
+              // setMessages((prev) => [...prev, data.content] as any);
+              break;
+            case "images":
+              if (Array.isArray(data.content)) {
+                // setImages(data.content);
+                setLoading(false);
+              } else {
+                console.error(
+                  "Expected  content to be an array:",
+                  data.content,
+                );
+              }
+              break;
+            case "ai_response":
+              // setAiResponse(data.content);
+              console.log(data.content);
+              break;
+            default:
+              console.error("Received unknown message type:", data.type);
+              setLoading(false);
+          }
+        } else {
+          throw new Error("Invalid message format");
+        }
+      } catch (error) {
+        console.error("Error processing message:", error);
+        setLoading(false);
+      }
+    };
+
+    setSocket(ws);
+    return () => ws.close();
+  }, []);
+
+  const onSubmit = (data: any) => {
+    setLoading(true);
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+      console.error("WebSocket is not connected, attempting to reconnect...");
+      const newSocket = new WebSocket("ws://localhost:4000/analysis/ws");
+      setSocket(newSocket);
+      setLoading(false);
+      return; // Optionally delay the submission until the socket is ready
     }
+
+    socket.send(
+      JSON.stringify({
+        url: data.website,
+        market: data.market,
+        audience: data.audience,
+        insights: data.insights,
+        bucketName: process.env.NEXT_PUBLIC_BUCKET_NAME,
+      }),
+    );
   };
 
   return (
@@ -120,7 +188,7 @@ export default function Form() {
             className="transition-all duration-300 ease-in-out bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-400 dark:focus:ring-offset-gray-900"
             type="submit"
           >
-            Analyze
+            {loading ? "Loading..." : "Analyze"}
           </Button>
         </form>
       </div>
