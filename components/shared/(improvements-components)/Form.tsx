@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import React from "react";
+import Response from "@/components/shared/(improvements-components)/Response";
+import AnalysisModal from "@/components/ui/AnalysisModal";
 
 export interface FormValues {
   websiteUrl: string;
@@ -18,22 +20,32 @@ export default function Form() {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<FormValues>();
 
   const [socket, setSocket] = React.useState<WebSocket | null>(null);
   const [loading, setLoading] = React.useState(false);
+  const [images, setImages] = React.useState([]);
+  const [messages, setMessages] = React.useState([]);
+  const [error, setError] = React.useState<string | null>(null);
+  const [analysisCompleted, setAnalysisCompleted] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
+  const socketRef = React.useRef<WebSocket | null>(null);
 
   const env = process.env.NODE_ENV;
   const wsUrl =
     env === "development"
       ? "ws://localhost:4000/analysis/ws"
-      : "ws://your-heroku-app.herokuapp.com/analysis/ws";
-
-  console.log("ws url: ", wsUrl);
+      : "ws://insightify-backend-3caf92991e4a.herokuapp.com/analysis/ws";
 
   React.useEffect(() => {
     const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      console.log("WebSocket connection established");
+      setLoading(false);
+      setError(null);
+    };
+
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
@@ -43,22 +55,22 @@ export default function Form() {
           switch (data.type) {
             case "status":
               setLoading(true);
-              // setMessages((prev) => [...prev, data.content] as any);
+              setMessages(
+                (prevMessages: any) => [...prevMessages, data] as any,
+              );
+              console.log("messages: ", messages);
               break;
             case "images":
               if (Array.isArray(data.content)) {
-                // setImages(data.content);
+                setImages(data.content);
                 setLoading(false);
+                setAnalysisCompleted(true); // Analysis completed, switch to Response component
               } else {
-                console.error(
-                  "Expected  content to be an array:",
-                  data.content,
-                );
+                console.error("Expected content to be an array:", data.content);
               }
               break;
-            case "ai_response":
-              // setAiResponse(data.content);
-              console.log(data.content);
+            case "progress":
+              setProgress(Math.trunc(data.content));
               break;
             default:
               console.error("Received unknown message type:", data.type);
@@ -69,35 +81,53 @@ export default function Form() {
         }
       } catch (error) {
         console.error("Error processing message:", error);
+        setError("Error processing message");
         setLoading(false);
       }
     };
 
+    ws.onerror = (err) => {
+      console.error("WebSocket error:", err);
+      setError("WebSocket error");
+      setLoading(false);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket connection closed");
+      setError("WebSocket connection closed");
+    };
+
+    socketRef.current = ws;
     setSocket(ws);
-    return () => ws.close();
-  }, []);
+
+    return () => {
+      ws.close();
+    };
+  }, [wsUrl]);
 
   const onSubmit = (data: any) => {
     setLoading(true);
+    setError(null);
+
     if (!socket || socket.readyState !== WebSocket.OPEN) {
       console.error("WebSocket is not connected, attempting to reconnect...");
-      const newSocket = new WebSocket("ws://localhost:4000/analysis/ws");
-      setSocket(newSocket);
+      setError("WebSocket is not connected");
       setLoading(false);
-      return; // Optionally delay the submission until the socket is ready
+      return;
     }
 
     socket.send(
       JSON.stringify({
-        url: data.website,
-        market: data.market,
-        audience: data.audience,
-        insights: data.insights,
-        bucketName: process.env.NEXT_PUBLIC_BUCKET_NAME,
+        url: data.websiteUrl,
       }),
     );
   };
 
+  if (analysisCompleted) {
+    return <Response images={images} />;
+  }
+
+  console.log("messages: ", messages);
   return (
     <section className="py-16 sm:py-24 lg:py-32">
       <div className="max-w-3xl mx-auto space-y-10 px-4 sm:px-6 lg:px-8">
@@ -184,12 +214,18 @@ export default function Form() {
               </span>
             )}
           </div>
-          <Button
-            className="transition-all duration-300 ease-in-out bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-400 dark:focus:ring-offset-gray-900"
-            type="submit"
-          >
-            {loading ? "Loading..." : "Analyze"}
-          </Button>
+          {!loading ? (
+            <Button
+              className="transition-all duration-300 ease-in-out bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-400 dark:focus:ring-offset-gray-900"
+              type="submit"
+              disabled={loading}
+            >
+              Analyze
+            </Button>
+          ) : (
+            <AnalysisModal messages={messages} progress={progress} />
+          )}
+          {error && <p className="text-red-500">{error}</p>}
         </form>
       </div>
     </section>
