@@ -35,7 +35,7 @@ export default function Form() {
   const wsUrl =
     env === "development"
       ? "ws://localhost:4000/analysis/ws"
-      : "ws://insightify-backend-3caf92991e4a.herokuapp.com/analysis/ws";
+      : "wss://insightify-backend-3caf92991e4a.herokuapp.com/analysis/ws";
 
   React.useEffect(() => {
     const ws = new WebSocket(wsUrl);
