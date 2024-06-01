@@ -11,7 +11,6 @@ const client = jwksClient({
 });
 
 export async function POST(req: Request) {
-  console.log("I am called");
   try {
     // Get the token from the request
     const token = await req.text();

@@ -50,15 +50,12 @@ export default function Form() {
       try {
         const data = JSON.parse(event.data);
         if (typeof data === "object" && data !== null && "type" in data) {
-          console.log("Data received:", data);
-
           switch (data.type) {
             case "status":
               setLoading(true);
               setMessages(
                 (prevMessages: any) => [...prevMessages, data] as any,
               );
-              console.log("messages: ", messages);
               break;
             case "images":
               if (Array.isArray(data.content)) {
@@ -127,7 +124,6 @@ export default function Form() {
     return <Response images={images} />;
   }
 
-  console.log("messages: ", messages);
   return (
     <section className="py-16 sm:py-24 lg:py-32">
       <div className="max-w-3xl mx-auto space-y-10 px-4 sm:px-6 lg:px-8">
