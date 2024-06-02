@@ -1,4 +1,5 @@
 "use client";
+import { RequestToAI } from "@/lib/actions/actions";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -19,17 +20,20 @@ export default function Form() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormValues>();
 
   const [socket, setSocket] = React.useState<WebSocket | null>(null);
   const [loading, setLoading] = React.useState(false);
-  const [images, setImages] = React.useState([]);
-  const [messages, setMessages] = React.useState([]);
+  const [images, setImages] = React.useState<string[]>([]);
+  const [messages, setMessages] = React.useState<any[]>([]);
   const [error, setError] = React.useState<string | null>(null);
   const [analysisCompleted, setAnalysisCompleted] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
+  const [aiResponse, setAiResponse] = React.useState("");
   const socketRef = React.useRef<WebSocket | null>(null);
+  const formDataRef = React.useRef<FormValues | null>(null);
 
   const env = process.env.NODE_ENV;
   const wsUrl =
@@ -46,22 +50,37 @@ export default function Form() {
       setError(null);
     };
 
-    ws.onmessage = (event) => {
+    ws.onmessage = async (event) => {
       try {
         const data = JSON.parse(event.data);
         if (typeof data === "object" && data !== null && "type" in data) {
           switch (data.type) {
             case "status":
               setLoading(true);
-              setMessages(
-                (prevMessages: any) => [...prevMessages, data] as any,
-              );
+              setMessages((prevMessages: any) => [...prevMessages, data]);
               break;
             case "images":
               if (Array.isArray(data.content)) {
                 setImages(data.content);
                 setLoading(false);
                 setAnalysisCompleted(true); // Analysis completed, switch to Response component
+
+                // Send the request to the GPT-4 endpoint
+                if (formDataRef.current) {
+                  console.log(
+                    "data provided to the server action: ",
+                    formDataRef.current,
+                  );
+                  const response = await RequestToAI({
+                    url: formDataRef.current.websiteUrl,
+                    audience: formDataRef.current.targetedAudience,
+                    market: formDataRef.current.targetedMarket,
+                    imageUrls: data.content,
+                  });
+                  setAiResponse(response);
+                } else {
+                  console.error("Form data is null");
+                }
               } else {
                 console.error("Expected content to be an array:", data.content);
               }
@@ -102,7 +121,7 @@ export default function Form() {
     };
   }, [wsUrl]);
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: FormValues) => {
     setLoading(true);
     setError(null);
 
@@ -112,16 +131,21 @@ export default function Form() {
       setLoading(false);
       return;
     }
+    console.log("data when form is submitted: ", data);
+
+    formDataRef.current = data;
 
     socket.send(
       JSON.stringify({
         url: data.websiteUrl,
       }),
     );
+
+    reset();
   };
 
   if (analysisCompleted) {
-    return <Response images={images} />;
+    return <Response images={images} aiResponse={aiResponse} />;
   }
 
   return (
