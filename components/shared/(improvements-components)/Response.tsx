@@ -6,6 +6,7 @@ export default function Response({
   images: string[];
   aiResponse: string;
 }) {
+  console.log("ai response: ", aiResponse);
   return (
     <div className="py-16 sm:py-24 lg:py-32">
       <div className="max-w-3xl mx-auto space-y-10 px-4 sm:px-6 lg:px-8">
