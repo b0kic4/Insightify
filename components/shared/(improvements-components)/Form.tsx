@@ -16,6 +16,29 @@ export interface FormValues {
   websiteInsights: string;
 }
 
+export interface AIResponse {
+  id: string;
+  object: string;
+  created_at: number;
+  assistant_id: string | null;
+  thread_id: string;
+  run_id: string | null;
+  role: "user" | "assistant";
+  content: Array<{
+    type: "text" | "image_url";
+    text?: {
+      value: string;
+      annotations: Array<unknown>;
+    };
+    image_url?: {
+      url: string;
+      detail: string;
+    };
+  }>;
+  attachments: Array<unknown>;
+  metadata: Record<string, unknown>;
+}
+
 export default function Form() {
   const {
     register,
@@ -31,7 +54,7 @@ export default function Form() {
   const [error, setError] = React.useState<string | null>(null);
   const [analysisCompleted, setAnalysisCompleted] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
-  const [aiResponse, setAiResponse] = React.useState("");
+  const [aiResponse, setAiResponse] = React.useState<AIResponse[]>([]);
   const socketRef = React.useRef<WebSocket | null>(null);
   const formDataRef = React.useRef<FormValues | null>(null);
 
@@ -77,7 +100,9 @@ export default function Form() {
                     market: formDataRef.current.targetedMarket,
                     imageUrls: data.content,
                   });
-                  setAiResponse(response);
+
+                  const parsedResponse = JSON.parse(response);
+                  setAiResponse(parsedResponse);
                 } else {
                   console.error("Form data is null");
                 }
@@ -145,7 +170,7 @@ export default function Form() {
   };
 
   if (analysisCompleted) {
-    return <Response images={images} aiResponse={aiResponse} />;
+    return <Response aiResponse={aiResponse} />;
   }
 
   return (

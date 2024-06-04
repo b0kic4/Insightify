@@ -163,11 +163,12 @@ async function loopUntilCompleted(
 async function getResponseMessage(openai: OpenAI, thread: OpenAI.Beta.Thread) {
   const threadMessages = await openai.beta.threads.messages.list(thread.id);
 
-  // Log the entire response to see its structure
   console.log(
     "Thread messages: ",
     JSON.stringify(threadMessages.data, null, 2),
   );
+
+  const stringifiedThreadMessage = JSON.stringify(threadMessages.data, null, 2);
 
   const responseMessage = threadMessages.data
     .filter((msg) => msg.role === "assistant")
@@ -177,6 +178,9 @@ async function getResponseMessage(openai: OpenAI, thread: OpenAI.Beta.Thread) {
     })
     .join("\n");
 
-  console.log("Concatenated response message: ", responseMessage);
-  return responseMessage;
+  console.log(
+    "Concatenated response message: ",
+    JSON.stringify(responseMessage),
+  );
+  return stringifiedThreadMessage;
 }
