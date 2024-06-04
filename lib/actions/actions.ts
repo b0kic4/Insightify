@@ -56,10 +56,10 @@ Continue this structure for each screenshot provided.
   ];
 
   const myAssistant = await getAssistant(openai);
-  const newThread = await createThread(openai);
+  const newThread = await setThread(openai);
 
   for (const message of messages) {
-    await createMessage(openai, newThread, message);
+    await setMessage(openai, newThread, message);
   }
 
   const newRun = await createRun(openai, newThread, myAssistant);
@@ -69,17 +69,11 @@ Continue this structure for each screenshot provided.
   return responseMessage;
 }
 
-async function getAssistant(openai: OpenAI) {
-  return await openai.beta.assistants.retrieve(
-    process.env.ASSISTANT_ID as string,
-  );
-}
-
-async function createThread(openai: OpenAI) {
+async function setThread(openai: OpenAI) {
   return openai.beta.threads.create();
 }
 
-async function createMessage(
+async function setMessage(
   openai: OpenAI,
   thread: OpenAI.Beta.Thread,
   message: any,
@@ -113,13 +107,29 @@ async function loopUntilCompleted(
   }
 }
 
+async function getAssistant(openai: OpenAI) {
+  return await openai.beta.assistants.retrieve(
+    process.env.ASSISTANT_ID as string,
+  );
+}
+
 async function getResponseMessage(openai: OpenAI, thread: OpenAI.Beta.Thread) {
   const threadMessages = await openai.beta.threads.messages.list(thread.id);
+
+  // Log the entire response to see its structure
+  console.log(
+    "Thread messages: ",
+    JSON.stringify(threadMessages.data, null, 2),
+  );
+
   const responseMessage = threadMessages.data
     .filter((msg) => msg.role === "assistant")
-    .map((msg) => msg.content)
+    .map((msg) => {
+      console.log("Assistant message content: ", msg.content);
+      return msg.content;
+    })
     .join("\n");
 
-  console.log("response Message: ", responseMessage);
+  console.log("Concatenated response message: ", responseMessage);
   return responseMessage;
 }
