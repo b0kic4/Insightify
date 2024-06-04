@@ -38,6 +38,9 @@ export async function RequestToAI({
     organization: process.env.OPENAI_ORGANIZATION,
   });
 
+  // FIXME: IMPLEMENT ERROR HANDLING
+  // NOTE: IMPLEMENT SENDING STATUS TO THE FRONT
+
   const initialContent: TextContent = {
     type: "text",
     text: `
@@ -58,12 +61,13 @@ improvements are needed. For each part of the website that requires improvement,
 reference the corresponding screenshot and suggest enhancements.
 
 Example Response Structure:
-Screenshot: [Screenshot URL]
+Indetified Section of the website:
 
 Current State: Describe the current state of the section.
 Improvements: Suggest specific changes, including design tweaks,
 text revisions, and user experience enhancements.
-Screenshot: [Screenshot URL]
+
+Indetified Section of the website:
 
 Current State: Describe the current state of the section.
 Improvements: Suggest specific changes, including design tweaks,
@@ -83,11 +87,12 @@ Continue this structure for each screenshot provided.`,
 Also, connect the provided screenshots with the respective parts of the website where improvements are needed. For each part of the website that requires improvement, reference the corresponding screenshot and suggest enhancements.
 
 Example Response Structure:
-Screenshot: [Screenshot URL]
+Indetified Section of the website:
 
 Current State: Describe the current state of the section.
 Improvements: Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
-Screenshot: [Screenshot URL]
+
+Indetified Section of the website:
 
 Current State: Describe the current state of the section.
 Improvements: Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
@@ -124,7 +129,7 @@ async function getAssistant(openai: OpenAI) {
 }
 
 async function createThread(openai: OpenAI) {
-  return openai.beta.threads.create();
+  return await openai.beta.threads.create();
 }
 
 async function createMessage(
@@ -163,24 +168,16 @@ async function loopUntilCompleted(
 async function getResponseMessage(openai: OpenAI, thread: OpenAI.Beta.Thread) {
   const threadMessages = await openai.beta.threads.messages.list(thread.id);
 
+  // Log the entire response to see its structure
   console.log(
     "Thread messages: ",
     JSON.stringify(threadMessages.data, null, 2),
   );
 
-  const stringifiedThreadMessage = JSON.stringify(threadMessages.data, null, 2);
-
-  const responseMessage = threadMessages.data
+  const responseMessages = threadMessages.data
     .filter((msg) => msg.role === "assistant")
-    .map((msg) => {
-      console.log("Assistant message content: ", msg.content);
-      return msg.content;
-    })
-    .join("\n");
+    .map((msg) => msg.content);
 
-  console.log(
-    "Concatenated response message: ",
-    JSON.stringify(responseMessage),
-  );
-  return stringifiedThreadMessage;
+  console.log("Filtered response messages: ", JSON.stringify(responseMessages));
+  return responseMessages;
 }

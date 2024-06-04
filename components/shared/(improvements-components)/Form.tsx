@@ -6,7 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import React from "react";
-import Response from "@/components/shared/(improvements-components)/Response";
+import Response, {
+  AIResponse,
+} from "@/components/shared/(improvements-components)/Response";
 import AnalysisModal from "@/components/ui/AnalysisModal";
 
 export interface FormValues {
@@ -14,29 +16,6 @@ export interface FormValues {
   targetedAudience: string;
   targetedMarket: string;
   websiteInsights: string;
-}
-
-export interface AIResponse {
-  id: string;
-  object: string;
-  created_at: number;
-  assistant_id: string | null;
-  thread_id: string;
-  run_id: string | null;
-  role: "user" | "assistant";
-  content: Array<{
-    type: "text" | "image_url";
-    text?: {
-      value: string;
-      annotations: Array<unknown>;
-    };
-    image_url?: {
-      url: string;
-      detail: string;
-    };
-  }>;
-  attachments: Array<unknown>;
-  metadata: Record<string, unknown>;
 }
 
 export default function Form() {
@@ -54,7 +33,7 @@ export default function Form() {
   const [error, setError] = React.useState<string | null>(null);
   const [analysisCompleted, setAnalysisCompleted] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
-  const [aiResponse, setAiResponse] = React.useState<AIResponse[]>([]);
+  const [aiResponse, setAiResponse] = React.useState<AIResponse[][]>([]);
   const socketRef = React.useRef<WebSocket | null>(null);
   const formDataRef = React.useRef<FormValues | null>(null);
 
@@ -90,10 +69,6 @@ export default function Form() {
 
                 // Send the request to the GPT-4 endpoint
                 if (formDataRef.current) {
-                  console.log(
-                    "data provided to the server action: ",
-                    formDataRef.current,
-                  );
                   const response = await RequestToAI({
                     url: formDataRef.current.websiteUrl,
                     audience: formDataRef.current.targetedAudience,
@@ -101,8 +76,7 @@ export default function Form() {
                     imageUrls: data.content,
                   });
 
-                  const parsedResponse = JSON.parse(response);
-                  setAiResponse(parsedResponse);
+                  setAiResponse(response as unknown as AIResponse[][]);
                 } else {
                   console.error("Form data is null");
                 }
@@ -156,7 +130,6 @@ export default function Form() {
       setLoading(false);
       return;
     }
-    console.log("data when form is submitted: ", data);
 
     formDataRef.current = data;
 
@@ -170,7 +143,7 @@ export default function Form() {
   };
 
   if (analysisCompleted) {
-    return <Response aiResponse={aiResponse} />;
+    return <Response images={images} aiResponse={aiResponse} />;
   }
 
   return (
