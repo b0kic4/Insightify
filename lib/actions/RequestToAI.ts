@@ -10,6 +10,8 @@ const redis = new Redis({
   password: process.env.REDIS_PW,
 });
 
+// NOTE: Implement sending partial updates (status of the gpt req)
+
 export async function RequestToAI({
   url,
   audience,
@@ -115,17 +117,17 @@ Continue this structure for each screenshot provided.`,
   await loopUntilCompleted(openai, newThread.id, newRun.id);
   const responseMessage = await getResponseMessage(openai, newThread);
 
-  // Cache the AI response in Redis
+  // Cache the AI response in Redis with an expiration time of 24 hours (86400 seconds)
   if (cachedData) {
     const parsedData = JSON.parse(cachedData);
     parsedData.aiResponse = responseMessage;
-    await redis.set(url, JSON.stringify(parsedData));
+    await redis.set(url, JSON.stringify(parsedData), "EX", 86400);
   } else {
     const newData = {
       screenshots: imageUrls,
       aiResponse: responseMessage,
     };
-    await redis.set(url, JSON.stringify(newData));
+    await redis.set(url, JSON.stringify(newData), "EX", 86400);
   }
 
   return responseMessage;

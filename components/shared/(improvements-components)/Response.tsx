@@ -95,7 +95,12 @@ export default function Response({
               AI Response
             </h3>
             {loading.current == true ? (
-              <SkeletonLoaderAIResponse />
+              <>
+                <p className="text-lg font-bold text-gray-900 dark:text-gray-50 mb-6">
+                  AI is looking for improvements, please be patient...
+                </p>
+                <SkeletonLoaderAIResponse />
+              </>
             ) : (
               aiResponse[0]?.map((content, index) => (
                 <ReactMarkdown
