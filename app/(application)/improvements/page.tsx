@@ -1,4 +1,5 @@
 import Form from "@/components/shared/(improvements-components)/Form";
+export const maxDuration = 60;
 export default function Improvements() {
   return (
     <main className="flex-1">
