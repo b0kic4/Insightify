@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Libre_Franklin } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 // import { Rubik } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -18,6 +19,7 @@ const libre = Libre_Franklin({
 
 export const metadata: Metadata = {
   title: "Insightify",
+  description: "AI Website Analyzer",
 };
 
 export default function RootLayout({
@@ -27,6 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Analytics />
       <body className={`${libre.className}`}>
         <ThemeProvider
           attribute="class"

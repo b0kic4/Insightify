@@ -1,5 +1,5 @@
 "use client";
-import { RequestToAI } from "@/lib/actions/actions";
+import { RequestToAI } from "@/lib/actions/RequestToAI";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -11,9 +11,7 @@ import Response, {
 } from "@/components/shared/(improvements-components)/Response";
 import AnalysisModal from "@/components/ui/AnalysisModal";
 
-export const maxDuration = 300;
-
-export interface FormValues {
+interface FormValues {
   websiteUrl: string;
   targetedAudience: string;
   targetedMarket: string;
@@ -36,6 +34,7 @@ export default function Form() {
   const [analysisCompleted, setAnalysisCompleted] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   const [aiResponse, setAiResponse] = React.useState<AIResponse[][]>([]);
+
   const socketRef = React.useRef<WebSocket | null>(null);
   const formDataRef = React.useRef<FormValues | null>(null);
   const aiResponseLoading = React.useRef<boolean>(false);

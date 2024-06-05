@@ -43,6 +43,8 @@ export default function Response({
     }
   };
 
+  // NOTE: if loading.current = false proceed
+
   const currentImage = images[currentImageIndex];
   return (
     <div className="overflow-hidden">

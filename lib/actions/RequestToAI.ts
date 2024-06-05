@@ -1,26 +1,14 @@
 "use server";
 import OpenAI from "openai";
+import Redis from "ioredis";
+import { TextContent, ImageContent, Content, Message } from "..";
 
-interface ImageURL {
-  url: string;
-}
-
-interface TextContent {
-  type: "text";
-  text: string;
-}
-
-interface ImageContent {
-  type: "image_url";
-  image_url: ImageURL;
-}
-
-type Content = TextContent | ImageContent;
-
-interface Message {
-  role: "user" | "assistant";
-  content: Content[];
-}
+// Initialize Redis client
+const redis = new Redis({
+  host: process.env.REDIS_ADD!.split(":")[0],
+  port: parseInt(process.env.REDIS_ADD!.split(":")[1]),
+  password: process.env.REDIS_PW,
+});
 
 export async function RequestToAI({
   url,
@@ -33,13 +21,21 @@ export async function RequestToAI({
   market: string;
   imageUrls: string[];
 }) {
+  // Check if the AI response is already cached
+  const cachedData = await redis.get(url);
+  if (cachedData) {
+    const parsedData = JSON.parse(cachedData);
+    if (parsedData.aiResponse) {
+      // Return cached AI response
+      console.log("Returning cached AI response");
+      return parsedData.aiResponse;
+    }
+  }
+
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
     organization: process.env.OPENAI_ORGANIZATION,
   });
-
-  // FIXME: IMPLEMENT ERROR HANDLING
-  // NOTE: IMPLEMENT SENDING STATUS TO THE FRONT
 
   const initialContent: TextContent = {
     type: "text",
@@ -61,13 +57,13 @@ improvements are needed. For each part of the website that requires improvement,
 reference the corresponding screenshot and suggest enhancements.
 
 Example Response Structure:
-Indetified Section of the website:
+Identified Section of the website:
 
 Current State: Describe the current state of the section.
 Improvements: Suggest specific changes, including design tweaks,
 text revisions, and user experience enhancements.
 
-Indetified Section of the website:
+Identified Section of the website:
 
 Current State: Describe the current state of the section.
 Improvements: Suggest specific changes, including design tweaks,
@@ -87,12 +83,12 @@ Continue this structure for each screenshot provided.`,
 Also, connect the provided screenshots with the respective parts of the website where improvements are needed. For each part of the website that requires improvement, reference the corresponding screenshot and suggest enhancements.
 
 Example Response Structure:
-Indetified Section of the website:
+Identified Section of the website:
 
 Current State: Describe the current state of the section.
 Improvements: Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
 
-Indetified Section of the website:
+Identified Section of the website:
 
 Current State: Describe the current state of the section.
 Improvements: Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
@@ -118,6 +114,19 @@ Continue this structure for each screenshot provided.`,
   const newRun = await createRun(openai, newThread, myAssistant);
   await loopUntilCompleted(openai, newThread.id, newRun.id);
   const responseMessage = await getResponseMessage(openai, newThread);
+
+  // Cache the AI response in Redis
+  if (cachedData) {
+    const parsedData = JSON.parse(cachedData);
+    parsedData.aiResponse = responseMessage;
+    await redis.set(url, JSON.stringify(parsedData));
+  } else {
+    const newData = {
+      screenshots: imageUrls,
+      aiResponse: responseMessage,
+    };
+    await redis.set(url, JSON.stringify(newData));
+  }
 
   return responseMessage;
 }
@@ -167,8 +176,6 @@ async function loopUntilCompleted(
 
 async function getResponseMessage(openai: OpenAI, thread: OpenAI.Beta.Thread) {
   const threadMessages = await openai.beta.threads.messages.list(thread.id);
-
-  // Log the entire response to see its structure
   console.log(
     "Thread messages: ",
     JSON.stringify(threadMessages.data, null, 2),
