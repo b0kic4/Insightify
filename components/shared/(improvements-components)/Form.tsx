@@ -11,6 +11,8 @@ import Response, {
 } from "@/components/shared/(improvements-components)/Response";
 import AnalysisModal from "@/components/ui/AnalysisModal";
 
+export const maxDuration = 300;
+
 export interface FormValues {
   websiteUrl: string;
   targetedAudience: string;

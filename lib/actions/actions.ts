@@ -160,8 +160,8 @@ async function loopUntilCompleted(
   while (!["completed", "failed", "requires_action"].includes(status)) {
     const runObj = await openai.beta.threads.runs.retrieve(threadId, runId);
     status = runObj.status;
-    await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait for 3 seconds
-    console.log(runObj.status);
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    console.log("request status: ", runObj.status);
   }
 }
 
