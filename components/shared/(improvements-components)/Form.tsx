@@ -38,6 +38,7 @@ export default function Form() {
   const [aiResponse, setAiResponse] = React.useState<AIResponse[][]>([]);
   const socketRef = React.useRef<WebSocket | null>(null);
   const formDataRef = React.useRef<FormValues | null>(null);
+  const aiResponseLoading = React.useRef<boolean>(false);
 
   const env = process.env.NODE_ENV;
   const wsUrl =
@@ -71,6 +72,7 @@ export default function Form() {
 
                 // Send the request to the GPT-4 endpoint
                 if (formDataRef.current) {
+                  aiResponseLoading.current = true;
                   const response = await RequestToAI({
                     url: formDataRef.current.websiteUrl,
                     audience: formDataRef.current.targetedAudience,
@@ -78,6 +80,7 @@ export default function Form() {
                     imageUrls: data.content,
                   });
 
+                  aiResponseLoading.current = false;
                   setAiResponse(response as unknown as AIResponse[][]);
                 } else {
                   console.error("Form data is null");
@@ -145,7 +148,13 @@ export default function Form() {
   };
 
   if (analysisCompleted) {
-    return <Response images={images} aiResponse={aiResponse} />;
+    return (
+      <Response
+        images={images}
+        aiResponse={aiResponse}
+        loading={aiResponseLoading}
+      />
+    );
   }
 
   return (
