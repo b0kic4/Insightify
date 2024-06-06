@@ -91,7 +91,7 @@ export default function Response({
             <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-6">
               AI Response
             </h3>
-            {loading.current == true ? (
+            {loading.current ? (
               <>
                 <p className="text-lg font-bold text-gray-900 dark:text-gray-50 mb-6">
                   AI is looking for improvements, please be patient...
@@ -100,12 +100,14 @@ export default function Response({
               </>
             ) : (
               aiResponse[0]?.map((content, index) => (
-                <ReactMarkdown
+                <div
                   key={index}
-                  className="prose dark:prose-dark text-lg text-gray-600 dark:text-gray-400 mt-4"
+                  className="bg-gray-100 dark:bg-gray-900 rounded-lg p-4 mb-4 shadow-md"
                 >
-                  {content?.text?.value ?? ""}
-                </ReactMarkdown>
+                  <ReactMarkdown className="prose dark:prose-invert text-lg text-gray-600 dark:text-gray-400">
+                    {content?.text?.value ?? ""}
+                  </ReactMarkdown>
+                </div>
               ))
             )}
           </div>
