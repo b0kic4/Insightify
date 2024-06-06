@@ -5,18 +5,7 @@ import ReactMarkdown from "react-markdown";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SkeletonLoaderAIResponse from "@/components/ui/AIResponseSkeletonLoader";
-
-export interface AIResponse {
-  type: "text" | "image_url";
-  text?: {
-    value: string;
-    annotations: Array<unknown>;
-  };
-  image_url?: {
-    url: string;
-    detail: string;
-  };
-}
+import { AIResponse } from "@/lib";
 
 interface ResponseProps {
   images: string[];
@@ -30,22 +19,24 @@ export default function Response({
   loading,
 }: ResponseProps) {
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+  const [imageLoading, setImageLoading] = React.useState(true);
 
   const handleNext = () => {
     if (currentImageIndex < images.length - 1) {
       setCurrentImageIndex(currentImageIndex + 1);
+      setImageLoading(true);
     }
   };
 
   const handlePrevious = () => {
     if (currentImageIndex > 0) {
       setCurrentImageIndex(currentImageIndex - 1);
+      setImageLoading(true);
     }
   };
 
-  // NOTE: if loading.current = false proceed
-
   const currentImage = images[currentImageIndex];
+
   return (
     <div className="overflow-hidden">
       <div className="max-w-5xl mx-auto space-y-10 px-4 sm:px-6 lg:px-8">
@@ -55,12 +46,18 @@ export default function Response({
               <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-6">
                 Screenshot {currentImageIndex + 1}
               </h3>
+              {imageLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
+                  <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-white/50 mx-auto my-2"></div>
+                </div>
+              )}
               <Image
                 src={currentImage}
                 alt={`Screenshot ${currentImageIndex + 1}`}
                 className="rounded-lg shadow-lg"
                 width={800}
                 height={600}
+                onLoadingComplete={() => setImageLoading(false)}
               />
               <div className="absolute inset-0 flex items-end p-2 justify-between px-4">
                 <Button

@@ -1,4 +1,15 @@
 // NOTE: Request To AI interfaces
+export interface AIResponse {
+  type: "text" | "image_url";
+  text?: {
+    value: string;
+    annotations: Array<unknown>;
+  };
+  image_url?: {
+    url: string;
+    detail: string;
+  };
+}
 export interface ImageURL {
   url: string;
 }
