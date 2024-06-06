@@ -6,9 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import React from "react";
-import Response, {
-  AIResponse,
-} from "@/components/shared/(improvements-components)/Response";
+import Response from "@/components/shared/(improvements-components)/Response";
+import { AIResponse } from "@/lib";
 import AnalysisModal from "@/components/ui/AnalysisModal";
 
 interface FormValues {
