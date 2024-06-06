@@ -17,11 +17,13 @@ export async function RequestToAI({
   url,
   audience,
   market,
+  insights,
   imageUrls,
 }: {
   url: string;
   audience: string;
   market: string;
+  insights: string;
   imageUrls: string[];
 }) {
   // Check if the AI response is already cached
@@ -40,6 +42,8 @@ export async function RequestToAI({
     organization: process.env.OPENAI_ORGANIZATION,
   });
 
+  // NOTE: Add severity, insights and design rate
+
   const initialContent: TextContent = {
     type: "text",
     text: `
@@ -47,6 +51,7 @@ Instructions:
 1. First, go and analyze the website URL provided and then proceed with the analysis of the screenshots: ${url}
 2. Review the provided screenshots in relation to the website sections.
 3. Identify design errors, evaluate the text, and suggest improvements to ensure the content resonates with ${audience} in the ${market} field.
+4. These are some insights of the website that user has provided you can aknowledge it for proceeding with analyzation: ${insights}
 
 Dissect the website not just mechanically but with an artistic and strategic eye.
 Narrow down to the essence that makes the website resonate with the target audience (${audience}).
@@ -55,9 +60,9 @@ After successful navigation of ${url} and analysis of the provided screenshots, 
 Review the site's layout, images, text efficiency, user experience, etc.,
 and provide a comprehensive report.
 
-Also, connect the provided screenshots with the respective parts of the website where
+Also, connect the provided screenshots - (sections) with the respective parts of the website where
 improvements are needed. For each part of the website that requires improvement, 
-reference the corresponding screenshot and suggest enhancements.
+reference the corresponding section and suggest enhancements.
 
 Example Response Structure:
 Identified Section of the website:
@@ -65,13 +70,15 @@ Identified Section of the website:
 Current State: Describe the current state of the section.
 Improvements: Suggest specific changes, including design tweaks,
 text revisions, and user experience enhancements.
+Severity: Severity Ratings for Usability and appearance
 
 Identified Section of the website:
 
 Current State: Describe the current state of the section.
 Improvements: Suggest specific changes, including design tweaks,
 text revisions, and user experience enhancements.
-Continue this structure for each screenshot provided.`,
+Severity: Severity Ratings for Usability and appearance
+Continue this structure for each section.`,
   };
 
   const imageContents: ImageContent[] = imageUrls.map((url) => ({
@@ -83,19 +90,22 @@ Continue this structure for each screenshot provided.`,
     type: "text",
     text: `Identify design errors and evaluate the effectiveness of the words used. After successful navigation of ${url} and analysis of the provided screenshots, make changes to the text to ensure it is compelling and relatable to the provided market (${market}). Review the site's layout, images, text efficiency, user experience, etc., and provide a comprehensive report.
 
-Also, connect the provided screenshots with the respective parts of the website where improvements are needed. For each part of the website that requires improvement, reference the corresponding screenshot and suggest enhancements.
+Also, connect the provided screenshots - (sections) with the respective parts of the website where improvements are needed. For each part of the website that requires improvement, reference the corresponding section and suggest enhancements.
 
 Example Response Structure:
 Identified Section of the website:
 
 Current State: Describe the current state of the section.
 Improvements: Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
+Severity: Severity Ratings for Usability and appearance
 
 Identified Section of the website:
 
 Current State: Describe the current state of the section.
 Improvements: Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
-Continue this structure for each screenshot provided.`,
+Severity: Severity Ratings for Usability and appearance
+
+Continue this structure for each section provided.`,
   };
 
   const messages: Message[] = [

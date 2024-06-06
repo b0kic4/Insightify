@@ -91,6 +91,7 @@ export default function Form() {
                     url: formDataRef.current.websiteUrl,
                     audience: formDataRef.current.targetedAudience,
                     market: formDataRef.current.targetedMarket,
+                    insights: formDataRef.current.websiteInsights,
                     imageUrls: data.content,
                   });
 
