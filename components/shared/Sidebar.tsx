@@ -86,13 +86,15 @@ export default function Sidebar() {
           </div>
         )}
         {user?.email && (
-          <p className="group-hover:block hidden text-center text-xs mb-3">
+          <p className="group-hover:block hidden text-center text-white text-xs mb-3">
             Logged in as {user.email}
           </p>
         )}
         {isAuthenticated && (
           <LogoutLink>
-            <span className="group-hover:block hidden">Log out</span>
+            <span className="group-hover:block text-red-500 text-bold hidden">
+              Log out
+            </span>
           </LogoutLink>
         )}
       </div>
