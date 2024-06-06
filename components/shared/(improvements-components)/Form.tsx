@@ -1,14 +1,15 @@
 "use client";
+import React from "react";
 import { RequestToAI } from "@/lib/actions/RequestToAI";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import React from "react";
 import Response from "@/components/shared/(improvements-components)/Response";
 import { AIResponse } from "@/lib";
 import AnalysisModal from "@/components/ui/AnalysisModal";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
 interface FormValues {
   websiteUrl: string;
@@ -25,6 +26,8 @@ export default function Form() {
     formState: { errors },
   } = useForm<FormValues>();
 
+  const { getToken } = useKindeBrowserClient();
+
   const [socket, setSocket] = React.useState<WebSocket | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [images, setImages] = React.useState<string[]>([]);
@@ -39,15 +42,24 @@ export default function Form() {
   const aiResponseLoading = React.useRef<boolean>(false);
 
   const env = process.env.NODE_ENV;
-  const wsUrl =
+  const baseWsUrl =
     env === "development"
       ? "ws://localhost:4000/analysis/ws"
       : "wss://insightify-backend-3caf92991e4a.herokuapp.com/analysis/ws";
 
-  const initializeWebSocket = () => {
+  const initializeWebSocket = async () => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       return;
     }
+
+    const token = getToken();
+
+    if (!token) {
+      console.error("Token is null or undefined");
+      return;
+    }
+
+    const wsUrl = `${baseWsUrl}?token=${token}`;
 
     const ws = new WebSocket(wsUrl);
 
@@ -126,6 +138,9 @@ export default function Form() {
   const onSubmit = async (data: FormValues) => {
     setLoading(true);
     setError(null);
+
+    // Initialize WebSocket connection
+    await initializeWebSocket();
 
     if (!socket || socket.readyState !== WebSocket.OPEN) {
       console.error("WebSocket is not connected, attempting to reconnect...");

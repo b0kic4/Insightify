@@ -2,7 +2,6 @@
 import {
   Grid3x3Icon,
   HomeIcon,
-  MountainIcon,
   SettingsIcon,
   BarChartIcon,
   HistoryIcon,
