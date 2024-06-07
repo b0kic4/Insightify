@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { RequestToAI } from "@/lib/actions/RequestToAI";
+import { RequestToAI } from "@/lib/utils/actions/RequestToAI";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";

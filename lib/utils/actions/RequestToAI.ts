@@ -2,7 +2,7 @@
 
 import OpenAI from "openai";
 import Redis from "ioredis";
-import { TextContent, ImageContent, Content, Message } from "..";
+import { TextContent, ImageContent, Content, Message } from "../..";
 
 // Initialize Redis client
 const redis = new Redis({
@@ -10,8 +10,6 @@ const redis = new Redis({
   port: parseInt(process.env.REDIS_ADD!.split(":")[1]),
   password: process.env.REDIS_PW,
 });
-
-// NOTE: Implement sending partial updates (status of the gpt req)
 
 export async function RequestToAI({
   url,
@@ -41,8 +39,6 @@ export async function RequestToAI({
     apiKey: process.env.OPENAI_API_KEY,
     organization: process.env.OPENAI_ORGANIZATION,
   });
-
-  // NOTE: Add severity, insights and design rate
 
   const initialContent: TextContent = {
     type: "text",
