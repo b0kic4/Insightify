@@ -1,5 +1,5 @@
 "use client";
-import React, { MutableRefObject } from "react";
+import React from "react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -9,15 +9,18 @@ import { AIResponse } from "@/lib";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { saveImprovementsWithUser } from "@/lib/utils/actions/SaveImprovementsToUser";
 import { useToast } from "@/components/ui/use-toast";
+import { FormValues } from "./Form";
 
 interface ResponseProps {
+  formData: FormValues | null;
   threadId: string;
   images: string[];
   aiResponse: AIResponse[][];
-  loading: MutableRefObject<boolean>;
+  loading: boolean;
 }
 
 export default function Response({
+  formData,
   threadId,
   aiResponse,
   images,
@@ -29,6 +32,8 @@ export default function Response({
   const { toast } = useToast();
 
   console.log("thread id: ", threadId);
+  console.log("form data: ", formData);
+  console.log("aiResponse: ", aiResponse);
 
   const handleNext = () => {
     if (currentImageIndex < images.length - 1) {
@@ -46,7 +51,7 @@ export default function Response({
 
   React.useEffect(() => {
     const saveImprovement = async () => {
-      if (!loading.current && threadId !== "cached" && user?.id) {
+      if (!loading && threadId !== "cached" && user?.id) {
         const response = await saveImprovementsWithUser(threadId, user.id);
         if (!response.success) {
           toast({
@@ -61,9 +66,11 @@ export default function Response({
       }
     };
     saveImprovement();
-  }, [loading.current, threadId, user]);
+  }, [loading, threadId, user]);
 
   const currentImage = images[currentImageIndex];
+
+  // FIXME:Type error for AI Response when data is cached
 
   return (
     <div className="overflow-hidden">
@@ -119,7 +126,7 @@ export default function Response({
             <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-6">
               AI Response
             </h3>
-            {loading.current ? (
+            {loading ? (
               <>
                 <p className="text-lg font-bold text-gray-900 dark:text-gray-50 mb-6">
                   AI is looking for improvements, please be patient...

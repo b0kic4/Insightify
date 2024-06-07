@@ -11,7 +11,7 @@ import { AIResponse } from "@/lib";
 import AnalysisModal from "@/components/ui/AnalysisModal";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
-interface FormValues {
+export interface FormValues {
   websiteUrl: string;
   targetedAudience: string;
   targetedMarket: string;
@@ -26,7 +26,7 @@ export default function Form() {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const { getToken } = useKindeBrowserClient();
+  const { getToken, user } = useKindeBrowserClient();
 
   const [socket, setSocket] = React.useState<WebSocket | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -100,6 +100,7 @@ export default function Form() {
                   setAiResponse(
                     response.aiResponse as unknown as AIResponse[][],
                   );
+                  console.log("aiResponse: ", response.aiResponse);
                   threadId.current = response.threadId as string;
                 } else {
                   console.error("Form data is null");
@@ -159,6 +160,10 @@ export default function Form() {
     socket.send(
       JSON.stringify({
         url: data.websiteUrl,
+        market: data.targetedMarket,
+        audience: data.targetedAudience,
+        insights: data.websiteInsights,
+        userID: user?.id,
       }),
     );
 
@@ -168,10 +173,11 @@ export default function Form() {
   if (analysisCompleted) {
     return (
       <Response
+        formData={formDataRef.current}
         threadId={threadId.current as string}
         images={images}
         aiResponse={aiResponse}
-        loading={aiResponseLoading}
+        loading={aiResponseLoading.current as boolean}
       />
     );
   }

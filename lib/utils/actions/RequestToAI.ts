@@ -3,6 +3,7 @@
 import OpenAI from "openai";
 import Redis from "ioredis";
 import { TextContent, ImageContent, Content, Message } from "../..";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 // Initialize Redis client
 const redis = new Redis({
@@ -27,14 +28,17 @@ export async function RequestToAI({
   aiResponse: OpenAI.Beta.Threads.Messages.MessageContent[][];
   threadId: string;
 }> {
-  // Check if the AI response is already cached
-  const cachedData = await redis.get(url);
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+  const key = user?.id + ":" + url;
+  const cachedData = await redis.get(key);
   if (cachedData) {
     const parsedData = JSON.parse(cachedData);
     if (parsedData.aiResponse) {
       // Return cached AI response
       console.log("Returning cached AI response");
       // NOTE: Remodify this to save for unique user
+      console.log("parsedData: ", parsedData);
       return { aiResponse: parsedData.aiResponse, threadId: "cached" };
     }
   }
@@ -132,13 +136,13 @@ Continue this structure for each section provided.`,
   if (cachedData) {
     const parsedData = JSON.parse(cachedData);
     parsedData.aiResponse = responseMessage;
-    await redis.set(url, JSON.stringify(parsedData), "EX", 86400);
+    await redis.set(key, JSON.stringify(parsedData), "EX", 86400);
   } else {
     const newData = {
       screenshots: imageUrls,
       aiResponse: responseMessage,
     };
-    await redis.set(url, JSON.stringify(newData), "EX", 86400);
+    await redis.set(key, JSON.stringify(newData), "EX", 86400);
   }
 
   return responseMessage;
