@@ -4,6 +4,8 @@ import { Libre_Franklin } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 // import { Rubik } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import Providers from "./providers";
 
 const libre = Libre_Franklin({
   subsets: ["latin"],
@@ -37,8 +39,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <Providers>{children}</Providers>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );

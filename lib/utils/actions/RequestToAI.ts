@@ -23,7 +23,10 @@ export async function RequestToAI({
   market: string;
   insights: string;
   imageUrls: string[];
-}) {
+}): Promise<{
+  aiResponse: OpenAI.Beta.Threads.Messages.MessageContent[][];
+  threadId: string;
+}> {
   // Check if the AI response is already cached
   const cachedData = await redis.get(url);
   if (cachedData) {
@@ -31,7 +34,8 @@ export async function RequestToAI({
     if (parsedData.aiResponse) {
       // Return cached AI response
       console.log("Returning cached AI response");
-      return parsedData.aiResponse;
+      // NOTE: Remodify this to save for unique user
+      return { aiResponse: parsedData.aiResponse, threadId: "cached" };
     }
   }
 
@@ -195,5 +199,5 @@ async function getResponseMessage(openai: OpenAI, thread: OpenAI.Beta.Thread) {
     .map((msg) => msg.content);
 
   console.log("Filtered response messages: ", JSON.stringify(responseMessages));
-  return responseMessages;
+  return { aiResponse: responseMessages, threadId: thread.id };
 }

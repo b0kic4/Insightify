@@ -40,6 +40,7 @@ export default function Form() {
   const socketRef = React.useRef<WebSocket | null>(null);
   const formDataRef = React.useRef<FormValues | null>(null);
   const aiResponseLoading = React.useRef<boolean>(false);
+  const threadId = React.useRef<string>();
 
   const env = process.env.NODE_ENV;
   const baseWsUrl =
@@ -96,7 +97,10 @@ export default function Form() {
                   });
 
                   aiResponseLoading.current = false;
-                  setAiResponse(response as unknown as AIResponse[][]);
+                  setAiResponse(
+                    response.aiResponse as unknown as AIResponse[][],
+                  );
+                  threadId.current = response.threadId as string;
                 } else {
                   console.error("Form data is null");
                 }
@@ -164,6 +168,7 @@ export default function Form() {
   if (analysisCompleted) {
     return (
       <Response
+        threadId={threadId.current as string}
         images={images}
         aiResponse={aiResponse}
         loading={aiResponseLoading}

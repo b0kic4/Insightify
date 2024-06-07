@@ -9,6 +9,7 @@ export interface AIResponse {
     url: string;
     detail: string;
   };
+  threadId: string;
 }
 export interface ImageURL {
   url: string;

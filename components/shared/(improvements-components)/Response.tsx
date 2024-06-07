@@ -6,20 +6,29 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SkeletonLoaderAIResponse from "@/components/ui/AIResponseSkeletonLoader";
 import { AIResponse } from "@/lib";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { saveImprovementsWithUser } from "@/lib/utils/actions/SaveImprovementsToUser";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ResponseProps {
+  threadId: string;
   images: string[];
   aiResponse: AIResponse[][];
   loading: MutableRefObject<boolean>;
 }
 
 export default function Response({
+  threadId,
   aiResponse,
   images,
   loading,
 }: ResponseProps) {
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
   const [imageLoading, setImageLoading] = React.useState(true);
+  const { user } = useKindeBrowserClient();
+  const { toast } = useToast();
+
+  console.log("thread id: ", threadId);
 
   const handleNext = () => {
     if (currentImageIndex < images.length - 1) {
@@ -34,6 +43,25 @@ export default function Response({
       setImageLoading(true);
     }
   };
+
+  React.useEffect(() => {
+    const saveImprovement = async () => {
+      if (!loading.current && threadId !== "cached" && user?.id) {
+        const response = await saveImprovementsWithUser(threadId, user.id);
+        if (!response.success) {
+          toast({
+            title: "Uh oh! Something went wrong.",
+            description: "There was a problem with your request.",
+          });
+        }
+        toast({
+          title: "Success",
+          description: "Your request has been completed successfully",
+        });
+      }
+    };
+    saveImprovement();
+  }, [loading.current, threadId, user]);
 
   const currentImage = images[currentImageIndex];
 
