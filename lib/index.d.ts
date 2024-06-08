@@ -1,3 +1,10 @@
+export interface FormValues {
+  websiteUrl: string;
+  targetedAudience: string;
+  targetedMarket: string;
+  websiteInsights: string;
+}
+
 export interface AIResponse {
   type: "text" | "image_url";
   text?: {

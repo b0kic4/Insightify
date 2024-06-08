@@ -7,16 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Response from "@/components/shared/(improvements-components)/Response";
-import { AIResponse } from "@/lib";
+import { AIResponse, FormValues } from "@/lib";
 import AnalysisModal from "@/components/ui/AnalysisModal";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-
-export interface FormValues {
-  websiteUrl: string;
-  targetedAudience: string;
-  targetedMarket: string;
-  websiteInsights: string;
-}
 
 export default function Form() {
   const {
@@ -83,9 +76,8 @@ export default function Form() {
               if (Array.isArray(data.content)) {
                 setImages(data.content);
                 setLoading(false);
-                setAnalysisCompleted(true); // Analysis completed, switch to Response component
+                setAnalysisCompleted(true);
 
-                // Send the request to the GPT-4 endpoint
                 if (formDataRef.current) {
                   aiResponseLoading.current = true;
                   const response = await RequestToAI({
@@ -100,6 +92,16 @@ export default function Form() {
                   setAiResponse(
                     response.aiResponse as unknown as AIResponse[][],
                   );
+
+                  const { market, insights, audience } = response;
+                  if (market && insights && audience) {
+                    Object.assign(formDataRef.current, {
+                      websiteInsights: insights,
+                      targetedAudience: audience,
+                      targetedMarket: market,
+                    });
+                  }
+
                   console.log("aiResponse: ", response.aiResponse);
                   threadId.current = response.threadId as string;
                 } else {
@@ -145,7 +147,6 @@ export default function Form() {
     setLoading(true);
     setError(null);
 
-    // Initialize WebSocket connection
     await initializeWebSocket();
 
     if (!socket || socket.readyState !== WebSocket.OPEN) {
@@ -171,10 +172,6 @@ export default function Form() {
   };
 
   if (analysisCompleted) {
-    // NOTE: Implement checking for cached
-    // form data in here
-    // and then passing the cached data
-    // instead of the one inputed
     return (
       <Response
         formData={formDataRef.current}
