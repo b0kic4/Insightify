@@ -27,19 +27,26 @@ export async function RequestToAI({
 }): Promise<{
   aiResponse: OpenAI.Beta.Threads.Messages.MessageContent[][];
   threadId: string;
+  market: string;
+  audience: string;
+  insights: string;
 }> {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
   const key = user?.id + ":" + url;
   const cachedData = await redis.get(key);
+
   if (cachedData) {
     const parsedData = JSON.parse(cachedData);
     if (parsedData.aiResponse) {
-      // Return cached AI response
       console.log("Returning cached AI response");
-      // NOTE: Remodify this to save for unique user
-      console.log("parsedData: ", parsedData);
-      return { aiResponse: parsedData.aiResponse, threadId: "cached" };
+      return {
+        aiResponse: parsedData.aiResponse,
+        threadId: "cached",
+        market: parsedData.market,
+        audience: parsedData.audience,
+        insights: parsedData.insights,
+      };
     }
   }
 
@@ -52,37 +59,20 @@ export async function RequestToAI({
     type: "text",
     text: `
 Instructions:
-1. First, go and analyze the website URL provided and then proceed with the analysis of the screenshots: ${url}
-2. Review the provided screenshots in relation to the website sections.
-3. Identify design errors, evaluate the text, and suggest improvements to ensure the content resonates with ${audience} in the ${market} field.
-4. These are some insights of the website that user has provided you can aknowledge it for proceeding with analyzation: ${insights}
+1. Analyze the website URL and provided screenshots: ${url}
+2. Identify design errors, evaluate the text, and suggest improvements to ensure the content resonates with ${audience} in the ${market} field.
+3. Consider these insights: ${insights}
 
-Dissect the website not just mechanically but with an artistic and strategic eye.
-Narrow down to the essence that makes the website resonate with the target audience (${audience}).
-Identify design errors and evaluate the effectiveness of the words used.
-After successful navigation of ${url} and analysis of the provided screenshots, make changes to the text to ensure it is compelling and relatable to the provided market (${market}).
-Review the site's layout, images, text efficiency, user experience, etc.,
-and provide a comprehensive report.
-
-Also, connect the provided screenshots - (sections) with the respective parts of the website where
-improvements are needed. For each part of the website that requires improvement, 
-reference the corresponding section and suggest enhancements.
+Focus on providing actionable improvements without mentioning the analysis process.
 
 Example Response Structure:
 Identified Section of the website:
 
 Current State: Describe the current state of the section.
-Improvements: Suggest specific changes, including design tweaks,
-text revisions, and user experience enhancements.
+Improvements: Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
 Severity: Severity Ratings for Usability and appearance
 
-Identified Section of the website:
-
-Current State: Describe the current state of the section.
-Improvements: Suggest specific changes, including design tweaks,
-text revisions, and user experience enhancements.
-Severity: Severity Ratings for Usability and appearance
-Continue this structure for each section.`,
+Continue this structure for each section provided.`,
   };
 
   const imageContents: ImageContent[] = imageUrls.map((url) => ({
@@ -97,12 +87,6 @@ Continue this structure for each section.`,
 Also, connect the provided screenshots - (sections) with the respective parts of the website where improvements are needed. For each part of the website that requires improvement, reference the corresponding section and suggest enhancements.
 
 Example Response Structure:
-Identified Section of the website:
-
-Current State: Describe the current state of the section.
-Improvements: Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
-Severity: Severity Ratings for Usability and appearance
-
 Identified Section of the website:
 
 Current State: Describe the current state of the section.
@@ -135,17 +119,26 @@ Continue this structure for each section provided.`,
   // Cache the AI response in Redis with an expiration time of 24 hours (86400 seconds)
   if (cachedData) {
     const parsedData = JSON.parse(cachedData);
-    parsedData.aiResponse = responseMessage;
+    parsedData.aiResponse = responseMessage.aiResponse;
     await redis.set(key, JSON.stringify(parsedData), "EX", 86400);
   } else {
     const newData = {
       screenshots: imageUrls,
-      aiResponse: responseMessage,
+      aiResponse: responseMessage.aiResponse,
+      market,
+      audience,
+      insights,
     };
     await redis.set(key, JSON.stringify(newData), "EX", 86400);
   }
 
-  return responseMessage;
+  return {
+    aiResponse: responseMessage.aiResponse,
+    threadId: responseMessage.threadId,
+    market,
+    audience,
+    insights,
+  };
 }
 
 async function getAssistant(openai: OpenAI) {

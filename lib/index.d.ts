@@ -1,4 +1,3 @@
-// NOTE: Request To AI interfaces
 export interface AIResponse {
   type: "text" | "image_url";
   text?: {
@@ -11,6 +10,16 @@ export interface AIResponse {
   };
   threadId: string;
 }
+
+export interface CachedAIResponse {
+  aiResponse: AIResponse[][];
+  threadId: string;
+  market: string;
+  audience: string;
+  insights: string;
+  url: string;
+}
+
 export interface ImageURL {
   url: string;
 }

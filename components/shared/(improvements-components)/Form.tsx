@@ -171,6 +171,10 @@ export default function Form() {
   };
 
   if (analysisCompleted) {
+    // NOTE: Implement checking for cached
+    // form data in here
+    // and then passing the cached data
+    // instead of the one inputed
     return (
       <Response
         formData={formDataRef.current}
