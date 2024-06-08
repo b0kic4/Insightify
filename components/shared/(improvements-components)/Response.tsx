@@ -15,7 +15,7 @@ interface ResponseProps {
   formData: FormValues | null;
   threadId: string;
   images: string[];
-  aiResponse: AIResponse[][];
+  aiResponse: AIResponse[][] | { aiResponse: AIResponse[][]; threadId: string };
   loading: boolean;
 }
 
@@ -70,7 +70,9 @@ export default function Response({
 
   const currentImage = images[currentImageIndex];
 
-  // FIXME:Type error for AI Response when data is cached
+  const aiResponseContent = Array.isArray(aiResponse)
+    ? aiResponse
+    : aiResponse.aiResponse;
 
   return (
     <div className="overflow-hidden">
@@ -134,7 +136,7 @@ export default function Response({
                 <SkeletonLoaderAIResponse />
               </>
             ) : (
-              aiResponse[0]?.map((content, index) => (
+              aiResponseContent[0]?.map((content, index) => (
                 <div
                   key={index}
                   className="bg-gray-100 dark:bg-gray-900 rounded-lg p-4 mb-4 shadow-md"
