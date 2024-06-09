@@ -144,6 +144,7 @@ export default function Response({
   aiResponse,
   images,
   loading,
+  type,
 }: ResponseProps) {
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
   const [imageLoading, setImageLoading] = React.useState(true);
@@ -154,32 +155,25 @@ export default function Response({
     ? aiResponse
     : aiResponse.aiResponse;
 
-  console.log("whole ai response: ", aiResponse);
-
-  console.log("ai response content: ", aiResponseContent);
-
   const threadId = Array.isArray(aiResponse) ? "" : aiResponse.threadId;
-  const type = Array.isArray(aiResponse) ? "" : aiResponse.type;
 
   React.useEffect(() => {
     const saveImprovement = async () => {
       if (!loading && user?.id) {
-        if (type !== "cached") {
+        if (type != "cached") {
           const response = await saveImprovementsWithUser(threadId, user.id);
           if (!response.success) {
             toast({
               title: "Uh oh! Something went wrong.",
               description: "There was a problem with your request.",
             });
-            console.log("response: ", response);
-            console.log("response error: ", response.error);
-          } else if (type === "new") {
+          } else if (type == "new") {
             toast({
               title: "Success",
               description: "Your request has been completed successfully",
             });
           }
-        } else if (type === "cached") {
+        } else if (type == "cached") {
           toast({
             title: "Success",
             description: "Your request has been successfully retrieved",

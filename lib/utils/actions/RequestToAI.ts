@@ -5,6 +5,8 @@ import { TextContent, ImageContent, Content, Message } from "../..";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { getRedisInstance } from "../hooks/RedisHooks";
 
+// FIXME: Handle Failed Request
+
 export async function RequestToAI({
   url,
   audience,

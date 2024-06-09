@@ -28,13 +28,13 @@ export default function Form() {
   const [error, setError] = React.useState<string | null>(null);
   const [analysisCompleted, setAnalysisCompleted] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
+  const [dataType, setDataType] = React.useState<string>("");
+  const [aiResponse, setAiResponse] = React.useState<AIResponse[][]>([]);
 
   const socketRef = React.useRef<WebSocket | null>(null);
   const formDataRef = React.useRef<FormValues | null>(null);
-  const dataType = React.useRef<string>("");
   const aiResponseLoading = React.useRef<boolean>(false);
   const images = React.useRef<string[]>();
-  const [aiResponse, setAiResponse] = React.useState<AIResponse[][]>([]);
 
   const env = process.env.NODE_ENV;
   const baseWsUrl =
@@ -103,7 +103,7 @@ export default function Form() {
 
                   const { market, insights, audience } = response;
                   console.log("response: ", response);
-                  dataType.current = response.type;
+                  setDataType(response.type);
                   if (market && insights && audience) {
                     Object.assign(formDataRef.current, {
                       websiteInsights: insights,
@@ -178,7 +178,7 @@ export default function Form() {
             targetedAudience: cachedData.audience,
             targetedMarket: cachedData.market,
           };
-          dataType.current = cachedData.type;
+          setDataType(cachedData.type);
         }
         if (cachedData.aiResponse && cachedData.aiResponse.length > 0) {
           setAiResponse(cachedData.aiResponse);
@@ -196,6 +196,7 @@ export default function Form() {
           });
           aiResponseLoading.current = false;
           setAiResponse(response.aiResponse as unknown as AIResponse[][]);
+          setDataType(response.type);
           return;
         }
       }
@@ -224,7 +225,7 @@ export default function Form() {
       <Response
         formData={formDataRef.current}
         images={images.current as string[]}
-        type={dataType.current}
+        type={dataType}
         aiResponse={aiResponse}
         loading={aiResponseLoading.current as boolean}
       />
