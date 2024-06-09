@@ -1,16 +1,9 @@
 "use server";
 
 import OpenAI from "openai";
-import Redis from "ioredis";
 import { TextContent, ImageContent, Content, Message } from "../..";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-
-// Initialize Redis client
-const redis = new Redis({
-  host: process.env.REDIS_ADD!.split(":")[0],
-  port: parseInt(process.env.REDIS_ADD!.split(":")[1]),
-  password: process.env.REDIS_PW,
-});
+import { getRedisInstance } from "../hooks/RedisHooks";
 
 export async function RequestToAI({
   url,
@@ -26,29 +19,16 @@ export async function RequestToAI({
   imageUrls: string[];
 }): Promise<{
   aiResponse: OpenAI.Beta.Threads.Messages.MessageContent[][];
+  type: string;
   threadId: string;
   market: string;
   audience: string;
   insights: string;
 }> {
+  const redis = await getRedisInstance();
   const { getUser } = getKindeServerSession();
   const user = await getUser();
   const key = user?.id + ":" + url;
-  const cachedData = await redis.get(key);
-
-  if (cachedData) {
-    const parsedData = JSON.parse(cachedData);
-    if (parsedData.aiResponse) {
-      console.log("Returning cached AI response");
-      return {
-        aiResponse: parsedData.aiResponse,
-        threadId: "cached",
-        market: parsedData.market,
-        audience: parsedData.audience,
-        insights: parsedData.insights,
-      };
-    }
-  }
 
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -125,24 +105,21 @@ Continue this structure for each section provided.`,
   const responseMessage = await getResponseMessage(openai, newThread);
 
   // Cache the AI response in Redis with an expiration time of 24 hours (86400 seconds)
-  if (cachedData) {
-    const parsedData = JSON.parse(cachedData);
-    parsedData.aiResponse = responseMessage.aiResponse;
-    await redis.set(key, JSON.stringify(parsedData), "EX", 86400);
-  } else {
-    const newData = {
-      screenshots: imageUrls,
-      aiResponse: responseMessage.aiResponse,
-      market,
-      audience,
-      insights,
-    };
-    await redis.set(key, JSON.stringify(newData), "EX", 86400);
-  }
+  const newData = {
+    screenshots: imageUrls,
+    aiResponse: responseMessage.aiResponse,
+    threadId: newRun.thread_id,
+    type: "cached",
+    market,
+    audience,
+    insights,
+  };
+  await redis.set(key, JSON.stringify(newData), "EX", 86400);
 
   return {
     aiResponse: responseMessage.aiResponse,
     threadId: responseMessage.threadId,
+    type: "new",
     market,
     audience,
     insights,

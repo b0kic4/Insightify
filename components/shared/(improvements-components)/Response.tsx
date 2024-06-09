@@ -12,24 +12,21 @@ import { useToast } from "@/components/ui/use-toast";
 
 interface ResponseProps {
   formData: FormValues | null;
-  threadId: string;
   images: string[];
   aiResponse: AIResponse[][] | CachedAIResponse;
   loading: boolean;
 }
 
 const FormDataDisplay = ({ formData }: { formData: FormValues }) => (
-  <div className="bg-gray-100 dark:bg-gray-900 flex-col max-h-96 overflow-y-auto w-full rounded-lg shadow-lg p-6">
-    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-50 mb-4">
-      Provided Form Data
-    </h2>
+  <div className="bg-gray-100 dark:bg-gray-900 flex-col max-h-96 overflow-y-scroll max-w-full w-full rounded-lg shadow-lg p-6 border border-gray-600">
+    <h2 className="text-2xl font-bold text-white mb-4">Provided Form Data</h2>
     <div className="space-y-4">
       {Object.entries(formData).map(([key, value]) => (
-        <div key={key}>
-          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 capitalize">
+        <div key={key} className="p-4 rounded-lg shadow-lg shadow-red-900">
+          <h3 className="text-lg font-semibold text-gray-300 capitalize">
             {key.replace(/([A-Z])/g, " $1")}:
           </h3>
-          <p className="text-gray-700 dark:text-gray-300">{value}</p>
+          <p className="text-gray-400 break-words">{value}</p>
         </div>
       ))}
     </div>
@@ -48,54 +45,65 @@ const ImageCarousel = ({
   setCurrentImageIndex: React.Dispatch<React.SetStateAction<number>>;
   setImageLoading: React.Dispatch<React.SetStateAction<boolean>>;
   imageLoading: boolean;
-}) => (
-  <div className="relative mt-10 flex-shrink-0">
-    <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-6 text-center">
-      Screenshot {currentImageIndex + 1}
-    </h3>
-    {imageLoading && (
-      <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
-        <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-white/50"></div>
+}) => {
+  const handleImageChange = (newIndex: number) => {
+    setImageLoading(true); // Set loading state to true when changing the image
+    setCurrentImageIndex(newIndex);
+  };
+
+  return (
+    <div className="relative mt-10 flex-shrink-0">
+      <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-6 text-center">
+        Screenshot {currentImageIndex + 1}
+      </h3>
+      <div className="relative w-[800px] h-[600px]">
+        {imageLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
+            <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-white/50"></div>
+          </div>
+        )}
+        <Image
+          src={images[currentImageIndex]}
+          alt={`Screenshot ${currentImageIndex + 1}`}
+          className="rounded-lg shadow-lg"
+          layout="fill"
+          objectFit="cover"
+          onLoadingComplete={() => setImageLoading(false)}
+        />
       </div>
-    )}
-    <Image
-      src={images[currentImageIndex]}
-      alt={`Screenshot ${currentImageIndex + 1}`}
-      className="rounded-lg shadow-lg"
-      width={800}
-      height={600}
-      onLoadingComplete={() => setImageLoading(false)}
-    />
-    <div className="absolute inset-0 flex items-end justify-between p-4">
-      <Button
-        variant="ghost"
-        onClick={() => setCurrentImageIndex((prev) => Math.max(prev - 1, 0))}
-        disabled={currentImageIndex === 0}
-        className={`py-2 px-4 rounded-md font-medium text-2xl ${
-          currentImageIndex === 0
-            ? "bg-gray-400 text-gray-700 cursor-not-allowed"
-            : "bg-blue-500 text-white hover:bg-blue-700"
-        }`}
-      >
-        <ArrowLeft />
-      </Button>
-      <Button
-        variant="ghost"
-        onClick={() =>
-          setCurrentImageIndex((prev) => Math.min(prev + 1, images.length - 1))
-        }
-        disabled={currentImageIndex === images.length - 1}
-        className={`py-2 px-4 rounded-md font-medium text-2xl ${
-          currentImageIndex === images.length - 1
-            ? "bg-gray-400 text-gray-700 cursor-not-allowed"
-            : "bg-blue-500 text-white hover:bg-blue-700"
-        }`}
-      >
-        <ArrowRight />
-      </Button>
+      <div className="absolute inset-0 flex items-end justify-between p-4">
+        <Button
+          variant="ghost"
+          onClick={() => handleImageChange(Math.max(currentImageIndex - 1, 0))}
+          disabled={currentImageIndex === 0}
+          className={`py-2 px-4 rounded-md font-medium text-2xl ${
+            currentImageIndex === 0
+              ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+              : "bg-blue-500 text-white hover:bg-blue-700"
+          }`}
+        >
+          <ArrowLeft />
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() =>
+            handleImageChange(
+              Math.min(currentImageIndex + 1, images.length - 1),
+            )
+          }
+          disabled={currentImageIndex === images.length - 1}
+          className={`py-2 px-4 rounded-md font-medium text-2xl ${
+            currentImageIndex === images.length - 1
+              ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+              : "bg-blue-500 text-white hover:bg-blue-700"
+          }`}
+        >
+          <ArrowRight />
+        </Button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const AIResponseDisplay = ({
   aiResponseContent,
@@ -132,7 +140,6 @@ const AIResponseDisplay = ({
 
 export default function Response({
   formData,
-  threadId,
   aiResponse,
   images,
   loading,
@@ -144,29 +151,41 @@ export default function Response({
 
   console.log("aiResponse: ", aiResponse);
 
+  const aiResponseText = Array.isArray(aiResponse)
+    ? aiResponse
+    : aiResponse.aiResponse;
+
+  const threadId = Array.isArray(aiResponse) ? "" : aiResponse.threadId;
+  const type = Array.isArray(aiResponse) ? "" : aiResponse.type;
+
   React.useEffect(() => {
     const saveImprovement = async () => {
-      if (!loading && threadId !== "cached" && user?.id) {
+      if (!loading && type !== "cached" && user?.id) {
         const response = await saveImprovementsWithUser(threadId, user.id);
         if (!response.success) {
           toast({
             title: "Uh oh! Something went wrong.",
             description: "There was a problem with your request.",
           });
-        } else {
+          console.log("response: ", response);
+          console.log("response error: ", response.error);
+        } else if (!loading && type === "cached" && user?.id) {
           toast({
             title: "Success",
-            description: "Your request has been completed successfully",
+            description: "Your request has been successfully retrieved",
           });
         }
+      } else {
+        // NOTE: TYPE IS EMPTY
+        console.log("type: ", type);
+        toast({
+          title: "Success",
+          description: "Your request has been completed successfully",
+        });
       }
     };
     saveImprovement();
-  }, [loading, threadId, user, toast]);
-
-  const aiResponseContent = Array.isArray(aiResponse)
-    ? aiResponse
-    : aiResponse.aiResponse;
+  }, [loading, type, threadId, user, toast]);
 
   return (
     <div className="overflow-hidden">
@@ -184,7 +203,7 @@ export default function Response({
               />
             )}
             <AIResponseDisplay
-              aiResponseContent={aiResponseContent}
+              aiResponseContent={aiResponseText}
               loading={loading}
             />
           </div>

@@ -16,11 +16,22 @@ export interface AIResponse {
     detail: string;
   };
   threadId: string;
+  type: string;
+}
+
+export interface ResponseData {
+  aiResponse: AIResponse[][];
+  threadId: string;
+  type: string;
+  market: string;
+  audience: string;
+  insights: string;
 }
 
 export interface CachedAIResponse {
   aiResponse: AIResponse[][];
   threadId: string;
+  type: string;
   market: string;
   audience: string;
   insights: string;

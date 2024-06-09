@@ -10,6 +10,7 @@ import Response from "@/components/shared/(improvements-components)/Response";
 import { AIResponse, FormValues } from "@/lib";
 import AnalysisModal from "@/components/ui/AnalysisModal";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { getCache, saveScreenshotsToRedis } from "@/lib/utils/hooks/RedisHooks";
 
 export default function Form() {
   const {
@@ -23,18 +24,16 @@ export default function Form() {
 
   const [socket, setSocket] = React.useState<WebSocket | null>(null);
   const [loading, setLoading] = React.useState(false);
-  const [images, setImages] = React.useState<string[]>([]);
   const [messages, setMessages] = React.useState<any[]>([]);
   const [error, setError] = React.useState<string | null>(null);
   const [analysisCompleted, setAnalysisCompleted] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
-  const [aiResponse, setAiResponse] = React.useState<AIResponse[][]>([]);
 
   const socketRef = React.useRef<WebSocket | null>(null);
   const formDataRef = React.useRef<FormValues | null>(null);
   const aiResponseLoading = React.useRef<boolean>(false);
-  const threadId = React.useRef<string>();
-
+  const images = React.useRef<string[]>();
+  const aiResponse = React.useRef<AIResponse[][]>([]);
   const env = process.env.NODE_ENV;
   const baseWsUrl =
     env === "development"
@@ -74,7 +73,14 @@ export default function Form() {
               break;
             case "images":
               if (Array.isArray(data.content)) {
-                setImages(data.content);
+                images.current = data.content;
+                if (user?.id && formDataRef.current?.websiteUrl) {
+                  await saveScreenshotsToRedis(
+                    user.id,
+                    formDataRef.current.websiteUrl,
+                    data.content,
+                  );
+                }
                 setLoading(false);
                 setAnalysisCompleted(true);
 
@@ -89,11 +95,11 @@ export default function Form() {
                   });
 
                   aiResponseLoading.current = false;
-                  setAiResponse(
-                    response.aiResponse as unknown as AIResponse[][],
-                  );
+                  aiResponse.current =
+                    response.aiResponse as unknown as AIResponse[][];
 
                   const { market, insights, audience } = response;
+                  console.log("response: ", response);
                   if (market && insights && audience) {
                     Object.assign(formDataRef.current, {
                       websiteInsights: insights,
@@ -101,9 +107,6 @@ export default function Form() {
                       targetedMarket: market,
                     });
                   }
-
-                  console.log("aiResponse: ", response.aiResponse);
-                  threadId.current = response.threadId as string;
                 } else {
                   console.error("Form data is null");
                 }
@@ -122,6 +125,7 @@ export default function Form() {
           throw new Error("Invalid message format");
         }
       } catch (error) {
+        console.log("error: ", error);
         console.error("Error processing message:", error);
         setError("Error processing message");
         setLoading(false);
@@ -147,6 +151,47 @@ export default function Form() {
     setLoading(true);
     setError(null);
 
+    formDataRef.current = data;
+
+    if (user?.id && formDataRef.current?.websiteUrl) {
+      const cachedData = await getCache(
+        user.id,
+        formDataRef.current.websiteUrl,
+      );
+      if (cachedData != null) {
+        console.log("Cached data found in Redis, using cached data");
+        if (cachedData.screenshots) {
+          images.current = cachedData.screenshots;
+        }
+        if (cachedData.market && cachedData.audience && cachedData.insights) {
+          formDataRef.current = {
+            ...formDataRef.current,
+            websiteInsights: cachedData.insights,
+            targetedAudience: cachedData.audience,
+            targetedMarket: cachedData.market,
+          };
+        }
+        if (cachedData.aiResponse) {
+          aiResponse.current = cachedData.aiResponse;
+          setAnalysisCompleted(true);
+          return;
+        } else {
+          aiResponseLoading.current = true;
+          const response = await RequestToAI({
+            url: formDataRef.current.websiteUrl,
+            audience: formDataRef.current.targetedAudience,
+            market: formDataRef.current.targetedMarket,
+            insights: formDataRef.current.websiteInsights,
+            imageUrls: cachedData.screenshots as string[],
+          });
+          aiResponseLoading.current = false;
+          aiResponse.current = response.aiResponse as unknown as AIResponse[][];
+          setAnalysisCompleted(true);
+          return;
+        }
+      }
+    }
+
     await initializeWebSocket();
 
     if (!socket || socket.readyState !== WebSocket.OPEN) {
@@ -156,15 +201,9 @@ export default function Form() {
       return;
     }
 
-    formDataRef.current = data;
-
     socket.send(
       JSON.stringify({
         url: data.websiteUrl,
-        market: data.targetedMarket,
-        audience: data.targetedAudience,
-        insights: data.websiteInsights,
-        userID: user?.id,
       }),
     );
 
@@ -175,9 +214,8 @@ export default function Form() {
     return (
       <Response
         formData={formDataRef.current}
-        threadId={threadId.current as string}
-        images={images}
-        aiResponse={aiResponse}
+        images={images.current as string[]}
+        aiResponse={aiResponse.current}
         loading={aiResponseLoading.current as boolean}
       />
     );
