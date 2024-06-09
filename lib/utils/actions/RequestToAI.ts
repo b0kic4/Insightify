@@ -45,6 +45,11 @@ Instructions:
 
 Focus on providing actionable improvements without mentioning the analysis process.
 
+Before proceeding to the detailed instructions, detect the current design style and provide some information about the current state of the layout, giving it a creative rating that will be useful for continued analysis.
+- **Current Design** in bold
+Add a horizontal line 
+
+
 Use Markdown to format the following key aspects:
 - **Current State:** in bold
 - **Improvements:** in bold 

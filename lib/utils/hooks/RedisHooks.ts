@@ -34,6 +34,7 @@ export async function getCache(
   market?: string;
   audience?: string;
   insights?: string;
+  type: string;
   aiResponse?: AIResponse[][];
 } | null> {
   const redis = await getRedisInstance();

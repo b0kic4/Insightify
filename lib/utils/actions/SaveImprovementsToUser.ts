@@ -35,7 +35,20 @@ export async function saveImprovementsWithUser(
       };
     }
 
-    const improvement = await prisma.improvement.create({
+    const foundImprovement = await prisma.improvement.findFirst({
+      where: {
+        userId: user.id,
+        threadId: threadId,
+      },
+    });
+
+    if (foundImprovement)
+      return {
+        success: true,
+        data: foundImprovement,
+      };
+
+    const newImprovement = await prisma.improvement.create({
       data: {
         threadId: threadId,
         userId: userId,
@@ -44,7 +57,7 @@ export async function saveImprovementsWithUser(
 
     return {
       success: true,
-      data: improvement,
+      data: newImprovement,
     };
   } catch (error) {
     return {

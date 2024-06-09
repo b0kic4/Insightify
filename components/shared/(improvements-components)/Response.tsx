@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -13,6 +13,7 @@ import { useToast } from "@/components/ui/use-toast";
 interface ResponseProps {
   formData: FormValues | null;
   images: string[];
+  type: string;
   aiResponse: AIResponse[][] | CachedAIResponse;
   loading: boolean;
 }
@@ -124,7 +125,7 @@ const AIResponseDisplay = ({
         <SkeletonLoaderAIResponse />
       </>
     ) : (
-      aiResponseContent[0]?.map((content, index) => (
+      aiResponseContent.flat().map((content, index) => (
         <div
           key={index}
           className="bg-gray-100 dark:bg-gray-900 rounded-lg p-4 mb-4 shadow-md"
@@ -144,44 +145,47 @@ export default function Response({
   images,
   loading,
 }: ResponseProps) {
-  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
-  const [imageLoading, setImageLoading] = React.useState(true);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imageLoading, setImageLoading] = useState(true);
   const { user } = useKindeBrowserClient();
   const { toast } = useToast();
 
   console.log("aiResponse: ", aiResponse);
 
+  // Ensure aiResponseText is always an array of arrays of AIResponse objects
   const aiResponseText = Array.isArray(aiResponse)
     ? aiResponse
-    : aiResponse.aiResponse;
+    : aiResponse.aiResponse instanceof Array
+      ? aiResponse.aiResponse
+      : [[]];
 
   const threadId = Array.isArray(aiResponse) ? "" : aiResponse.threadId;
   const type = Array.isArray(aiResponse) ? "" : aiResponse.type;
 
-  React.useEffect(() => {
+  useEffect(() => {
     const saveImprovement = async () => {
-      if (!loading && type !== "cached" && user?.id) {
-        const response = await saveImprovementsWithUser(threadId, user.id);
-        if (!response.success) {
-          toast({
-            title: "Uh oh! Something went wrong.",
-            description: "There was a problem with your request.",
-          });
-          console.log("response: ", response);
-          console.log("response error: ", response.error);
-        } else if (!loading && type === "cached" && user?.id) {
+      if (!loading && user?.id) {
+        if (type !== "cached") {
+          const response = await saveImprovementsWithUser(threadId, user.id);
+          if (!response.success) {
+            toast({
+              title: "Uh oh! Something went wrong.",
+              description: "There was a problem with your request.",
+            });
+            console.log("response: ", response);
+            console.log("response error: ", response.error);
+          } else if (type === "new") {
+            toast({
+              title: "Success",
+              description: "Your request has been completed successfully",
+            });
+          }
+        } else if (type === "cached") {
           toast({
             title: "Success",
             description: "Your request has been successfully retrieved",
           });
         }
-      } else {
-        // NOTE: TYPE IS EMPTY
-        console.log("type: ", type);
-        toast({
-          title: "Success",
-          description: "Your request has been completed successfully",
-        });
       }
     };
     saveImprovement();

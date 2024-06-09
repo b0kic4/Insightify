@@ -1,16 +1,16 @@
 "use client";
-import React from "react";
-import { RequestToAI } from "@/lib/utils/actions/RequestToAI";
-import { Button } from "@/components/ui/button";
+import React, { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { RequestToAI } from "@/lib/utils/actions/RequestToAI";
+import { getCache, saveScreenshotsToRedis } from "@/lib/utils/hooks/RedisHooks";
+import { FormValues, AIResponse } from "@/lib";
+import Response from "@/components/shared/(improvements-components)/Response";
+import AnalysisModal from "@/components/ui/AnalysisModal";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import Response from "@/components/shared/(improvements-components)/Response";
-import { AIResponse, FormValues } from "@/lib";
-import AnalysisModal from "@/components/ui/AnalysisModal";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import { getCache, saveScreenshotsToRedis } from "@/lib/utils/hooks/RedisHooks";
 
 export default function Form() {
   const {
@@ -22,18 +22,20 @@ export default function Form() {
 
   const { getToken, user } = useKindeBrowserClient();
 
-  const [socket, setSocket] = React.useState<WebSocket | null>(null);
-  const [loading, setLoading] = React.useState(false);
-  const [messages, setMessages] = React.useState<any[]>([]);
-  const [error, setError] = React.useState<string | null>(null);
-  const [analysisCompleted, setAnalysisCompleted] = React.useState(false);
-  const [progress, setProgress] = React.useState(0);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [analysisCompleted, setAnalysisCompleted] = useState(false);
+  const [progress, setProgress] = useState(0);
 
-  const socketRef = React.useRef<WebSocket | null>(null);
-  const formDataRef = React.useRef<FormValues | null>(null);
-  const aiResponseLoading = React.useRef<boolean>(false);
-  const images = React.useRef<string[]>();
-  const aiResponse = React.useRef<AIResponse[][]>([]);
+  const socketRef = useRef<WebSocket | null>(null);
+  const formDataRef = useRef<FormValues | null>(null);
+  const dataType = useRef<string>("");
+  const aiResponseLoading = useRef<boolean>(false);
+  const images = useRef<string[]>();
+  const aiResponse = useRef<AIResponse[][]>([]);
+
   const env = process.env.NODE_ENV;
   const baseWsUrl =
     env === "development"
@@ -69,7 +71,7 @@ export default function Form() {
           switch (data.type) {
             case "status":
               setLoading(true);
-              setMessages((prevMessages: any) => [...prevMessages, data]);
+              setMessages((prevMessages) => [...prevMessages, data]);
               break;
             case "images":
               if (Array.isArray(data.content)) {
@@ -100,6 +102,7 @@ export default function Form() {
 
                   const { market, insights, audience } = response;
                   console.log("response: ", response);
+                  dataType.current = response.type;
                   if (market && insights && audience) {
                     Object.assign(formDataRef.current, {
                       websiteInsights: insights,
@@ -125,7 +128,6 @@ export default function Form() {
           throw new Error("Invalid message format");
         }
       } catch (error) {
-        console.log("error: ", error);
         console.error("Error processing message:", error);
         setError("Error processing message");
         setLoading(false);
@@ -163,19 +165,26 @@ export default function Form() {
         if (cachedData.screenshots) {
           images.current = cachedData.screenshots;
         }
-        if (cachedData.market && cachedData.audience && cachedData.insights) {
+        if (
+          cachedData.market &&
+          cachedData.audience &&
+          cachedData.insights &&
+          cachedData.type
+        ) {
           formDataRef.current = {
             ...formDataRef.current,
             websiteInsights: cachedData.insights,
             targetedAudience: cachedData.audience,
             targetedMarket: cachedData.market,
           };
+          dataType.current = cachedData.type;
         }
-        if (cachedData.aiResponse) {
+        if (cachedData.aiResponse && cachedData.aiResponse.length > 0) {
           aiResponse.current = cachedData.aiResponse;
           setAnalysisCompleted(true);
           return;
         } else {
+          setAnalysisCompleted(true);
           aiResponseLoading.current = true;
           const response = await RequestToAI({
             url: formDataRef.current.websiteUrl,
@@ -186,7 +195,6 @@ export default function Form() {
           });
           aiResponseLoading.current = false;
           aiResponse.current = response.aiResponse as unknown as AIResponse[][];
-          setAnalysisCompleted(true);
           return;
         }
       }
@@ -215,6 +223,7 @@ export default function Form() {
       <Response
         formData={formDataRef.current}
         images={images.current as string[]}
+        type={dataType.current}
         aiResponse={aiResponse.current}
         loading={aiResponseLoading.current as boolean}
       />
