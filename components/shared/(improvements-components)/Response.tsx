@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -48,7 +48,7 @@ const ImageCarousel = ({
   imageLoading: boolean;
 }) => {
   const handleImageChange = (newIndex: number) => {
-    setImageLoading(true); // Set loading state to true when changing the image
+    setImageLoading(true);
     setCurrentImageIndex(newIndex);
   };
 
@@ -145,24 +145,23 @@ export default function Response({
   images,
   loading,
 }: ResponseProps) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [imageLoading, setImageLoading] = useState(true);
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+  const [imageLoading, setImageLoading] = React.useState(true);
   const { user } = useKindeBrowserClient();
   const { toast } = useToast();
 
-  console.log("aiResponse: ", aiResponse);
-
-  // Ensure aiResponseText is always an array of arrays of AIResponse objects
-  const aiResponseText = Array.isArray(aiResponse)
+  const aiResponseContent = Array.isArray(aiResponse)
     ? aiResponse
-    : aiResponse.aiResponse instanceof Array
-      ? aiResponse.aiResponse
-      : [[]];
+    : aiResponse.aiResponse;
+
+  console.log("whole ai response: ", aiResponse);
+
+  console.log("ai response content: ", aiResponseContent);
 
   const threadId = Array.isArray(aiResponse) ? "" : aiResponse.threadId;
   const type = Array.isArray(aiResponse) ? "" : aiResponse.type;
 
-  useEffect(() => {
+  React.useEffect(() => {
     const saveImprovement = async () => {
       if (!loading && user?.id) {
         if (type !== "cached") {
@@ -189,7 +188,7 @@ export default function Response({
       }
     };
     saveImprovement();
-  }, [loading, type, threadId, user, toast]);
+  }, [loading, type, threadId, user, toast, aiResponse]);
 
   return (
     <div className="overflow-hidden">
@@ -207,7 +206,7 @@ export default function Response({
               />
             )}
             <AIResponseDisplay
-              aiResponseContent={aiResponseText}
+              aiResponseContent={aiResponseContent}
               loading={loading}
             />
           </div>

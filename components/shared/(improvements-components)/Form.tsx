@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { RequestToAI } from "@/lib/utils/actions/RequestToAI";
@@ -22,19 +22,19 @@ export default function Form() {
 
   const { getToken, user } = useKindeBrowserClient();
 
-  const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState<any[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [analysisCompleted, setAnalysisCompleted] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [socket, setSocket] = React.useState<WebSocket | null>(null);
+  const [loading, setLoading] = React.useState(false);
+  const [messages, setMessages] = React.useState<any[]>([]);
+  const [error, setError] = React.useState<string | null>(null);
+  const [analysisCompleted, setAnalysisCompleted] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
 
-  const socketRef = useRef<WebSocket | null>(null);
-  const formDataRef = useRef<FormValues | null>(null);
-  const dataType = useRef<string>("");
-  const aiResponseLoading = useRef<boolean>(false);
-  const images = useRef<string[]>();
-  const aiResponse = useRef<AIResponse[][]>([]);
+  const socketRef = React.useRef<WebSocket | null>(null);
+  const formDataRef = React.useRef<FormValues | null>(null);
+  const dataType = React.useRef<string>("");
+  const aiResponseLoading = React.useRef<boolean>(false);
+  const images = React.useRef<string[]>();
+  const [aiResponse, setAiResponse] = React.useState<AIResponse[][]>([]);
 
   const env = process.env.NODE_ENV;
   const baseWsUrl =
@@ -97,8 +97,9 @@ export default function Form() {
                   });
 
                   aiResponseLoading.current = false;
-                  aiResponse.current =
-                    response.aiResponse as unknown as AIResponse[][];
+                  setAiResponse(
+                    response.aiResponse as unknown as AIResponse[][],
+                  );
 
                   const { market, insights, audience } = response;
                   console.log("response: ", response);
@@ -180,7 +181,7 @@ export default function Form() {
           dataType.current = cachedData.type;
         }
         if (cachedData.aiResponse && cachedData.aiResponse.length > 0) {
-          aiResponse.current = cachedData.aiResponse;
+          setAiResponse(cachedData.aiResponse);
           setAnalysisCompleted(true);
           return;
         } else {
@@ -194,7 +195,7 @@ export default function Form() {
             imageUrls: cachedData.screenshots as string[],
           });
           aiResponseLoading.current = false;
-          aiResponse.current = response.aiResponse as unknown as AIResponse[][];
+          setAiResponse(response.aiResponse as unknown as AIResponse[][]);
           return;
         }
       }
@@ -224,7 +225,7 @@ export default function Form() {
         formData={formDataRef.current}
         images={images.current as string[]}
         type={dataType.current}
-        aiResponse={aiResponse.current}
+        aiResponse={aiResponse}
         loading={aiResponseLoading.current as boolean}
       />
     );
