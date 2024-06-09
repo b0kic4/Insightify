@@ -30,6 +30,7 @@ export interface ResponseData {
 
 export interface CachedAIResponse {
   aiResponse: AIResponse[][];
+  screenshots: string[];
   threadId: string;
   type: string;
   market: string;

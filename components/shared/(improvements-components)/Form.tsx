@@ -3,7 +3,10 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { RequestToAI } from "@/lib/utils/actions/RequestToAI";
-import { getCache, saveScreenshotsToRedis } from "@/lib/utils/hooks/RedisHooks";
+import {
+  getSingleWebsiteFromUserCache,
+  saveScreenshotsToRedis,
+} from "@/lib/utils/hooks/RedisHooks";
 import { FormValues, AIResponse } from "@/lib";
 import Response from "@/components/shared/(improvements-components)/Response";
 import AnalysisModal from "@/components/ui/AnalysisModal";
@@ -157,7 +160,7 @@ export default function Form() {
     formDataRef.current = data;
 
     if (user?.id && formDataRef.current?.websiteUrl) {
-      const cachedData = await getCache(
+      const cachedData = await getSingleWebsiteFromUserCache(
         user.id,
         formDataRef.current.websiteUrl,
       );
