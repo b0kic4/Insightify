@@ -60,7 +60,7 @@ Use Markdown to format the following key aspects:
 Add a horizontal line after each section for clear separation.
 
 Example Response Structure:
-**Identified Section of the website with the Screenshot number/s that indecates that section:**
+**Identified Section of the website with the Screenshot number/s that indecates that section: in bold**
 
 **Current State:** Describe the current state of the section.
 **Improvements:** Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
