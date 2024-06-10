@@ -15,7 +15,7 @@ interface ResponseProps {
   images: string[];
   type: string;
   aiResponse: AIResponse[][] | CachedAIResponse;
-  loading: boolean;
+  loading?: boolean | undefined;
 }
 
 const FormDataDisplay = ({ formData }: { formData: FormValues }) => (
@@ -111,7 +111,7 @@ const AIResponseDisplay = ({
   loading,
 }: {
   aiResponseContent: AIResponse[][];
-  loading: boolean;
+  loading?: boolean | undefined;
 }) => (
   <div className="flex-grow mt-10 lg:mt-0 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-h-96 overflow-y-auto w-full">
     <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-6">
@@ -139,7 +139,7 @@ const AIResponseDisplay = ({
   </div>
 );
 
-export default function Response({
+export default function ImprovementDetails({
   formData,
   aiResponse,
   images,

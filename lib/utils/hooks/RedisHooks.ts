@@ -40,7 +40,7 @@ export async function getSingleWebsiteFromUserCache(
   market?: string;
   audience?: string;
   insights?: string;
-  type: string;
+  type?: string;
   aiResponse?: AIResponse[][];
 } | null> {
   const redis = await getRedisInstance();

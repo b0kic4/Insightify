@@ -8,7 +8,7 @@ import {
   saveScreenshotsToRedis,
 } from "@/lib/utils/hooks/RedisHooks";
 import { FormValues, AIResponse } from "@/lib";
-import Response from "@/components/shared/(improvements-components)/Response";
+import ImprovementDetails from "@/components/shared/(improvements-components)/ImprovementDetails";
 import AnalysisModal from "@/components/ui/AnalysisModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -225,7 +225,7 @@ export default function Form() {
 
   if (analysisCompleted) {
     return (
-      <Response
+      <ImprovementDetails
         formData={formDataRef.current}
         images={images.current as string[]}
         type={dataType}

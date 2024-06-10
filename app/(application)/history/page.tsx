@@ -1,6 +1,7 @@
 import ListHistory from "@/components/shared/(history-components)/History";
 import { getWebsitesFromUserCache } from "@/lib/utils/hooks/RedisHooks";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+
 export default async function History() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
@@ -13,7 +14,7 @@ export default async function History() {
           Welcome to History
         </h1>
         <p className="mt-4 text-gray-600 dark:text-gray-400">
-          This is the main content area of the application.
+          This is where your recent improvements generation are stored
         </p>
       </section>
       <ListHistory history={history} />
