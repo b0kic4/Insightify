@@ -17,7 +17,7 @@ export default function ListHistory({ history }: ListHistoryProps) {
       <section className="mb-6 text-gray-700 dark:text-gray-300">
         Please note: The improvements listed in your history are stored based on
         your current subscription plan. Improvements will be available for a
-        limited time according to your plan's retention policy. After this
+        limited time according to your plan&apos;s retention policy. After this
         period, the improvements will no longer be accessible. Ensure you review
         and save any important data before it expires.
       </section>
