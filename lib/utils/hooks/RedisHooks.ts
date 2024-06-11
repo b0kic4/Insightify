@@ -37,6 +37,7 @@ export async function getSingleWebsiteFromUserCache(
   url: string,
 ): Promise<{
   screenshots?: string[];
+  url?: string;
   market?: string;
   audience?: string;
   insights?: string;

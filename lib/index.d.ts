@@ -15,8 +15,8 @@ export interface AIResponse {
     url: string;
     detail: string;
   };
-  threadId: string;
-  type: string;
+  threadId?: string | undefined;
+  type?: string | undefined;
 }
 
 export interface ResponseData {

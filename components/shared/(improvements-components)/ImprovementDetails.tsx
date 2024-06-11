@@ -13,7 +13,7 @@ import { useToast } from "@/components/ui/use-toast";
 interface ResponseProps {
   formData: FormValues | null;
   images: string[];
-  type: string;
+  type?: string | undefined;
   aiResponse: AIResponse[][] | CachedAIResponse;
   loading?: boolean | undefined;
 }
@@ -150,6 +150,9 @@ export default function ImprovementDetails({
   const [imageLoading, setImageLoading] = React.useState(true);
   const { user } = useKindeBrowserClient();
   const { toast } = useToast();
+
+  console.log("images: ", images);
+  console.log("formData: ", formData);
 
   const aiResponseContent = Array.isArray(aiResponse)
     ? aiResponse
