@@ -3,7 +3,7 @@ import { getRedisInstance } from "./RedisHooks";
 import prisma from "@/prisma/client";
 import { bucket } from "./firebaseAdminSDK";
 
-export async function deleteFromCache(
+export async function removeImprovementData(
   userId: string,
   url: string,
   threadId: string,

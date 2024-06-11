@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { TrashIcon } from "lucide-react";
-import { deleteFromCache } from "@/lib/utils/hooks/DeleteFromCache";
+import { removeImprovementData } from "@/lib/utils/hooks/DeleteFromCache";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -22,7 +22,7 @@ export default function ListHistory({ history }: ListHistoryProps) {
     threadId: string,
     screenshots: string[],
   ) => {
-    const response = await deleteFromCache(
+    const response = await removeImprovementData(
       user?.id as string,
       url,
       threadId,

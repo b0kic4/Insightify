@@ -56,7 +56,7 @@ export async function saveImprovementsWithUser(
         userId: userId,
         url: formData?.websiteUrl,
         market: formData?.targetedMarket,
-        audience: formData?.targetedMarket,
+        audience: formData?.targetedAudience,
         insights: formData?.websiteInsights,
       },
     });
