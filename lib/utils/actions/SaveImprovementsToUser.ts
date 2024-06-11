@@ -30,10 +30,6 @@ export async function saveImprovementsWithUser(
       },
     });
 
-    console.log("threadId: ", threadId);
-    console.log("formData: ", formData);
-    console.log("userId: ", userId);
-
     if (!user) {
       return {
         success: false,

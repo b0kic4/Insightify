@@ -37,6 +37,7 @@ export interface CachedAIResponse {
   audience: string;
   insights: string;
   url: string;
+  expiration?: number | undefined;
 }
 
 export interface ImageURL {

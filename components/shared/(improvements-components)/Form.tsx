@@ -108,7 +108,6 @@ export default function Form() {
                   );
 
                   const { market, insights, audience } = response;
-                  console.log("response: ", response);
                   setDataType(response.type);
                   if (market && insights && audience) {
                     Object.assign(formDataRef.current, {

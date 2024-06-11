@@ -14,14 +14,11 @@ export default async function Improvement({
   const user = await getUser();
 
   const responseMessage = await getDataFromThreadID(params.id);
-  console.log("response: ", responseMessage);
 
   const improvementResponse = await retrieveUsersImprovements(
     params.id,
     user?.id as string,
   );
-
-  console.log("images: ", responseMessage.images);
 
   if (improvementResponse && improvementResponse.success) {
     const improvement = improvementResponse.data.improvement;

@@ -160,10 +160,6 @@ export default function ImprovementDetails({
   const { user } = useKindeBrowserClient();
   const { toast } = useToast();
 
-  console.log("images: ", images);
-  console.log("formData: ", formData);
-  console.log("aiResponse: ", aiResponse);
-
   const aiResponseContent = Array.isArray(aiResponse)
     ? aiResponse
     : aiResponse.aiResponse;

@@ -68,5 +68,11 @@ export async function getWebsitesFromUserCache(
   }
 
   const data = await redis.mget(keys);
-  return data.map((item) => JSON.parse(item as string) as CachedAIResponse);
+  const ttlPromises = keys.map((key) => redis.ttl(key));
+  const ttls = await Promise.all(ttlPromises);
+
+  return data.map((item, index) => {
+    const cachedResponse = JSON.parse(item as string) as CachedAIResponse;
+    return { ...cachedResponse, expiration: ttls[index] };
+  });
 }
