@@ -1,17 +1,45 @@
+"use client";
 import { CachedAIResponse } from "@/lib";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { TrashIcon } from "lucide-react";
+import { deleteFromCache } from "@/lib/utils/hooks/DeleteFromCache";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ListHistoryProps {
   history: CachedAIResponse[];
 }
 
 export default function ListHistory({ history }: ListHistoryProps) {
-  // NOTE: Add for every improvement:
-  // 1. "EX" time
-  // 2. delete improvement
+  const { user } = useKindeBrowserClient();
+
+  const { toast } = useToast();
+
+  const deleteImprovement = async (
+    url: string,
+    threadId: string,
+    screenshots: string[],
+  ) => {
+    const response = await deleteFromCache(
+      user?.id as string,
+      url,
+      threadId,
+      screenshots,
+    );
+    if (!response.success) {
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: response.message,
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: response.message,
+      });
+    }
+  };
 
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6">
@@ -51,7 +79,17 @@ export default function ListHistory({ history }: ListHistoryProps) {
                           </Button>
                         </Link>
                       </div>
-                      <Button variant="ghost" size="icon">
+                      <Button
+                        onClick={async () =>
+                          await deleteImprovement(
+                            item.url,
+                            item.threadId,
+                            item.screenshots,
+                          )
+                        }
+                        variant="ghost"
+                        size="icon"
+                      >
                         <TrashIcon />
                       </Button>
                     </div>
