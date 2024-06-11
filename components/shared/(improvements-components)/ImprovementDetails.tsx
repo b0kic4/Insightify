@@ -114,7 +114,7 @@ const AIResponseDisplay = ({
   loading?: boolean | undefined;
 }) => (
   <div className="flex-grow bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 lg:p-10 max-h-96 lg:max-h-[30rem] overflow-y-auto w-full lg:w-full lg:px-4">
-    <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-50 mb-6">
+    <h3 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-50 mb-6">
       AI Response
     </h3>
     {loading ? (

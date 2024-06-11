@@ -38,7 +38,7 @@ export default function ListHistory({ history }: ListHistoryProps) {
                     {item.insights}
                   </p>
                   <div className="flex justify-end p-4">
-                    <Link href={`/history/${item.url}`}>
+                    <Link href={`/history/${item.threadId}`}>
                       <Button variant="outline">Go to Improvement</Button>
                     </Link>
                   </div>

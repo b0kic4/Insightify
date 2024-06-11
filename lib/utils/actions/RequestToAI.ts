@@ -115,6 +115,7 @@ Continue this structure for each section provided.`,
   const newData = {
     screenshots: imageUrls,
     aiResponse: responseMessage.aiResponse,
+    url: url,
     threadId: newRun.thread_id,
     type: "cached",
     market,
