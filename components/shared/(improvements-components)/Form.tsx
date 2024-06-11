@@ -35,6 +35,7 @@ export default function Form() {
   const [aiResponse, setAiResponse] = React.useState<AIResponse[][]>([]);
 
   const socketRef = React.useRef<WebSocket | null>(null);
+  const threadId = React.useRef<string>("");
   const formDataRef = React.useRef<FormValues | null>(null);
   const aiResponseLoading = React.useRef<boolean>(false);
   const images = React.useRef<string[]>();
@@ -98,6 +99,8 @@ export default function Form() {
                     insights: formDataRef.current.websiteInsights,
                     imageUrls: data.content,
                   });
+
+                  threadId.current = response.threadId;
 
                   aiResponseLoading.current = false;
                   setAiResponse(
@@ -197,6 +200,7 @@ export default function Form() {
             insights: formDataRef.current.websiteInsights,
             imageUrls: cachedData.screenshots as string[],
           });
+          threadId.current = response.threadId;
           aiResponseLoading.current = false;
           setAiResponse(response.aiResponse as unknown as AIResponse[][]);
           setDataType(response.type);
@@ -227,6 +231,7 @@ export default function Form() {
     return (
       <ImprovementDetails
         formData={formDataRef.current}
+        threadId={threadId.current}
         images={images.current as string[]}
         type={dataType}
         aiResponse={aiResponse}

@@ -1,13 +1,11 @@
 "use server";
-import { FormValues } from "@/lib";
 import prisma from "@/prisma/client";
+import { Improvement } from "@prisma/client";
 
 interface SaveImprovementsSuccess {
   success: true;
   data: {
-    id: number;
-    threadId: string;
-    userId: string;
+    improvement: Improvement;
   };
 }
 
@@ -18,22 +16,19 @@ interface SaveImprovementsError {
 
 type SaveImprovementsResponse = SaveImprovementsSuccess | SaveImprovementsError;
 
-export async function saveImprovementsWithUser(
+export async function retrieveUsersImprovements(
   threadId: string,
   userId: string,
-  formData: FormValues | null,
-): Promise<SaveImprovementsResponse> {
+): Promise<SaveImprovementsResponse | undefined> {
   try {
+    // Find the user by userId
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
       },
     });
 
-    console.log("threadId: ", threadId);
-    console.log("formData: ", formData);
-    console.log("userId: ", userId);
-
+    // If user not found, return an error response
     if (!user) {
       return {
         success: false,
@@ -41,6 +36,7 @@ export async function saveImprovementsWithUser(
       };
     }
 
+    // Find the improvement by userId and threadId
     const foundImprovement = await prisma.improvement.findFirst({
       where: {
         userId: user.id,
@@ -48,28 +44,23 @@ export async function saveImprovementsWithUser(
       },
     });
 
-    if (foundImprovement)
+    // If improvement not found, return an error response
+    if (!foundImprovement) {
       return {
-        success: true,
-        data: foundImprovement,
+        success: false,
+        error: `Improvement with thread ID ${threadId} for user ID ${userId} not found`,
       };
+    }
 
-    const newImprovement = await prisma.improvement.create({
-      data: {
-        threadId: threadId,
-        userId: userId,
-        url: formData?.websiteUrl,
-        market: formData?.targetedMarket,
-        audience: formData?.targetedMarket,
-        insights: formData?.websiteInsights,
-      },
-    });
-
+    // If improvement found, return success response with the improvement data
     return {
       success: true,
-      data: newImprovement,
+      data: {
+        improvement: foundImprovement,
+      },
     };
   } catch (error) {
+    // Catch any errors and return an error response
     return {
       success: false,
       error: (error as Error).message,

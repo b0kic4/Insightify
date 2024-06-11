@@ -16,18 +16,25 @@ async function getResponseMessage(openai: OpenAI, thread: OpenAI.Beta.Thread) {
     JSON.stringify(threadMessages.data, null, 2),
   );
 
-  const responseMessages = threadMessages.data
+  const assistantResponseMessages = threadMessages.data
     .filter((msg) => msg.role === "assistant")
     .map((msg) => msg.content);
 
-  console.log("Filtered response messages: ", JSON.stringify(responseMessages));
+  const userRequestMessage = threadMessages.data
+    .filter((msg) => msg.role === "user")
+    .map((msg) => msg.content);
+
+  console.log(
+    "Filtered response messages: ",
+    JSON.stringify(assistantResponseMessages),
+  );
 
   // Structure the response messages
   const aiResponse: AIResponse[] = [];
   const images: string[] = [];
 
-  responseMessages.flat().forEach((content) => {
-    if (content.type === "text") {
+  assistantResponseMessages.flat().forEach((content) => {
+    if (content.type == "text") {
       aiResponse.push({
         type: "text",
         text: {
@@ -36,7 +43,10 @@ async function getResponseMessage(openai: OpenAI, thread: OpenAI.Beta.Thread) {
         },
         threadId: thread.id,
       });
-    } else if (content.type === "image_url") {
+    }
+  });
+  userRequestMessage.flat().forEach((content) => {
+    if (content.type == "image_url") {
       images.push(content.image_url.url);
     }
   });

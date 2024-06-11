@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Improvement" ADD COLUMN     "audience" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "insights" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "market" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "url" TEXT NOT NULL DEFAULT '';

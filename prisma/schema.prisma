@@ -22,4 +22,8 @@ model Improvement {
   threadId String
   userId   String
   user     User   @relation(fields: [userId], references: [id])
+  url      String @default("")
+  market   String @default("")
+  audience String @default("")
+  insights String @default("")
 }

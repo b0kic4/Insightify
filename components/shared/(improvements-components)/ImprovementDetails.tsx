@@ -15,6 +15,7 @@ interface ResponseProps {
   images: string[];
   type?: string | undefined;
   aiResponse: AIResponse[][] | CachedAIResponse;
+  threadId: string;
   loading?: boolean | undefined;
 }
 
@@ -141,6 +142,7 @@ const AIResponseDisplay = ({
 
 export default function ImprovementDetails({
   formData,
+  threadId,
   aiResponse,
   images,
   loading,
@@ -153,18 +155,21 @@ export default function ImprovementDetails({
 
   console.log("images: ", images);
   console.log("formData: ", formData);
+  console.log("aiResponse: ", aiResponse);
 
   const aiResponseContent = Array.isArray(aiResponse)
     ? aiResponse
     : aiResponse.aiResponse;
 
-  const threadId = Array.isArray(aiResponse) ? "" : aiResponse.threadId;
-
   React.useEffect(() => {
     const saveImprovement = async () => {
       if (!loading && user?.id) {
         if (type != "cached") {
-          const response = await saveImprovementsWithUser(threadId, user.id);
+          const response = await saveImprovementsWithUser(
+            threadId,
+            user.id,
+            formData,
+          );
           if (!response.success) {
             toast({
               title: "Uh oh! Something went wrong.",
