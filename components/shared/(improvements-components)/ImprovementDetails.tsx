@@ -19,15 +19,15 @@ interface ResponseProps {
 }
 
 const FormDataDisplay = ({ formData }: { formData: FormValues }) => (
-  <div className="bg-gray-100 dark:bg-gray-900 flex-col max-h-96 overflow-y-scroll max-w-full w-full rounded-lg shadow-lg p-6 border border-gray-600">
-    <h2 className="text-2xl font-bold text-white mb-4">Provided Form Data</h2>
-    <div className="space-y-4">
+  <div className="bg-gray-100 dark:bg-gray-900 flex-col max-h-96 overflow-y-scroll max-w-full w-full rounded-lg shadow-lg p-4 border border-gray-600 mt-4">
+    <h2 className="text-xl font-bold text-white mb-4">Provided Form Data</h2>
+    <div className="space-y-2">
       {Object.entries(formData).map(([key, value]) => (
-        <div key={key} className="p-4 rounded-lg shadow-lg shadow-red-900">
-          <h3 className="text-lg font-semibold text-gray-300 capitalize">
+        <div key={key} className="p-2 rounded-lg bg-gray-800">
+          <h3 className="text-sm font-semibold text-gray-300 capitalize">
             {key.replace(/([A-Z])/g, " $1")}:
           </h3>
-          <p className="text-gray-400 break-words">{value}</p>
+          <p className="text-gray-400 break-words text-sm">{value}</p>
         </div>
       ))}
     </div>
@@ -53,11 +53,11 @@ const ImageCarousel = ({
   };
 
   return (
-    <div className="relative mt-10 flex-shrink-0">
-      <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-6 text-center">
+    <div className="relative flex-shrink-0 w-full lg:w-2/3 xl:w-3/4 mb-8 lg:mb-0 lg:px-4">
+      <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-50 mb-6 text-center">
         Screenshot {currentImageIndex + 1}
       </h3>
-      <div className="relative w-[800px] h-[600px]">
+      <div className="relative w-full h-96 lg:h-[30rem]">
         {imageLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
             <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-white/50"></div>
@@ -113,13 +113,13 @@ const AIResponseDisplay = ({
   aiResponseContent: AIResponse[][];
   loading?: boolean | undefined;
 }) => (
-  <div className="flex-grow mt-10 lg:mt-0 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-h-96 overflow-y-auto w-full">
-    <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-6">
+  <div className="flex-grow bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 lg:p-10 max-h-96 lg:max-h-[30rem] overflow-y-auto w-full lg:w-full lg:px-4">
+    <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-50 mb-6">
       AI Response
     </h3>
     {loading ? (
       <>
-        <p className="text-lg font-bold text-gray-900 dark:text-gray-50 mb-6">
+        <p className="text-lg lg:text-xl font-bold text-gray-900 dark:text-gray-50 mb-6">
           AI is looking for improvements, please be patient...
         </p>
         <SkeletonLoaderAIResponse />
@@ -128,9 +128,9 @@ const AIResponseDisplay = ({
       aiResponseContent.flat().map((content, index) => (
         <div
           key={index}
-          className="bg-gray-100 dark:bg-gray-900 rounded-lg p-4 mb-4 shadow-md"
+          className="bg-gray-100 dark:bg-gray-900 rounded-lg p-4 lg:p-6 mb-4 shadow-md"
         >
-          <ReactMarkdown className="prose dark:prose-invert text-lg text-gray-600 dark:text-gray-400">
+          <ReactMarkdown className="prose dark:prose-invert text-lg lg:text-xl text-gray-600 dark:text-gray-400">
             {content?.text?.value ?? ""}
           </ReactMarkdown>
         </div>
@@ -185,26 +185,24 @@ export default function ImprovementDetails({
   }, [loading, type, threadId, user, toast, aiResponse]);
 
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-auto">
       <div className="max-w-7xl mx-auto p-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8 items-center">
-          {formData && <FormDataDisplay formData={formData} />}
-          <div className="flex flex-col items-center gap-6 overflow-hidden">
-            {images.length > 0 && (
-              <ImageCarousel
-                images={images}
-                currentImageIndex={currentImageIndex}
-                setCurrentImageIndex={setCurrentImageIndex}
-                setImageLoading={setImageLoading}
-                imageLoading={imageLoading}
-              />
-            )}
-            <AIResponseDisplay
-              aiResponseContent={aiResponseContent}
-              loading={loading}
+        <div className="flex flex-col lg:flex-col gap-8 lg:gap-12 items-center">
+          {images.length > 0 && (
+            <ImageCarousel
+              images={images}
+              currentImageIndex={currentImageIndex}
+              setCurrentImageIndex={setCurrentImageIndex}
+              setImageLoading={setImageLoading}
+              imageLoading={imageLoading}
             />
-          </div>
+          )}
+          <AIResponseDisplay
+            aiResponseContent={aiResponseContent}
+            loading={loading}
+          />
         </div>
+        {formData && <FormDataDisplay formData={formData} />}
       </div>
     </div>
   );

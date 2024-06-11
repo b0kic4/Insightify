@@ -236,7 +236,7 @@ export default function Form() {
   }
 
   return (
-    <section className="py-16 sm:py-24 lg:py-32">
+    <section className="flex-1 overflow-y-auto p-4 md:p-6">
       <div className="max-w-3xl mx-auto space-y-10 px-4 sm:px-6 lg:px-8">
         <div className="space-y-6 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-4xl">
