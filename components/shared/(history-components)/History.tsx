@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { TrashIcon } from "lucide-react";
-import { removeImprovementData } from "@/lib/utils/hooks/DeleteFromCache";
+import { removeImprovementData } from "@/lib/utils/hooks/(redisHooks)/DeleteFromCache";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -59,7 +59,7 @@ export default function ListHistory({ history }: ListHistoryProps) {
                 key={index}
                 className="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-500 ease-in-out"
               >
-                <div className="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover:opacity-90 transition-opacity duration-500">
+                <div className="absolute text-sm inset-0 z-10 flex items-center justify-center opacity-0 group-hover:opacity-90 transition-opacity duration-500">
                   <div className="bg-white dark:bg-gray-950 p-6 rounded-lg shadow-lg w-full max-w-md space-y-4">
                     <h3 className="text-xl font-bold">{item.market}</h3>
                     <p className="text-gray-500 dark:text-gray-400">

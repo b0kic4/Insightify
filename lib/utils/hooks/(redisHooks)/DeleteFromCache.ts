@@ -1,7 +1,7 @@
 "use server";
 import { getRedisInstance } from "./RedisHooks";
 import prisma from "@/prisma/client";
-import { bucket } from "./firebaseAdminSDK";
+import { bucket } from "../firebaseAdminSDK";
 
 export async function removeImprovementData(
   userId: string,

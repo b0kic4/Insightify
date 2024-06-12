@@ -3,7 +3,7 @@
 import OpenAI from "openai";
 import { TextContent, ImageContent, Content, Message } from "../..";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { getRedisInstance } from "../hooks/RedisHooks";
+import { getRedisInstance } from "../hooks/(redisHooks)/RedisHooks";
 
 // FIXME: Handle Failed Request
 
@@ -64,6 +64,7 @@ Example Response Structure:
 
 **Current State:** Describe the current state of the section.
 **Improvements:** Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
+**Examples:** Provide concrete examples with sources to help visualize the suggested improvements.
 **Severity:** Severity Ratings for Usability and appearance
 
 Nice horizontal line seperating next section
@@ -86,6 +87,7 @@ Identified Section of the website:
 
 Current State: Describe the current state of the section.
 Improvements: Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
+Examples: Provide concrete examples with sources to help visualize the suggested improvements.
 Severity: Severity Ratings for Usability and appearance
 
 Continue this structure for each section provided.`,

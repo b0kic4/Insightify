@@ -1,5 +1,5 @@
 import ListHistory from "@/components/shared/(history-components)/History";
-import { getWebsitesFromUserCache } from "@/lib/utils/hooks/RedisHooks";
+import { getWebsitesFromUserCache } from "@/lib/utils/hooks/(redisHooks)/RedisHooks";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 export default async function History() {

@@ -1,5 +1,5 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { getDataFromThreadID } from "@/lib/utils/hooks/GetDataFromThreadId";
+import { getDataFromThreadID } from "@/lib/utils/hooks/(redisHooks)/GetDataFromThreadId";
 import ImprovementDetails from "@/components/shared/(improvements-components)/ImprovementDetails";
 import React from "react";
 import { FormValues } from "@/lib";
