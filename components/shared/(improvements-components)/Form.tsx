@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useWebSocket } from "@/lib/utils/hooks/websockets-hooks/useWebSockets";
+import { saveImprovementsWithUser } from "@/lib/utils/actions/SaveImprovementsToUser";
 
 export default function Form() {
   const {
@@ -41,6 +42,21 @@ export default function Form() {
     setDataType,
   } = useWebSocket();
 
+  React.useEffect(() => {
+    // Load data from localStorage
+    const savedData = localStorage.getItem("improvementData");
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      console.log("parsedData: ", parsedData);
+      setAnalysisCompleted(true);
+      formDataRef.current = parsedData.formData;
+      images.current = parsedData.images;
+      setDataType(parsedData.type);
+      setAiResponse(parsedData.aiResponse);
+      aiResponseLoading.current = parsedData.loading;
+    }
+  }, [setAnalysisCompleted, formDataRef, images, setDataType, setAiResponse]);
+
   const onSubmit = async (data: FormValues) => {
     setAnalysisCompleted(false);
     reset();
@@ -52,15 +68,6 @@ export default function Form() {
         user.id,
         formDataRef.current.websiteUrl,
       );
-      // NOTE: Here I am checking for the cachedData in redis
-      // if there is not data I am just proceeding with websocket functionality
-      // if there are screenshots I am setting the screenshots
-      // to be in my images.current = cached screenshtos
-      // then I am checking for provided form data in redis
-      // if there is I am setting the form data to be that data
-      // than if there is AI Response in redis I am setting
-      // ai response to be that response else if there is no
-      // ai response I proceeding with genereting the response
 
       if (cachedData != null) {
         console.log("Cached data found in Redis, using cached data");
@@ -95,7 +102,6 @@ export default function Form() {
             insights: formDataRef.current.websiteInsights,
             imageUrls: cachedData.screenshots as string[],
           });
-          // NOTE: Add here saving the improvement to db
           threadId.current = response.threadId;
           aiResponseLoading.current = false;
           setAiResponse(response.aiResponse as unknown as AIResponse[][]);

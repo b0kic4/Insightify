@@ -101,7 +101,7 @@ export default function ListHistory({ history }: ListHistoryProps) {
                     alt="Improvement Screenshot"
                     width={500}
                     height={400}
-                    className="object-cover w-full h-64 transition-transform duration-500 ease-in-out group-hover:scale-110"
+                    className="object-cover w-full h-64 transition-transform duration-500 ease-in-out group-hover:scale-110 group-hover:blur-sm"
                   />
                 )}
               </div>

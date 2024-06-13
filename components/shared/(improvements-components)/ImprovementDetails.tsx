@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -9,6 +9,7 @@ import { AIResponse, CachedAIResponse, FormValues } from "@/lib";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { saveImprovementsWithUser } from "@/lib/utils/actions/SaveImprovementsToUser";
 import { useToast } from "@/components/ui/use-toast";
+import { BiReset } from "react-icons/bi";
 
 interface ResponseProps {
   formData: FormValues | null;
@@ -193,12 +194,22 @@ export default function ImprovementDetails({
       }
     };
     saveImprovement();
-  }, [loading, type, threadId, user, toast, aiResponse]);
+  }, [loading, type, threadId, user, toast, aiResponse, formData, images]);
+
+  const removeLocalStorageData = () => {
+    localStorage.removeItem("improvementData");
+  };
 
   return (
     <div className="overflow-auto">
       <div className="max-w-7xl mx-auto p-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-col gap-8 lg:gap-12 items-center">
+          <Button className="relative group" size="icon" variant="ghost">
+            <BiReset onClick={removeLocalStorageData} className="h-6 w-6" />
+            <span className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity text-sm bg-gray-800 text-white rounded-md px-2 py-1">
+              Reset
+            </span>
+          </Button>
           {images.length > 0 && (
             <ImageCarousel
               images={images}

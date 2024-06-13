@@ -74,27 +74,56 @@ export const useWebSocket = () => {
                 setLoading(false);
                 setAnalysisCompleted(true);
 
-                if (formDataRef.current) {
+                const formData = formDataRef.current;
+
+                localStorage.setItem(
+                  "improvementData",
+                  JSON.stringify({
+                    formData,
+                    images,
+                    type: "new",
+                    aiResponse: "",
+                    aiResLoading: true,
+                  }),
+                );
+
+                if (formData) {
                   aiResponseLoading.current = true;
                   const response = await RequestToAI({
-                    url: formDataRef.current.websiteUrl,
-                    audience: formDataRef.current.targetedAudience,
-                    market: formDataRef.current.targetedMarket,
-                    insights: formDataRef.current.websiteInsights,
+                    url: formData.websiteUrl,
+                    audience: formData.targetedAudience,
+                    market: formData.targetedMarket,
+                    insights: formData.websiteInsights,
                     imageUrls: data.content,
                   });
 
                   threadId.current = response.threadId;
 
                   aiResponseLoading.current = false;
+
                   setAiResponse(
                     response.aiResponse as unknown as AIResponse[][],
                   );
 
-                  const { market, insights, audience } = response;
+                  const { market, insights, audience, type, aiResponse } =
+                    response;
+                  const images = data.content;
+
+                  localStorage.setItem(
+                    "improvementData",
+                    JSON.stringify({
+                      formData,
+                      images,
+                      type: type,
+                      threadId: threadId.current,
+                      aiResponse: aiResponse,
+                      aiResLoading: aiResponseLoading.current,
+                    }),
+                  );
+
                   setDataType(response.type);
                   if (market && insights && audience) {
-                    Object.assign(formDataRef.current, {
+                    Object.assign(formData, {
                       websiteInsights: insights,
                       targetedAudience: audience,
                       targetedMarket: market,
