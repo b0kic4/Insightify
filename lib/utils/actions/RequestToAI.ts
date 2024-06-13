@@ -1,11 +1,12 @@
 "use server";
-
 import OpenAI from "openai";
 import { TextContent, ImageContent, Content, Message } from "../..";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { getRedisInstance } from "../hooks/(redisHooks)/RedisHooks";
 
-// FIXME: Handle Failed Request
+// Define retry parameters
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 5000; // in milliseconds
 
 export async function RequestToAI({
   url,
@@ -105,36 +106,69 @@ Continue this structure for each section provided.`,
     { role: "user", content: [finalContent] },
   ];
 
-  const myAssistant = await getAssistant(openai);
-  const newThread = await createThread(openai);
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const myAssistant = await getAssistant(openai);
+      const newThread = await createThread(openai);
 
-  for (const message of messages) {
-    await createMessage(openai, newThread, message);
+      for (const message of messages) {
+        await createMessage(openai, newThread, message);
+      }
+
+      const newRun = await createRun(openai, newThread, myAssistant);
+      await loopUntilCompleted(openai, newThread.id, newRun.id);
+      const responseMessage = await getResponseMessage(openai, newThread);
+
+      // Cache the AI response in Redis with an expiration time of 24 hours (86400 seconds)
+      const newData = {
+        screenshots: imageUrls,
+        aiResponse: responseMessage.aiResponse,
+        url: url,
+        threadId: newRun.thread_id,
+        type: "cached",
+        market,
+        audience,
+        insights,
+      };
+      await redis.set(key, JSON.stringify(newData), "EX", 86400);
+
+      return {
+        success: true,
+        data: {
+          aiResponse: responseMessage.aiResponse,
+          threadId: responseMessage.threadId,
+          type: "new",
+          market,
+          audience,
+          insights,
+        },
+      };
+    } catch (error) {
+      console.error(`Attempt ${attempt} failed:`, error);
+      if (attempt < MAX_RETRIES) {
+        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+      } else {
+        return {
+          success: false,
+          data: {
+            aiResponse: [],
+            type: "failed",
+            threadId: "",
+            market,
+            audience,
+            insights,
+          },
+        };
+      }
+    }
   }
 
-  const newRun = await createRun(openai, newThread, myAssistant);
-  await loopUntilCompleted(openai, newThread.id, newRun.id);
-  const responseMessage = await getResponseMessage(openai, newThread);
-
-  // Cache the AI response in Redis with an expiration time of 24 hours (86400 seconds)
-  const newData = {
-    screenshots: imageUrls,
-    aiResponse: responseMessage.aiResponse,
-    url: url,
-    threadId: newRun.thread_id,
-    type: "cached",
-    market,
-    audience,
-    insights,
-  };
-  await redis.set(key, JSON.stringify(newData), "EX", 86400);
-
   return {
-    success: true,
+    success: false,
     data: {
-      aiResponse: responseMessage.aiResponse,
-      threadId: responseMessage.threadId,
-      type: "new",
+      aiResponse: [],
+      type: "failed",
+      threadId: "",
       market,
       audience,
       insights,

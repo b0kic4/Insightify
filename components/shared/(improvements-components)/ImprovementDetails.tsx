@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { AIResponse, FormValues } from "@/lib";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
@@ -31,11 +32,74 @@ export default function ImprovementDetails({
   const { user } = useKindeBrowserClient();
   const { toast } = useToast();
 
-  // FIXME: Fix when user navigates from the improvement
+  const makeAIRequest = useCallback(
+    async (formData: FormValues, images: string[]) => {
+      try {
+        if (!formData || images.length === 0) {
+          console.log("formData or images are missing");
+          return;
+        }
+        if (loading.current) {
+          console.log("Request is already in progress");
+          return;
+        }
+        loading.current = true;
+
+        localStorage.setItem(
+          "improvementData",
+          JSON.stringify({
+            formData,
+            images,
+          }),
+        );
+
+        const response = await RequestToAI({
+          url: formData.websiteUrl,
+          audience: formData.targetedAudience,
+          market: formData.targetedMarket,
+          insights: formData.websiteInsights,
+          imageUrls: images,
+        });
+
+        console.log("success of the response: ", response.success);
+        console.log("response data: ", response.data);
+
+        if (!response.success) {
+          loading.current = false;
+          console.log("error occurred: ", response);
+          return;
+        }
+
+        setAiResponse(response.data.aiResponse as unknown as AIResponse[][]);
+        setThreadId(response.data.threadId);
+
+        localStorage.setItem(
+          "improvementData",
+          JSON.stringify({
+            formData,
+            images,
+            type: response.data.type,
+            aiResponse: response.data.aiResponse,
+            threadId: response.data.threadId,
+            aiResLoading: false,
+          }),
+        );
+
+        loading.current = false;
+      } catch (error) {
+        console.log("error: ", error);
+        loading.current = false;
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
-    if (cachedAiResponse && cachedAiResponse.length > 0) {
-      setAiResponse(cachedAiResponse);
+    const savedData = localStorage.getItem("improvementData");
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      setAiResponse(parsedData.aiResponse || []);
+      setThreadId(parsedData.threadId);
       toast({
         title: "Success",
         description: "Your request has been successfully retrieved",
@@ -43,63 +107,14 @@ export default function ImprovementDetails({
     } else if (formData && images.length > 0 && aiResponse.length === 0) {
       makeAIRequest(formData, images);
     }
-  }, [cachedAiResponse, formData, images, aiResponse.length, toast]);
-
-  const makeAIRequest = async (formData: FormValues, images: string[]) => {
-    try {
-      if (!formData || images.length === 0) {
-        console.log("formData or images are missing");
-        return;
-      }
-      if (loading.current) {
-        console.log("Request is already in progress");
-        return;
-      }
-      loading.current = true;
-
-      localStorage.setItem(
-        "improvementData",
-        JSON.stringify({
-          formData,
-          images,
-        }),
-      );
-
-      const response = await RequestToAI({
-        url: formData.websiteUrl,
-        audience: formData.targetedAudience,
-        market: formData.targetedMarket,
-        insights: formData.websiteInsights,
-        imageUrls: images,
-      });
-
-      if (!response.success) {
-        loading.current = false;
-        console.log("error occurred: ", response);
-        return;
-      }
-
-      setAiResponse(response.data.aiResponse as unknown as AIResponse[][]);
-      setThreadId(response.data.threadId);
-
-      localStorage.setItem(
-        "improvementData",
-        JSON.stringify({
-          formData,
-          images,
-          type: response.data.type,
-          aiResponse: response.data.aiResponse,
-          threadId: response.data.threadId,
-          aiResLoading: false,
-        }),
-      );
-
-      loading.current = false;
-    } catch (error) {
-      console.log("error: ", error);
-      loading.current = false;
-    }
-  };
+  }, [
+    cachedAiResponse,
+    formData,
+    images,
+    aiResponse.length,
+    toast,
+    makeAIRequest,
+  ]);
 
   useEffect(() => {
     if (threadId && aiResponse.length > 0) {
@@ -108,6 +123,10 @@ export default function ImprovementDetails({
   }, [threadId, aiResponse]);
 
   const saveImprovement = async (threadId: string) => {
+    console.log(
+      "proceeding with saving the improvement with threadId: ",
+      threadId,
+    );
     if (!user?.id || aiResponse.length === 0) {
       return;
     }
