@@ -2,7 +2,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import { RequestToAI } from "@/lib/utils/actions/RequestToAI";
 import { getSingleWebsiteFromUserCache } from "@/lib/utils/hooks/(redisHooks)/RedisHooks";
 import { FormValues, AIResponse } from "@/lib";
 import ImprovementDetails from "@/components/shared/(improvements-components)/ImprovementDetails";
@@ -12,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useWebSocket } from "@/lib/utils/hooks/websockets-hooks/useWebSockets";
-import { saveImprovementsWithUser } from "@/lib/utils/actions/SaveImprovementsToUser";
 
 export default function Form() {
   const {
@@ -23,23 +21,21 @@ export default function Form() {
   } = useForm<FormValues>();
 
   const { user } = useKindeBrowserClient();
+  const [aiResponse, setAiResponse] = React.useState<
+    AIResponse[][] | undefined
+  >([]);
+
   const {
     messages,
     loading,
     error,
     progress,
     analysisCompleted,
-    dataType,
-    aiResponse,
     images,
     initializeWebSocket,
     sendMessage,
     formDataRef,
-    threadId,
-    aiResponseLoading,
     setAnalysisCompleted,
-    setAiResponse,
-    setDataType,
   } = useWebSocket();
 
   React.useEffect(() => {
@@ -51,11 +47,9 @@ export default function Form() {
       setAnalysisCompleted(true);
       formDataRef.current = parsedData.formData;
       images.current = parsedData.images;
-      setDataType(parsedData.type);
       setAiResponse(parsedData.aiResponse);
-      aiResponseLoading.current = parsedData.loading;
     }
-  }, [setAnalysisCompleted, formDataRef, images, setDataType, setAiResponse]);
+  }, [setAnalysisCompleted, formDataRef, images]);
 
   const onSubmit = async (data: FormValues) => {
     setAnalysisCompleted(false);
@@ -71,62 +65,41 @@ export default function Form() {
 
       if (cachedData != null) {
         console.log("Cached data found in Redis, using cached data");
-        if (cachedData.screenshots) {
-          images.current = cachedData.screenshots;
-        }
         if (
+          cachedData.screenshots &&
           cachedData.market &&
           cachedData.audience &&
           cachedData.insights &&
           cachedData.type
         ) {
+          images.current = cachedData.screenshots;
           formDataRef.current = {
             ...formDataRef.current,
             websiteInsights: cachedData.insights,
             targetedAudience: cachedData.audience,
             targetedMarket: cachedData.market,
           };
-          setDataType(cachedData.type);
         }
         if (cachedData.aiResponse && cachedData.aiResponse.length > 0) {
           setAiResponse(cachedData.aiResponse);
           setAnalysisCompleted(true);
           return;
-        } else {
-          setAnalysisCompleted(true);
-          aiResponseLoading.current = true;
-          const response = await RequestToAI({
-            url: formDataRef.current.websiteUrl,
-            audience: formDataRef.current.targetedAudience,
-            market: formDataRef.current.targetedMarket,
-            insights: formDataRef.current.websiteInsights,
-            imageUrls: cachedData.screenshots as string[],
-          });
-          threadId.current = response.threadId;
-          aiResponseLoading.current = false;
-          setAiResponse(response.aiResponse as unknown as AIResponse[][]);
-          setDataType(response.type);
-          return;
         }
       }
+
+      initializeWebSocket();
+      sendMessage({
+        url: data.websiteUrl,
+      });
     }
-
-    initializeWebSocket();
-
-    sendMessage({
-      url: data.websiteUrl,
-    });
   };
 
   if (analysisCompleted) {
     return (
       <ImprovementDetails
         formData={formDataRef.current}
-        threadId={threadId.current}
         images={images.current as string[]}
-        type={dataType}
-        aiResponse={aiResponse}
-        loading={aiResponseLoading.current as boolean}
+        cachedAiResponse={aiResponse}
       />
     );
   }

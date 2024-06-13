@@ -1,28 +1,21 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import React from "react";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { saveScreenshotsToRedis } from "@/lib/utils/hooks/(redisHooks)/RedisHooks";
-import { RequestToAI } from "@/lib/utils/actions/RequestToAI";
-import { FormValues, AIResponse } from "@/lib";
+import { FormValues } from "@/lib";
 
 export const useWebSocket = () => {
-  const queryClient = useQueryClient();
   const { getToken, user } = useKindeBrowserClient();
 
-  const [messages, setMessages] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [progress, setProgress] = useState(0);
-  const [analysisCompleted, setAnalysisCompleted] = useState(false);
-  const [dataType, setDataType] = useState<string>("");
-  const [aiResponse, setAiResponse] = useState<AIResponse[][]>([]);
+  const [messages, setMessages] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [progress, setProgress] = React.useState(0);
+  const [analysisCompleted, setAnalysisCompleted] = React.useState(false);
 
-  const socketRef = useRef<WebSocket | null>(null);
-  const threadId = useRef<string>("");
-  const formDataRef = useRef<FormValues | null>(null);
-  const aiResponseLoading = useRef<boolean>(false);
-  const images = useRef<string[]>([]);
+  const socketRef = React.useRef<WebSocket | null>(null);
+  const formDataRef = React.useRef<FormValues | null>(null);
+  const images = React.useRef<string[]>([]);
 
   const token = getToken();
 
@@ -32,7 +25,7 @@ export const useWebSocket = () => {
       ? "ws://localhost:4000/analysis/ws"
       : "wss://insightify-backend-3caf92991e4a.herokuapp.com/analysis/ws";
 
-  const initializeWebSocket = useCallback(() => {
+  const initializeWebSocket = React.useCallback(() => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       return;
     }
@@ -71,67 +64,9 @@ export const useWebSocket = () => {
                     data.content,
                   );
                 }
+
                 setLoading(false);
                 setAnalysisCompleted(true);
-
-                const formData = formDataRef.current;
-
-                localStorage.setItem(
-                  "improvementData",
-                  JSON.stringify({
-                    formData,
-                    images,
-                    type: "new",
-                    aiResponse: "",
-                    aiResLoading: true,
-                  }),
-                );
-
-                if (formData) {
-                  aiResponseLoading.current = true;
-                  const response = await RequestToAI({
-                    url: formData.websiteUrl,
-                    audience: formData.targetedAudience,
-                    market: formData.targetedMarket,
-                    insights: formData.websiteInsights,
-                    imageUrls: data.content,
-                  });
-
-                  threadId.current = response.threadId;
-
-                  aiResponseLoading.current = false;
-
-                  setAiResponse(
-                    response.aiResponse as unknown as AIResponse[][],
-                  );
-
-                  const { market, insights, audience, type, aiResponse } =
-                    response;
-                  const images = data.content;
-
-                  localStorage.setItem(
-                    "improvementData",
-                    JSON.stringify({
-                      formData,
-                      images,
-                      type: type,
-                      threadId: threadId.current,
-                      aiResponse: aiResponse,
-                      aiResLoading: aiResponseLoading.current,
-                    }),
-                  );
-
-                  setDataType(response.type);
-                  if (market && insights && audience) {
-                    Object.assign(formData, {
-                      websiteInsights: insights,
-                      targetedAudience: audience,
-                      targetedMarket: market,
-                    });
-                  }
-                } else {
-                  console.error("Form data is null");
-                }
               } else {
                 console.error("Expected content to be an array:", data.content);
               }
@@ -167,7 +102,7 @@ export const useWebSocket = () => {
     socketRef.current = ws;
   }, [token, baseWsUrl, user?.id]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     initializeWebSocket();
 
     return () => {
@@ -187,16 +122,10 @@ export const useWebSocket = () => {
     error,
     progress,
     analysisCompleted,
-    dataType,
-    aiResponse,
     images,
     initializeWebSocket,
     sendMessage,
     formDataRef,
-    threadId,
-    aiResponseLoading,
     setAnalysisCompleted,
-    setAiResponse,
-    setDataType,
   };
 };

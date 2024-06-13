@@ -20,12 +20,15 @@ export async function RequestToAI({
   insights: string;
   imageUrls: string[];
 }): Promise<{
-  aiResponse: OpenAI.Beta.Threads.Messages.MessageContent[][];
-  type: string;
-  threadId: string;
-  market: string;
-  audience: string;
-  insights: string;
+  success: boolean;
+  data: {
+    aiResponse: OpenAI.Beta.Threads.Messages.MessageContent[][];
+    type: string;
+    threadId: string;
+    market: string;
+    audience: string;
+    insights: string;
+  };
 }> {
   const redis = await getRedisInstance();
   const { getUser } = getKindeServerSession();
@@ -127,12 +130,15 @@ Continue this structure for each section provided.`,
   await redis.set(key, JSON.stringify(newData), "EX", 86400);
 
   return {
-    aiResponse: responseMessage.aiResponse,
-    threadId: responseMessage.threadId,
-    type: "new",
-    market,
-    audience,
-    insights,
+    success: true,
+    data: {
+      aiResponse: responseMessage.aiResponse,
+      threadId: responseMessage.threadId,
+      type: "new",
+      market,
+      audience,
+      insights,
+    },
   };
 }
 

@@ -14,7 +14,6 @@ interface ListHistoryProps {
 
 export default function ListHistory({ history }: ListHistoryProps) {
   const { user } = useKindeBrowserClient();
-
   const { toast } = useToast();
 
   const deleteImprovement = async (
@@ -57,10 +56,10 @@ export default function ListHistory({ history }: ListHistoryProps) {
             return (
               <div
                 key={index}
-                className="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-500 ease-in-out"
+                className="relative group overflow-hidden text-xs font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-500 ease-in-out"
               >
-                <div className="absolute text-sm inset-0 z-10 flex items-center justify-center opacity-0 group-hover:opacity-90 transition-opacity duration-500">
-                  <div className="bg-white dark:bg-gray-950 p-6 rounded-lg shadow-lg w-full max-w-md space-y-4">
+                <div className="absolute inset-0 z-10 flex items-center justify-center bg-white bg-opacity-80 dark:bg-gray-950 dark:bg-opacity-80 p-6 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <div className="w-full max-w-md space-y-4">
                     <h3 className="text-xl font-bold">{item.market}</h3>
                     <p className="text-gray-500 dark:text-gray-400">
                       Audience: {item.audience}

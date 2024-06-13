@@ -5,6 +5,7 @@ import React from "react";
 import { FormValues } from "@/lib";
 import { retrieveUsersImprovements } from "@/lib/utils/actions/RetrieveUsersImprovementByThreadId";
 
+// NOTE: Improve with React query
 export default async function Improvement({
   params,
 }: {
@@ -42,10 +43,7 @@ export default async function Improvement({
         <ImprovementDetails
           formData={formData}
           images={responseMessage.images.sort()}
-          aiResponse={responseMessage.aiResponse}
-          threadId={responseMessage.threadId}
-          loading={false}
-          type="cached"
+          cachedAiResponse={responseMessage.aiResponse}
         />
       </main>
     );
