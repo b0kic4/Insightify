@@ -20,6 +20,8 @@ export const ImageCarousel = ({
     setCurrentImageIndex(newIndex);
   };
 
+  // FIXME: FIX IMAGE STYLING (COMPONENT SIZE AND IMAGE ZOOM)
+
   return (
     <div className="relative flex-shrink-0 w-full lg:w-2/3 xl:w-3/4 mb-8 lg:mb-0 lg:px-4">
       <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-50 mb-6 text-center">

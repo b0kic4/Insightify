@@ -63,14 +63,14 @@ export default function Form() {
         formDataRef.current.websiteUrl,
       );
 
-      if (cachedData != null) {
+      if (cachedData !== null) {
         console.log("Cached data found in Redis, using cached data");
+        console.log("cachedData: ", cachedData);
         if (
           cachedData.screenshots &&
           cachedData.market &&
           cachedData.audience &&
-          cachedData.insights &&
-          cachedData.type
+          cachedData.insights
         ) {
           images.current = cachedData.screenshots;
           formDataRef.current = {
@@ -79,18 +79,26 @@ export default function Form() {
             targetedAudience: cachedData.audience,
             targetedMarket: cachedData.market,
           };
-        }
-        if (cachedData.aiResponse && cachedData.aiResponse.length > 0) {
-          setAiResponse(cachedData.aiResponse);
+          if (
+            cachedData.aiResponse &&
+            cachedData.aiResponse.length > 0 &&
+            cachedData.type
+          ) {
+            setAiResponse(cachedData.aiResponse);
+            setAnalysisCompleted(true);
+            return;
+          }
           setAnalysisCompleted(true);
           return;
         }
       }
 
-      initializeWebSocket();
-      sendMessage({
-        url: data.websiteUrl,
-      });
+      if (cachedData === null) {
+        initializeWebSocket();
+        sendMessage({
+          url: data.websiteUrl,
+        });
+      }
     }
   };
 

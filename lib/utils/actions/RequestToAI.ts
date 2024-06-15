@@ -31,6 +31,7 @@ export async function RequestToAI({
     insights: string;
   };
 }> {
+  console.log("RequestToAI called");
   const redis = await getRedisInstance();
   const { getUser } = getKindeServerSession();
   const user = await getUser();

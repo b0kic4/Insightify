@@ -60,7 +60,7 @@ export const useWebSocket = () => {
                 if (user?.id && formDataRef.current?.websiteUrl) {
                   await saveScreenshotsToRedis(
                     user.id,
-                    formDataRef.current.websiteUrl,
+                    formDataRef.current,
                     data.content,
                   );
                 }

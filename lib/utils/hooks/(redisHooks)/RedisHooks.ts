@@ -1,6 +1,6 @@
 "use server";
 import Redis from "ioredis";
-import { AIResponse } from "@/lib";
+import { AIResponse, FormValues } from "@/lib";
 import { CachedAIResponse } from "@/lib";
 
 let redisClient: Redis | null = null;
@@ -24,12 +24,19 @@ export async function getRedisInstance() {
 
 export async function saveScreenshotsToRedis(
   userId: string,
-  url: string,
+  formData: FormValues,
   screenshots: string[],
 ) {
   const redis = await getRedisInstance();
-  const key = `${userId}:${url}`;
-  await redis.set(key, JSON.stringify({ screenshots }));
+  const key = `${userId}:${formData.websiteUrl}`;
+  const newData = {
+    screenshots: screenshots,
+    url: formData.websiteUrl,
+    market: formData.targetedMarket,
+    audience: formData.targetedAudience,
+    insights: formData.websiteInsights,
+  };
+  await redis.set(key, JSON.stringify(newData), "EX", 86400);
 }
 
 export async function getSingleWebsiteFromUserCache(

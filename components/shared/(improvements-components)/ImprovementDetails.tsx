@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { AIResponse, FormValues } from "@/lib";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
@@ -25,25 +24,72 @@ export default function ImprovementDetails({
 }: ResponseProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageLoading, setImageLoading] = useState(true);
-  const [aiResponse, setAiResponse] = useState<AIResponse[][]>([]);
+  const [aiResponse, setAiResponse] = useState<AIResponse[][]>(
+    cachedAiResponse || [],
+  );
   const [threadId, setThreadId] = useState<string>("");
-  const loading = useRef<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { user } = useKindeBrowserClient();
   const { toast } = useToast();
 
+  const saveImprovement = useCallback(
+    async (threadId: string) => {
+      console.log(
+        "proceeding with saving the improvement with threadId: ",
+        threadId,
+      );
+      if (!threadId) {
+        return console.log("no threadId");
+      }
+      if (!user) {
+        console.log("user: ", user);
+        return console.log("no user");
+      }
+      if (!user.id) {
+        console.log("userid: ", user.id);
+        return console.log("no userId");
+      }
+
+      try {
+        const response = await saveImprovementsWithUser(
+          threadId,
+          user.id,
+          formData,
+        );
+        console.log("saveImprovement response: ", response);
+
+        if (!response.success) {
+          toast({
+            title: "Uh oh! Something went wrong.",
+            description: "There was a problem with your request.",
+          });
+          console.log(response.error);
+        } else {
+          toast({
+            title: "Success",
+            description: "Your request has been completed successfully",
+          });
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "An error occurred while saving the improvement.",
+        });
+        console.log("Error saving improvement: ", error);
+      }
+    },
+    [formData, toast, user],
+  );
+
   const makeAIRequest = useCallback(
     async (formData: FormValues, images: string[]) => {
+      console.log("Make AI Request is called");
       try {
         if (!formData || images.length === 0) {
           console.log("formData or images are missing");
           return;
         }
-        if (loading.current) {
-          console.log("Request is already in progress");
-          return;
-        }
-        loading.current = true;
 
         localStorage.setItem(
           "improvementData",
@@ -65,12 +111,12 @@ export default function ImprovementDetails({
         console.log("response data: ", response.data);
 
         if (!response.success) {
-          loading.current = false;
+          setLoading(false);
           console.log("error occurred: ", response);
           return;
         }
 
-        setAiResponse(response.data.aiResponse as unknown as AIResponse[][]);
+        setAiResponse(response.data.aiResponse as AIResponse[][]);
         setThreadId(response.data.threadId);
 
         localStorage.setItem(
@@ -85,76 +131,49 @@ export default function ImprovementDetails({
           }),
         );
 
-        loading.current = false;
+        console.log("request completed");
+
+        setLoading(false);
       } catch (error) {
         console.log("error: ", error);
-        loading.current = false;
+        setLoading(false);
       }
     },
-    [],
+    [saveImprovement],
   );
 
   useEffect(() => {
     const savedData = localStorage.getItem("improvementData");
-    if (savedData) {
-      const parsedData = JSON.parse(savedData);
-      setAiResponse(parsedData.aiResponse || []);
-      setThreadId(parsedData.threadId);
-      toast({
-        title: "Success",
-        description: "Your request has been successfully retrieved",
-      });
-    } else if (formData && images.length > 0 && aiResponse.length === 0) {
+    const parsedData = savedData ? JSON.parse(savedData) : null;
+
+    console.log("threadId: ", threadId);
+    console.log("parsedData: ", parsedData);
+
+    if (cachedAiResponse && cachedAiResponse.length > 0) {
+      setAiResponse(cachedAiResponse);
+      setLoading(false);
+    } else if (parsedData) {
+      if (parsedData.threadId) {
+        setAiResponse(parsedData.aiResponse || []);
+        setThreadId(parsedData.threadId);
+        setLoading(parsedData.aiResLoading);
+      }
+    }
+
+    if (formData && images.length > 0 && !parsedData) {
+      console.log(
+        "Making AI request because cachedAiResponse is empty and no localStorage data found",
+      );
       makeAIRequest(formData, images);
     }
-  }, [
-    cachedAiResponse,
-    formData,
-    images,
-    aiResponse.length,
-    toast,
-    makeAIRequest,
-  ]);
+  }, [cachedAiResponse, formData, images, makeAIRequest, threadId]);
 
   useEffect(() => {
-    if (threadId && aiResponse.length > 0) {
+    if (user && threadId) {
+      console.log("User is available, calling saveImprovement");
       saveImprovement(threadId);
     }
-  }, [threadId, aiResponse]);
-
-  const saveImprovement = async (threadId: string) => {
-    console.log(
-      "proceeding with saving the improvement with threadId: ",
-      threadId,
-    );
-    if (!user?.id || aiResponse.length === 0) {
-      return;
-    }
-    try {
-      const response = await saveImprovementsWithUser(
-        threadId,
-        user.id,
-        formData,
-      );
-      if (!response.success) {
-        toast({
-          title: "Uh oh! Something went wrong.",
-          description: "There was a problem with your request.",
-        });
-      } else {
-        toast({
-          title: "Success",
-          description: "Your request has been completed successfully",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "An error occurred while saving the improvement.",
-      });
-      console.log("Error saving improvement: ", error);
-    }
-  };
+  }, [user, threadId, saveImprovement]);
 
   const removeLocalStorageData = () => {
     localStorage.removeItem("improvementData");
@@ -180,10 +199,7 @@ export default function ImprovementDetails({
               imageLoading={imageLoading}
             />
           )}
-          <AIResponseDisplay
-            aiResponseContent={aiResponse}
-            loading={loading.current}
-          />
+          <AIResponseDisplay aiResponseContent={aiResponse} loading={loading} />
         </div>
         {formData && <FormDataDisplay formData={formData} />}
       </div>
