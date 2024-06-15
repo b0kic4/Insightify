@@ -28,10 +28,12 @@ export default function ImprovementDetails({
     cachedAiResponse || [],
   );
   const [threadId, setThreadId] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const { user } = useKindeBrowserClient();
   const { toast } = useToast();
+
+  // NOTE: Fix when navigated from the ImprovementDetails
 
   const saveImprovement = useCallback(
     async (threadId: string) => {
@@ -160,10 +162,16 @@ export default function ImprovementDetails({
       }
     }
 
-    if (formData && images.length > 0 && !parsedData) {
+    if (
+      formData &&
+      images.length > 0 &&
+      !parsedData &&
+      (cachedAiResponse?.length == 0 || !cachedAiResponse)
+    ) {
       console.log(
         "Making AI request because cachedAiResponse is empty and no localStorage data found",
       );
+      console.log("cachedAiResponse: ", cachedAiResponse);
       makeAIRequest(formData, images);
     }
   }, [cachedAiResponse, formData, images, makeAIRequest, threadId]);
