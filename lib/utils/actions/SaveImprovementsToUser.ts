@@ -9,6 +9,7 @@ interface SaveImprovementsSuccess {
     threadId: string;
     userId: string;
   };
+  message: string;
 }
 
 interface SaveImprovementsError {
@@ -51,6 +52,7 @@ export async function saveImprovementsWithUser(
       return {
         success: true,
         data: foundImprovement,
+        message: "improvement has been retrieved",
       };
 
     const newImprovement = await prisma.improvement.create({
@@ -67,6 +69,7 @@ export async function saveImprovementsWithUser(
     return {
       success: true,
       data: newImprovement,
+      message: "improvement successfully created",
     };
   } catch (error) {
     return {

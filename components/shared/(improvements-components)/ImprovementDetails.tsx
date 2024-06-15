@@ -30,6 +30,8 @@ export default function ImprovementDetails({
   const [threadId, setThreadId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
+  const [requestCompleted, setRequestCompleted] = useState<boolean>(false);
+
   const { user } = useKindeBrowserClient();
   const { toast } = useToast();
 
@@ -37,6 +39,10 @@ export default function ImprovementDetails({
 
   const saveImprovement = useCallback(
     async (threadId: string) => {
+      console.log(
+        "requestcompleted in the saveImprovement: ",
+        requestCompleted,
+      );
       console.log(
         "proceeding with saving the improvement with threadId: ",
         threadId,
@@ -64,14 +70,16 @@ export default function ImprovementDetails({
         if (!response.success) {
           toast({
             title: "Uh oh! Something went wrong.",
-            description: "There was a problem with your request.",
+            description: response.error,
           });
           console.log(response.error);
+          setRequestCompleted(true);
         } else {
           toast({
             title: "Success",
-            description: "Your request has been completed successfully",
+            description: response.message,
           });
+          setRequestCompleted(true);
         }
       } catch (error) {
         toast({
@@ -79,6 +87,7 @@ export default function ImprovementDetails({
           description: "An error occurred while saving the improvement.",
         });
         console.log("Error saving improvement: ", error);
+        setRequestCompleted(true);
       }
     },
     [formData, toast, user],
@@ -134,7 +143,7 @@ export default function ImprovementDetails({
         );
 
         console.log("request completed");
-
+        setRequestCompleted(true);
         setLoading(false);
       } catch (error) {
         console.log("error: ", error);
@@ -148,8 +157,9 @@ export default function ImprovementDetails({
     const savedData = localStorage.getItem("improvementData");
     const parsedData = savedData ? JSON.parse(savedData) : null;
 
-    console.log("threadId: ", threadId);
-    console.log("parsedData: ", parsedData);
+    if (parsedData && parsedData.threadId) {
+      setThreadId(parsedData.threadId);
+    }
 
     if (cachedAiResponse && cachedAiResponse.length > 0) {
       setAiResponse(cachedAiResponse);
@@ -171,6 +181,7 @@ export default function ImprovementDetails({
       console.log(
         "Making AI request because cachedAiResponse is empty and no localStorage data found",
       );
+
       console.log("cachedAiResponse: ", cachedAiResponse);
       makeAIRequest(formData, images);
     }
@@ -178,6 +189,10 @@ export default function ImprovementDetails({
 
   useEffect(() => {
     if (user && threadId) {
+      console.log(
+        "requestCompleted in useEffect where saveImprovement is called: ",
+        requestCompleted,
+      );
       console.log("User is available, calling saveImprovement");
       saveImprovement(threadId);
     }
