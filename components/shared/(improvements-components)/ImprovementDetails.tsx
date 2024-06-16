@@ -74,6 +74,7 @@ export default function ImprovementDetails({
             title: "Success",
             description: response.message,
           });
+          window.location.reload();
         }
       } catch (error) {
         toast({
