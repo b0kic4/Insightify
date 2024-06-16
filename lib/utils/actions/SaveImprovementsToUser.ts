@@ -69,7 +69,8 @@ export async function saveImprovementsWithUser(
     return {
       success: true,
       data: newImprovement,
-      message: "improvement successfully created",
+      message:
+        "improvement successfully created, if response is not displayed please refresh the page",
     };
   } catch (error) {
     return {

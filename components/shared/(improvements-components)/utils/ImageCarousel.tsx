@@ -42,7 +42,7 @@ export const ImageCarousel = ({
           onLoadingComplete={() => setImageLoading(false)}
         />
       </div>
-      <div className="absolute inset-0 flex items-end justify-between p-4">
+      <div className="absolute inset-0 flex items-end justify-between p-6">
         <Button
           variant="ghost"
           onClick={() => handleImageChange(Math.max(currentImageIndex - 1, 0))}

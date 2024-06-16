@@ -34,6 +34,13 @@ export default function ImprovementDetails({
   const { user } = useKindeBrowserClient();
   const { toast } = useToast();
 
+  const savedData = localStorage.getItem("improvementData");
+
+  useEffect(() => {
+    console.log("trigger rerender with: ", requestCompleted, aiResponse);
+    setAiResponse([...aiResponse]);
+  }, [requestCompleted, aiResponse.length, savedData]);
+
   const saveImprovement = useCallback(
     async (threadId: string, userId: string) => {
       console.log(
@@ -143,7 +150,6 @@ export default function ImprovementDetails({
   );
 
   useEffect(() => {
-    const savedData = localStorage.getItem("improvementData");
     const parsedData = savedData ? JSON.parse(savedData) : null;
 
     if (parsedData && parsedData.threadId) {
