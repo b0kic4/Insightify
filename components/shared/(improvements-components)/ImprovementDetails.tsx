@@ -29,18 +29,15 @@ export default function ImprovementDetails({
   );
   const [threadId, setThreadId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
-
   const [requestCompleted, setRequestCompleted] = useState<boolean>(false);
 
   const { user } = useKindeBrowserClient();
   const { toast } = useToast();
 
-  // NOTE: Fix when navigated from the ImprovementDetails
-
   const saveImprovement = useCallback(
-    async (threadId: string) => {
+    async (threadId: string, userId: string) => {
       console.log(
-        "requestcompleted in the saveImprovement: ",
+        "requestCompleted in the saveImprovement: ",
         requestCompleted,
       );
       console.log(
@@ -50,19 +47,11 @@ export default function ImprovementDetails({
       if (!threadId) {
         return console.log("no threadId");
       }
-      if (!user) {
-        console.log("user: ", user);
-        return console.log("no user");
-      }
-      if (!user.id) {
-        console.log("userid: ", user.id);
-        return console.log("no userId");
-      }
 
       try {
         const response = await saveImprovementsWithUser(
           threadId,
-          user.id,
+          userId,
           formData,
         );
         console.log("saveImprovement response: ", response);
@@ -73,13 +62,11 @@ export default function ImprovementDetails({
             description: response.error,
           });
           console.log(response.error);
-          setRequestCompleted(true);
         } else {
           toast({
             title: "Success",
             description: response.message,
           });
-          setRequestCompleted(true);
         }
       } catch (error) {
         toast({
@@ -87,14 +74,13 @@ export default function ImprovementDetails({
           description: "An error occurred while saving the improvement.",
         });
         console.log("Error saving improvement: ", error);
-        setRequestCompleted(true);
       }
     },
     [formData, toast, user],
   );
 
   const makeAIRequest = useCallback(
-    async (formData: FormValues, images: string[]) => {
+    async (formData: FormValues, images: string[], userId: string) => {
       console.log("Make AI Request is called");
       try {
         if (!formData || images.length === 0) {
@@ -142,12 +128,15 @@ export default function ImprovementDetails({
           }),
         );
 
+        saveImprovement(response.data.threadId, userId);
+
         console.log("request completed");
         setRequestCompleted(true);
         setLoading(false);
       } catch (error) {
         console.log("error: ", error);
         setLoading(false);
+        setRequestCompleted(true);
       }
     },
     [saveImprovement],
@@ -173,6 +162,7 @@ export default function ImprovementDetails({
     }
 
     if (
+      user &&
       formData &&
       images.length > 0 &&
       !parsedData &&
@@ -183,20 +173,9 @@ export default function ImprovementDetails({
       );
 
       console.log("cachedAiResponse: ", cachedAiResponse);
-      makeAIRequest(formData, images);
+      makeAIRequest(formData, images, user.id);
     }
-  }, [cachedAiResponse, formData, images, makeAIRequest, threadId]);
-
-  useEffect(() => {
-    if (user && threadId) {
-      console.log(
-        "requestCompleted in useEffect where saveImprovement is called: ",
-        requestCompleted,
-      );
-      console.log("User is available, calling saveImprovement");
-      saveImprovement(threadId);
-    }
-  }, [user, threadId, saveImprovement]);
+  }, [cachedAiResponse, formData, images, makeAIRequest, threadId, user]);
 
   const removeLocalStorageData = () => {
     localStorage.removeItem("improvementData");
