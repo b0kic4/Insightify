@@ -1,35 +1,19 @@
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { getDataFromThreadID } from "@/lib/utils/hooks/(redisHooks)/GetDataFromThreadId";
-import ImprovementDetails from "@/components/shared/(improvements-components)/ImprovementDetails";
+"use client";
+
 import React from "react";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { useImprovementDetails } from "@/lib/utils/hooks/(react-query)/fetchImprovementData";
+import ImprovementDetails from "@/components/shared/(improvements-components)/ImprovementDetails";
 import { FormValues } from "@/lib";
-import { retrieveUsersImprovements } from "@/lib/utils/actions/RetrieveUsersImprovementByThreadId";
 
-// NOTE: Improve with React query
-export default async function Improvement({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
-
-  const responseMessage = await getDataFromThreadID(params.id);
-
-  const improvementResponse = await retrieveUsersImprovements(
+export default function Improvement({ params }: { params: { id: string } }) {
+  const { user } = useKindeBrowserClient();
+  const { data, isLoading, error } = useImprovementDetails(
     params.id,
     user?.id as string,
   );
 
-  if (improvementResponse && improvementResponse.success) {
-    const improvement = improvementResponse.data.improvement;
-    const formData: FormValues = {
-      websiteUrl: improvement.url as string,
-      websiteInsights: improvement.insights as string,
-      targetedAudience: improvement.audience as string,
-      targetedMarket: improvement.market as string,
-    };
-
+  if (isLoading) {
     return (
       <main className="flex flex-col h-screen">
         <section className="bg-gray-100 dark:bg-gray-900 p-8">
@@ -40,14 +24,40 @@ export default async function Improvement({
             Screenshots might not be sorted properly so pay attention :)
           </p>
         </section>
-        <ImprovementDetails
-          formData={formData}
-          images={responseMessage.images.sort()}
-          cachedAiResponse={responseMessage.aiResponse}
-        />
+        <div className="flex justify-center items-center animate-spin rounded-full h-7 w-7 border-b-2 border-white/50 mx-auto my-2"></div>
       </main>
     );
-  } else {
-    return <div>Error: {improvementResponse?.error}</div>;
   }
+
+  if (error) {
+    <main className="flex flex-col h-screen">
+      <section className="bg-gray-100 dark:bg-gray-900 p-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">
+          Your Improvement
+        </h1>
+        <p className="mt-4 text-gray-600 dark:text-gray-400">
+          Screenshots might not be sorted properly so pay attention :)
+        </p>
+      </section>
+      <div>Error: {error.message}</div>;
+    </main>;
+  }
+
+  return (
+    <main className="flex flex-col h-screen">
+      <section className="bg-gray-100 dark:bg-gray-900 p-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50">
+          Your Improvement
+        </h1>
+        <p className="mt-4 text-gray-600 dark:text-gray-400">
+          Screenshots might not be sorted properly so pay attention :)
+        </p>
+      </section>
+      <ImprovementDetails
+        formData={data?.formData as FormValues}
+        images={data?.images as string[]}
+        cachedAiResponse={data?.cachedAiResponse}
+      />
+    </main>
+  );
 }

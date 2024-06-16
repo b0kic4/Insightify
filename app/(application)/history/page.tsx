@@ -1,11 +1,17 @@
 import ListHistory from "@/components/shared/(history-components)/History";
 import { getWebsitesFromUserCache } from "@/lib/utils/hooks/(redisHooks)/RedisHooks";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { HydrationBoundary, QueryClient } from "@tanstack/react-query";
 
 export default async function History() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
-  const history = await getWebsitesFromUserCache(user?.id as string);
+
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ["getHistoryList", user?.id],
+    queryFn: ({ queryKey }) => getWebsitesFromUserCache(queryKey[1] as string),
+  });
 
   return (
     <main className="flex flex-col h-screen">
@@ -17,7 +23,9 @@ export default async function History() {
           This is where your recent improvements generation are stored
         </p>
       </section>
-      <ListHistory history={history} />
+      <HydrationBoundary>
+        <ListHistory />
+      </HydrationBoundary>
     </main>
   );
 }

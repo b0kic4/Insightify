@@ -6,7 +6,7 @@ export async function getDataFromThreadID(threadId: string) {
   const openai = new OpenAI();
   const thread = await retrieveThread(openai, threadId);
   const responseMessage = await getResponseMessage(openai, thread);
-  return responseMessage; // Ensure the structured response is returned
+  return responseMessage;
 }
 
 async function getResponseMessage(openai: OpenAI, thread: OpenAI.Beta.Thread) {

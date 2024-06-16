@@ -23,7 +23,7 @@ export const ImageCarousel = ({
   // FIXME: FIX IMAGE STYLING (COMPONENT SIZE AND IMAGE ZOOM)
 
   return (
-    <div className="relative flex-shrink-0 w-full lg:w-2/3 xl:w-3/4 mb-8 lg:mb-0 lg:px-4">
+    <div className="relative flex-shrink-0 w-full lg:w-full xl:w-full h-full mb-8 lg:mb-0 lg:px-4">
       <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-50 mb-6 text-center">
         Screenshot {currentImageIndex + 1}
       </h3>
@@ -36,7 +36,8 @@ export const ImageCarousel = ({
         <Image
           src={images[currentImageIndex]}
           alt={`Screenshot ${currentImageIndex + 1}`}
-          className="rounded-lg shadow-lg"
+          className="rounded-lg shadow-lg h-full"
+          loading="lazy"
           layout="fill"
           objectFit="cover"
           onLoadingComplete={() => setImageLoading(false)}

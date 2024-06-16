@@ -75,6 +75,7 @@ export default function Sidebar() {
             src={user.picture}
             alt="Profile picture"
             className="rounded-full"
+            loading="lazy"
             width={50}
             height={50}
           />
