@@ -37,20 +37,11 @@ export default function ImprovementDetails({
   const savedData = localStorage.getItem("improvementData");
 
   useEffect(() => {
-    console.log("trigger rerender with: ", requestCompleted, aiResponse);
     setAiResponse([...aiResponse]);
   }, [requestCompleted, aiResponse.length, savedData]);
 
   const saveImprovement = useCallback(
     async (threadId: string, userId: string) => {
-      console.log(
-        "requestCompleted in the saveImprovement: ",
-        requestCompleted,
-      );
-      console.log(
-        "proceeding with saving the improvement with threadId: ",
-        threadId,
-      );
       if (!threadId) {
         return console.log("no threadId");
       }
@@ -61,7 +52,6 @@ export default function ImprovementDetails({
           userId,
           formData,
         );
-        console.log("saveImprovement response: ", response);
 
         if (!response.success) {
           toast({
@@ -111,9 +101,6 @@ export default function ImprovementDetails({
           insights: formData.websiteInsights,
           imageUrls: images,
         });
-
-        console.log("success of the response: ", response.success);
-        console.log("response data: ", response.data);
 
         if (!response.success) {
           setLoading(false);
@@ -175,11 +162,6 @@ export default function ImprovementDetails({
       !parsedData &&
       (cachedAiResponse?.length == 0 || !cachedAiResponse)
     ) {
-      console.log(
-        "Making AI request because cachedAiResponse is empty and no localStorage data found",
-      );
-
-      console.log("cachedAiResponse: ", cachedAiResponse);
       makeAIRequest(formData, images, user.id);
     }
   }, [cachedAiResponse, formData, images, makeAIRequest, threadId, user]);

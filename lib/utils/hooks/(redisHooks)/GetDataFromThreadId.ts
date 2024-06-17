@@ -24,11 +24,6 @@ async function getResponseMessage(openai: OpenAI, thread: OpenAI.Beta.Thread) {
     .filter((msg) => msg.role === "user")
     .map((msg) => msg.content);
 
-  console.log(
-    "Filtered response messages: ",
-    JSON.stringify(assistantResponseMessages),
-  );
-
   // Structure the response messages
   const aiResponse: AIResponse[] = [];
   const images: string[] = [];

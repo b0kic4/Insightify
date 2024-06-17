@@ -48,6 +48,7 @@ export const useWebSocket = () => {
     ws.onmessage = async (event) => {
       try {
         const data = JSON.parse(event.data);
+        console.log("data: ", data);
         if (typeof data === "object" && data !== null && "type" in data) {
           switch (data.type) {
             case "status":
@@ -73,6 +74,9 @@ export const useWebSocket = () => {
               break;
             case "progress":
               setProgress(Math.trunc(data.content));
+              break;
+            case "error":
+              setError(data.content);
               break;
             default:
               console.error("Received unknown message type:", data.type);

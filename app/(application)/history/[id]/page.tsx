@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useImprovementDetails } from "@/lib/utils/hooks/(react-query)/fetchImprovementData";

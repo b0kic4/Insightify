@@ -53,7 +53,6 @@ export default function Form() {
 
   const onSubmit = async (data: FormValues) => {
     setAnalysisCompleted(false);
-    reset();
 
     formDataRef.current = data;
 
@@ -103,6 +102,7 @@ export default function Form() {
   };
 
   if (analysisCompleted) {
+    reset();
     return (
       <ImprovementDetails
         formData={formDataRef.current}

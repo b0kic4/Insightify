@@ -222,15 +222,9 @@ async function loopUntilCompleted(
 
 async function getResponseMessage(openai: OpenAI, thread: OpenAI.Beta.Thread) {
   const threadMessages = await openai.beta.threads.messages.list(thread.id);
-  console.log(
-    "Thread messages: ",
-    JSON.stringify(threadMessages.data, null, 2),
-  );
-
   const responseMessages = threadMessages.data
     .filter((msg) => msg.role === "assistant")
     .map((msg) => msg.content);
 
-  console.log("Filtered response messages: ", JSON.stringify(responseMessages));
   return { aiResponse: responseMessages, threadId: thread.id };
 }

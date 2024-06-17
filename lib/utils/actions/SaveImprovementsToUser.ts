@@ -25,9 +25,6 @@ export async function saveImprovementsWithUser(
   formData: FormValues | null,
 ): Promise<SaveImprovementsResponse> {
   try {
-    console.log("threadId: ", threadId);
-    console.log("userId: ", userId);
-    console.log("formData: ", formData);
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
