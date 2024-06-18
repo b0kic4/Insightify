@@ -1,5 +1,5 @@
 import React from "react";
-import DashboardComponent from "@/components/shared/(dashboard-components)/Dashboard";
+import DashboardComponent from "@/components/shared/(Application)/(dashboard-components)/Dashboard";
 
 export default function Dashboard() {
   return (

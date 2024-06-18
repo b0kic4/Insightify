@@ -1,4 +1,4 @@
-import Form from "@/components/shared/(improvements-components)/Form";
+import Form from "@/components/shared/(Application)/(improvements-components)/Form";
 export const maxDuration = 60;
 export default function Improvements() {
   return (

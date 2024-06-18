@@ -1,4 +1,4 @@
-import ListHistory from "@/components/shared/(history-components)/History";
+import ListHistory from "@/components/shared/(Application)/(history-components)/History";
 import { getWebsitesFromUserCache } from "@/lib/utils/hooks/(redisHooks)/RedisHooks";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { HydrationBoundary, QueryClient } from "@tanstack/react-query";

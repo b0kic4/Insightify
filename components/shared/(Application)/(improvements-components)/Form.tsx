@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { getSingleWebsiteFromUserCache } from "@/lib/utils/hooks/(redisHooks)/RedisHooks";
 import { FormValues, AIResponse } from "@/lib";
-import ImprovementDetails from "@/components/shared/(improvements-components)/ImprovementDetails";
+import ImprovementDetails from "@/components/shared/(Application)/(improvements-components)/ImprovementDetails";
 import AnalysisModal from "@/components/ui/AnalysisModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

@@ -2,7 +2,7 @@
 import React from "react";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useImprovementDetails } from "@/lib/utils/hooks/(react-query)/fetchImprovementData";
-import ImprovementDetails from "@/components/shared/(improvements-components)/ImprovementDetails";
+import ImprovementDetails from "@/components/shared/(Application)/(improvements-components)/ImprovementDetails";
 import { useDeleteImprovement } from "@/lib/utils/hooks/(react-query)/deleteImprovement";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
