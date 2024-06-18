@@ -16,15 +16,18 @@ export default function Improvement({ params }: { params: { id: string } }) {
   );
   const { handleDeleteImprovement } = useDeleteImprovement(user?.id as string);
 
+  const router = useRouter();
   const { toast } = useToast();
 
-  if (!params.id) {
-    toast({
-      title: "Error",
-      description: "There was an error with your improvement",
-    }),
-      useRouter().back();
-  }
+  React.useEffect(() => {
+    if (!params.id) {
+      toast({
+        title: "Error",
+        description: "Invalid improvement ID. Redirecting...",
+      });
+      router.back();
+    }
+  }, [params.id, router, toast]);
 
   if (isLoading) {
     return (

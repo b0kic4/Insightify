@@ -118,16 +118,16 @@ export default function Features() {
             <div className="grid gap-1">
               <h3 className="text-lg font-bold">Competitive Benchmarking</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Compare your website's performance against industry leaders and
-                identify areas for improvement.
+                Compare your website&apos;s performance against industry leaders
+                and identify areas for improvement.
               </p>
             </div>
             <div className="grid gap-1">
               <h3 className="text-lg font-bold">Seamless Integration</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Easily integrate our tool with your existing marketing and
-                analytics platforms for a comprehensive view of your website's
-                performance.
+                analytics platforms for a comprehensive view of your
+                website&apos;s performance.
               </p>
             </div>
           </div>
