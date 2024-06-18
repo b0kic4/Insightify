@@ -19,10 +19,10 @@ export default async function Landing() {
           <div className="flex flex-col justify-center space-y-4">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                Unlock Your Website&apos;s True Potential
+                Unlock Your Website&apos;s True Potential with Insightify
               </h1>
               <p className="max-w-[600px] text-gray-500 md:text-xl dark:text-gray-400">
-                Our AI-powered marketing optimization tool analyzes your
+                Insightify is AI-powered optimization tool analyzes your
                 website&apos;s design, content, and user experience to uncover
                 hidden opportunities and drive higher conversions.
               </p>

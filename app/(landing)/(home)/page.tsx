@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Features from "@/components/shared/(features)/Features";
-import About from "@/components/shared/(about)/About";
+import Works from "@/components/shared/(about)/Works";
 import Pricing from "@/components/shared/(pricing)/Pricing";
 import Landing from "@/components/landing";
 import Contact from "@/components/shared/(contact)/Contact";
@@ -16,7 +16,7 @@ export default function Home() {
         <Features />
 
         {/* About */}
-        <About />
+        <Works />
 
         {/* Pricing */}
         <Pricing />

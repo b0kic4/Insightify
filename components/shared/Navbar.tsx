@@ -6,7 +6,7 @@ export default function Navbar() {
     <header className="px-4 lg:px-6 h-14 flex items-center gap-2">
       <Link className="flex items-center justify-center" href="/">
         <GiArtificialIntelligence className="h-6 w-6" />
-        <span className="sr-only">Acme Marketing Optimizer</span>
+        <span className="sr-only">Insightify</span>
       </Link>
       <nav className="ml-auto flex gap-4 sm:gap-6">
         <Link
@@ -17,15 +17,15 @@ export default function Navbar() {
         </Link>
         <Link
           className="text-sm font-medium hover:underline underline-offset-4"
-          href="#pricing"
+          href="#works"
         >
-          Pricing
+          How it works
         </Link>
         <Link
           className="text-sm font-medium hover:underline underline-offset-4"
-          href="#about"
+          href="#pricing"
         >
-          About
+          Pricing
         </Link>
         <Link
           className="text-sm font-medium hover:underline underline-offset-4"

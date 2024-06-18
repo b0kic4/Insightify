@@ -12,10 +12,10 @@ export default function Features() {
                 Elevate Your Website to New Heights
               </h2>
               <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                Our AI-powered marketing optimization tool provides a detailed,
-                strategic analysis of your website&apos;s design, content, and
-                user experience, empowering you to make data-driven decisions
-                that drive higher conversions and better engagement.
+                Insightify provides a detailed, strategic analysis of your
+                website&apos;s design, content, and user experience, empowering
+                you to make data-driven decisions that drive higher conversions
+                and better engagement.
               </p>
             </div>
           </div>
@@ -76,63 +76,58 @@ export default function Features() {
                 Key Features
               </div>
               <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                Powerful Features to Boost Your Marketing
+                Unlock the full potential of your website
               </h2>
               <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                Our AI-powered marketing optimization tool provides a suite of
-                features to help you improve your website&apos;s performance and
-                drive more conversions.
+                Insightify analysis provides a comprehensive set of features to
+                help you optimize your website for better performance, user
+                experience, and conversion rates.
               </p>
             </div>
           </div>
-          <div className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-2 md:gap-12 lg:max-w-5xl lg:grid-cols-3">
+          <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3 lg:gap-12">
             <div className="grid gap-1">
-              <h3 className="text-lg font-bold">Website Audit and Analysis</h3>
+              <h3 className="text-lg font-bold">Comprehensive Analysis</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Our AI-powered tool analyzes your website and provides
-                personalized recommendations to improve your marketing
-                performance.
+                Our AI-powered analysis covers every aspect of your website,
+                from design and user experience to content and performance.
               </p>
             </div>
             <div className="grid gap-1">
-              <h3 className="text-lg font-bold">
-                Conversion Rate Optimization
-              </h3>
+              <h3 className="text-lg font-bold">Actionable Insights</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Identify and address friction points in your customer journey to
-                boost your conversion rates.
+                Receive detailed insights and recommendations to improve your
+                website and achieve your business goals.
               </p>
             </div>
             <div className="grid gap-1">
-              <h3 className="text-lg font-bold">
-                Personalized Recommendations
-              </h3>
+              <h3 className="text-lg font-bold">Continuous Optimization</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Get tailored suggestions to optimize your website content,
-                design, and user experience.
+                Our tool provides ongoing monitoring and analysis to ensure your
+                website stays optimized for maximum performance and user
+                satisfaction.
               </p>
             </div>
             <div className="grid gap-1">
-              <h3 className="text-lg font-bold">
-                A/B Testing and Experimentation
-              </h3>
+              <h3 className="text-lg font-bold">Customizable Reporting</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Easily set up A/B tests and experiments to validate your
-                optimization ideas.
+                Generate custom reports to track your website's progress and
+                share insights with your team.
               </p>
             </div>
             <div className="grid gap-1">
-              <h3 className="text-lg font-bold">Reporting and Analytics</h3>
+              <h3 className="text-lg font-bold">Competitive Benchmarking</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Track the impact of your optimizations with detailed performance
-                reports and analytics.
+                Compare your website's performance against industry leaders and
+                identify areas for improvement.
               </p>
             </div>
             <div className="grid gap-1">
               <h3 className="text-lg font-bold">Seamless Integration</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Integrate our tool with your existing marketing stack for a
-                streamlined optimization workflow.
+                Easily integrate our tool with your existing marketing and
+                analytics platforms for a comprehensive view of your website's
+                performance.
               </p>
             </div>
           </div>

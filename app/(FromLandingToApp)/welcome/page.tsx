@@ -5,7 +5,7 @@ import {
 
 export default function Welcome() {
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex items-center justify-center p-2 h-screen bg-gray-100 dark:bg-gray-900">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-lg dark:bg-gray-800">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
