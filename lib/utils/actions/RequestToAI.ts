@@ -69,6 +69,20 @@ Add a horizontal line after each section for clear separation like this: **---**
   - **Examples**: Provide examples.
   - **Severity**: Rate usability and appearance.
 
+Add a horizontal line after each section for clear separation like this: **---**.
+
+**Detailed Analysis:**
+Identify design errors and evaluate the effectiveness of the words used. After successful navigation of ${url} and analysis of the provided screenshots, make changes to the text to ensure it is compelling and relatable to the provided market (${market}). Review the site's layout, images, text efficiency, user experience, etc., and provide a comprehensive report.
+
+Connect the provided screenshots (sections) with the respective parts of the website where improvements are needed. For each part of the website that requires improvement, reference the corresponding section and suggest enhancements.
+
+**Example Response Structure:**
+- **Identified Section** (e.g., Screenshot 1):
+  - **Current State**: Describe the current state.
+  - **Improvements**: Suggest specific changes.
+  - **Examples**: Provide examples.
+  - **Severity**: Rate usability and appearance.
+
 Add a horizontal line after each section for clear separation like this: **---**.`,
   };
 

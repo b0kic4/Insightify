@@ -217,7 +217,7 @@ export default function Form() {
           ) : (
             <AnalysisModal messages={messages} progress={progress} />
           )}
-          {error && <p className="text-red-500">{error}</p>}
+          {/* {error && <p className="text-red-500">{error}</p>} */}
         </form>
       </div>
     </section>

@@ -1,8 +1,15 @@
 import ReactMarkdown from "react-markdown";
 import { FaRobot } from "react-icons/fa";
 import SkeletonLoaderAIResponse from "@/components/ui/AIResponseSkeletonLoader";
+import { AIResponse } from "@/lib";
 
-export const AIResponseDisplay = ({ aiResponseContent, loading }: any) => (
+export const AIResponseDisplay = ({
+  aiResponseContent,
+  loading,
+}: {
+  aiResponseContent: AIResponse[][];
+  loading: boolean;
+}) => (
   <div className="flex-grow bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 lg:p-10 max-h-96 lg:max-h-[30rem] overflow-y-auto w-full lg:w-full lg:px-4">
     <h3 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-50 mb-6 flex items-center gap-2">
       <FaRobot className="text-blue-500" />
@@ -10,18 +17,18 @@ export const AIResponseDisplay = ({ aiResponseContent, loading }: any) => (
     </h3>
     {loading ? (
       <>
-        <p className="text-lg lg:text-xl font-semibold text-gray-700 dark:text-gray-300 mb-6">
+        <p className="text-lg font-bold text-gray-900 dark:text-gray-50 mb-6">
           AI is looking for improvements, please be patient...
         </p>
         <SkeletonLoaderAIResponse />
       </>
     ) : (
-      aiResponseContent.flat().map((content: any, index: any) => (
+      aiResponseContent.flat().map((content, index) => (
         <div
           key={index}
-          className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 lg:p-6 mb-4 shadow-sm border border-gray-200 dark:border-gray-700"
+          className="bg-gray-100 dark:bg-gray-900 rounded-lg p-4 mb-4 shadow-md"
         >
-          <ReactMarkdown className="prose dark:prose-invert text-xl lg:text-xl text-gray-800 dark:text-gray-300 leading-relaxed">
+          <ReactMarkdown className="prose dark:prose-invert text-lg text-gray-600 dark:text-gray-400">
             {content?.text?.value ?? ""}
           </ReactMarkdown>
         </div>

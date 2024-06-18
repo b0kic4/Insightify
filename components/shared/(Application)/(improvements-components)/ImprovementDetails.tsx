@@ -60,7 +60,10 @@ export default function ImprovementDetails({
             title: "Success",
             description: response.message,
           });
-          window.location.reload();
+
+          if (aiResponse.length <= 0) {
+            window.location.reload();
+          }
         }
       } catch (error) {
         toast({
