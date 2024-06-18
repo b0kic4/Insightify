@@ -16,7 +16,7 @@ export default function Works() {
             </h2>
             <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
               Insightify makes it easy to analyze and optimize your website.
-              Here's how it works:
+              Here&apos;s how it works:
             </p>
           </div>
         </div>

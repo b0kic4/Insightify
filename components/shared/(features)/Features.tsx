@@ -111,8 +111,8 @@ export default function Features() {
             <div className="grid gap-1">
               <h3 className="text-lg font-bold">Customizable Reporting</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Generate custom reports to track your website's progress and
-                share insights with your team.
+                Generate custom reports to track your website&apos;s progress
+                and share insights with your team.
               </p>
             </div>
             <div className="grid gap-1">

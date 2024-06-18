@@ -19,13 +19,11 @@ export default function Improvement({ params }: { params: { id: string } }) {
   const { toast } = useToast();
 
   if (!params.id) {
-    return (
-      toast({
-        title: "Error",
-        description: "There was an error with your improvement",
-      }),
-      useRouter().back()
-    );
+    toast({
+      title: "Error",
+      description: "There was an error with your improvement",
+    }),
+      useRouter().back();
   }
 
   if (isLoading) {
