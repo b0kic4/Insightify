@@ -11,10 +11,6 @@ export async function getDataFromThreadID(threadId: string) {
 
 async function getResponseMessage(openai: OpenAI, thread: OpenAI.Beta.Thread) {
   const threadMessages = await openai.beta.threads.messages.list(thread.id);
-  console.log(
-    "Thread messages: ",
-    JSON.stringify(threadMessages.data, null, 2),
-  );
 
   const assistantResponseMessages = threadMessages.data
     .filter((msg) => msg.role === "assistant")

@@ -99,10 +99,11 @@ export default function Form() {
         });
       }
     }
+
+    reset();
   };
 
   if (analysisCompleted) {
-    reset();
     return (
       <ImprovementDetails
         formData={formDataRef.current}
@@ -124,7 +125,10 @@ export default function Form() {
             comprehensive analysis and potential design improvements.
           </p>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-8">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="grid gap-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md"
+        >
           <div className="grid gap-4">
             <Label
               className="text-lg text-gray-700 dark:text-gray-300"

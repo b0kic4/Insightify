@@ -45,37 +45,33 @@ export async function RequestToAI({
   const initialContent: TextContent = {
     type: "text",
     text: `
-Instructions:
+**Instructions:**
 1. Analyze the website URL and provided screenshots: ${url}
-2. Identify design errors, evaluate the text, and suggest improvements to ensure the content resonates with ${audience} in the ${market} field.
+2. Identify design errors, evaluate the text, and suggest improvements for ${audience} in the ${market} field.
 3. Consider these insights: ${insights}
+4. Focus on providing actionable improvements without mentioning the analysis process.
 
-Focus on providing actionable improvements without mentioning the analysis process.
+**Guidelines:**
+- **Current Design**: Detect the current design style and provide information about the layout's current state, including a creative rating.
+- Use Markdown to format the response with the following sections:
+  - **Current State**: Describe the current state of the section.
+  - **Improvements**: Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
+  - **Examples**: Provide concrete examples with sources to help visualize the suggested improvements.
+  - **Severity**: Provide severity ratings for usability and appearance.
+- Frame your suggestions in an engaging, creative manner, and use descriptive language to make the recommendations lively.
 
-Before proceeding to the detailed instructions, detect the current design style and provide some information about the current state of the layout, giving it a creative rating that will be useful for continued analysis.
-- **Current Design** in bold
-Add a horizontal line 
+Add a horizontal line after each section for clear separation like this: **---**.
 
+**Example Response Structure:**
+- **Identified Section** (e.g., Screenshot 1):
+  - **Current State**: Describe the current state.
+  - **Improvements**: Suggest specific changes.
+  - **Examples**: Provide examples.
+  - **Severity**: Rate usability and appearance.
 
-Use Markdown to format the following key aspects:
-- **Current State:** in bold
-- **Improvements:** in bold 
-- **Severity:** in bold 
-
-Add a horizontal line after each section for clear separation.
-
-Example Response Structure:
-**Identified Section of the website with the Screenshot number/s that indecates that section: in bold**
-
-**Current State:** Describe the current state of the section.
-**Improvements:** Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
-**Examples:** Provide concrete examples with sources to help visualize the suggested improvements.
-**Severity:** Severity Ratings for Usability and appearance
-
-Nice horizontal line seperating next section
-
-Continue this structure for each section provided.`,
+Add a horizontal line after each section for clear separation like this: **---**.`,
   };
+
   const imageContents: ImageContent[] = imageUrls.map((url) => ({
     type: "image_url",
     image_url: { url },
@@ -83,19 +79,16 @@ Continue this structure for each section provided.`,
 
   const finalContent: TextContent = {
     type: "text",
-    text: `Identify design errors and evaluate the effectiveness of the words used. After successful navigation of ${url} and analysis of the provided screenshots, make changes to the text to ensure it is compelling and relatable to the provided market (${market}). Review the site's layout, images, text efficiency, user experience, etc., and provide a comprehensive report.
+    text: `Review the site (${url}), analyze the provided screenshots, and suggest improvements to ensure it resonates with the provided market (${market}). Connect each screenshot with the respective part of the website, providing enhancements as needed. Focus on providing actionable improvements without mentioning the analysis process.
 
-Also, connect the provided screenshots - (sections) with the respective parts of the website where improvements are needed. For each part of the website that requires improvement, reference the corresponding section and suggest enhancements.
+**Example Response Structure:**
+- **Identified Section**:
+  - **Current State**: Describe the current state.
+  - **Improvements**: Suggest specific changes.
+  - **Examples**: Provide examples.
+  - **Severity**: Rate usability and appearance.
 
-Example Response Structure:
-Identified Section of the website:
-
-Current State: Describe the current state of the section.
-Improvements: Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
-Examples: Provide concrete examples with sources to help visualize the suggested improvements.
-Severity: Severity Ratings for Usability and appearance
-
-Continue this structure for each section provided.`,
+Add a horizontal line after each section for clear separation like this: **---**.`,
   };
 
   const messages: Message[] = [

@@ -27,7 +27,7 @@ export const ImageCarousel = ({
       <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-50 mb-6 text-center">
         Screenshot {currentImageIndex + 1}
       </h3>
-      <div className="relative w-full h-96 lg:h-[30rem]">
+      <div className="relative w-full h-96 md:h-[30rem] lg:h-[40rem] rounded-lg shadow-lg overflow-hidden">
         {imageLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
             <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-white/50"></div>
@@ -36,7 +36,7 @@ export const ImageCarousel = ({
         <Image
           src={images[currentImageIndex]}
           alt={`Screenshot ${currentImageIndex + 1}`}
-          className="rounded-lg shadow-lg h-full"
+          className="rounded-lg"
           loading="lazy"
           layout="fill"
           objectFit="cover"

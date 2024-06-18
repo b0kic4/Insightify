@@ -32,9 +32,7 @@ export default function Pricing() {
               <CardTitle className="text-blue-900 dark:text-blue-100">
                 Starter
               </CardTitle>
-              <CardDescription className="text-blue-700 dark:text-blue-300">
-                For small businesses and startups.
-              </CardDescription>
+              <CardDescription className="text-blue-700 dark:text-blue-300"></CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4 p-4">
               <div className="flex justify-between items-end">
@@ -76,9 +74,7 @@ export default function Pricing() {
               <CardTitle className="text-green-900 dark:text-green-100">
                 Advanced
               </CardTitle>
-              <CardDescription className="text-green-700 dark:text-green-300">
-                For growing businesses and marketing teams.
-              </CardDescription>
+              <CardDescription className="text-green-700 dark:text-green-300"></CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4 p-4">
               <div className="flex justify-between items-end">

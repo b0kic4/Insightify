@@ -9,19 +9,10 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-[100dvh]">
       <main className="flex-1">
-        {/* Landing */}
         <Landing />
-
-        {/* Features */}
         <Features />
-
-        {/* About */}
         <Works />
-
-        {/* Pricing */}
         <Pricing />
-
-        {/* FAQ */}
         <FAQ />
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">

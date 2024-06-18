@@ -72,7 +72,7 @@ export default function FAQ() {
                 className="w-full flex justify-between items-center text-left focus:outline-none"
                 onClick={() => toggleFAQ(index)}
               >
-                <span className="flex items-center text-lg font-medium text-gray-900 dark:text-gray-50">
+                <span className="flex items-center text-lg font-medium text-gray-900 dark:text-gray-50 break-words">
                   <FaQuestionCircle className="mr-2 text-blue-600 dark:text-blue-300" />
                   {item.question}
                 </span>
@@ -81,7 +81,7 @@ export default function FAQ() {
                 </span>
               </Button>
               {activeIndex === index && (
-                <div className="mt-4 text-gray-700 dark:text-gray-300">
+                <div className="mt-4 text-gray-700 dark:text-gray-300 break-words">
                   {item.answer}
                 </div>
               )}
