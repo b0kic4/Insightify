@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import CheckoutButton from "@/components/ui/CheckoutButton";
 
 export default function Pricing() {
   return (
@@ -42,12 +42,7 @@ export default function Pricing() {
                   </span>
                   <span className="text-gray-500 dark:text-gray-400">/mo</span>
                 </div>
-                <Button
-                  variant="secondary"
-                  className="bg-blue-500 hover:bg-blue-600 text-white"
-                >
-                  Get Started
-                </Button>
+                <CheckoutButton />
               </div>
               <ul className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
                 <li className="flex items-center gap-2">
@@ -84,12 +79,7 @@ export default function Pricing() {
                   </span>
                   <span className="text-gray-500 dark:text-gray-400">/mo</span>
                 </div>
-                <Button
-                  variant="secondary"
-                  className="bg-green-500 hover:bg-green-600 text-white"
-                >
-                  Get Started
-                </Button>
+                <CheckoutButton />
               </div>
               <ul className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
                 <li className="flex items-center gap-2">
