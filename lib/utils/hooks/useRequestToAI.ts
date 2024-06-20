@@ -1,6 +1,6 @@
 // lib/hooks/useRequestToAI.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { RequestToAI } from "@/lib/utils/actions/RequestToAI";
+import { RequestToAI } from "../actions/ai/RequestToAI";
 
 export const useRequestToAI = () => {
   const queryClient = useQueryClient();

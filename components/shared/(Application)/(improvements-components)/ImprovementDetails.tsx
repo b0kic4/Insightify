@@ -3,13 +3,13 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { AIResponse, FormValues } from "@/lib";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import { saveImprovementsWithUser } from "@/lib/utils/actions/SaveImprovementsToUser";
+import { saveImprovementsWithUser } from "@/lib/utils/actions/db/SaveImprovementsToUser";
 import { useToast } from "@/components/ui/use-toast";
 import { BiReset } from "react-icons/bi";
 import { FormDataDisplay } from "./utils/FormDataDisplay";
 import { ImageCarousel } from "./utils/ImageCarousel";
 import { AIResponseDisplay } from "./utils/AIResponseDisplay";
-import { RequestToAI } from "@/lib/utils/actions/RequestToAI";
+import { RequestToAI } from "@/lib/utils/actions/ai/RequestToAI";
 
 interface ResponseProps {
   formData: FormValues | null;

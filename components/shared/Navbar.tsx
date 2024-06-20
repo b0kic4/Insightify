@@ -13,7 +13,7 @@ export default function Navbar() {
   const navItems = [
     { href: "#features", label: "Features" },
     { href: "#works", label: "How it works" },
-    { href: "/pricing", label: "Pricing" },
+    { href: "#pricing", label: "Pricing" },
     { href: "#contact", label: "Contact" },
     { href: "#faq", label: "FAQ" },
   ];
@@ -29,33 +29,19 @@ export default function Navbar() {
       </Link>
 
       <nav className="ml-auto hidden sm:flex gap-4 sm:gap-6">
-        {pathname === "/pricing" ? (
-          <>
-            <Link
-              className="text-sm font-medium hover:underline underline-offset-4 text-gray-900 dark:text-gray-100"
-              href="/"
-            >
-              Home
-            </Link>
-            <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
-              Pricing
-            </span>
-          </>
-        ) : (
-          navItems.map((item) => (
-            <Link
-              key={item.href}
-              className={`text-sm font-medium hover:underline underline-offset-4 ${
-                pathname === item.href
-                  ? "text-blue-600 dark:text-blue-400"
-                  : "text-gray-900 dark:text-gray-100"
-              }`}
-              href={item.href}
-            >
-              {item.label}
-            </Link>
-          ))
-        )}
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            className={`text-sm font-medium hover:underline underline-offset-4 ${
+              pathname === item.href
+                ? "text-blue-600 dark:text-blue-400"
+                : "text-gray-900 dark:text-gray-100"
+            }`}
+            href={item.href}
+          >
+            {item.label}
+          </Link>
+        ))}
       </nav>
 
       <button
@@ -71,35 +57,20 @@ export default function Navbar() {
 
       {menuOpen && (
         <nav className="absolute top-14 left-0 w-full bg-gray-100 dark:bg-gray-900 flex flex-col items-center gap-4 py-4 sm:hidden z-10">
-          {pathname === "/pricing" ? (
-            <>
-              <Link
-                className="text-sm font-medium text-gray-900 dark:text-gray-100 hover:underline underline-offset-4"
-                href="/"
-                onClick={() => setMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
-                Pricing
-              </span>
-            </>
-          ) : (
-            navItems.map((item) => (
-              <Link
-                key={item.href}
-                className={`text-sm font-medium hover:underline underline-offset-4 ${
-                  pathname === item.href
-                    ? "text-blue-600 dark:text-blue-400"
-                    : "text-gray-900 dark:text-gray-100"
-                }`}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))
-          )}
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              className={`text-sm font-medium hover:underline underline-offset-4 ${
+                pathname === item.href
+                  ? "text-blue-600 dark:text-blue-400"
+                  : "text-gray-900 dark:text-gray-100"
+              }`}
+              href={item.href}
+              onClick={() => setMenuOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
         </nav>
       )}
 

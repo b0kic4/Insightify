@@ -1,8 +1,9 @@
 "use server";
 import OpenAI from "openai";
-import { TextContent, ImageContent, Content, Message } from "../..";
+import { TextContent, ImageContent, Content, Message } from "@/lib";
+
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { getRedisInstance } from "../hooks/(redisHooks)/RedisHooks";
+import { getRedisInstance } from "../../hooks/(redisHooks)/RedisHooks";
 
 // Define retry parameters
 const MAX_RETRIES = 3;
