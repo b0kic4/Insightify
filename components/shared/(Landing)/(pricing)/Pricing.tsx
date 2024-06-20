@@ -6,7 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import CheckoutButton from "@/components/ui/CheckoutButton";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Pricing() {
   return (
@@ -42,7 +43,6 @@ export default function Pricing() {
                   </span>
                   <span className="text-gray-500 dark:text-gray-400">/mo</span>
                 </div>
-                <CheckoutButton />
               </div>
               <ul className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
                 <li className="flex items-center gap-2">
@@ -79,7 +79,6 @@ export default function Pricing() {
                   </span>
                   <span className="text-gray-500 dark:text-gray-400">/mo</span>
                 </div>
-                <CheckoutButton />
               </div>
               <ul className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
                 <li className="flex items-center gap-2">
@@ -110,6 +109,9 @@ export default function Pricing() {
             </CardContent>
           </Card>
         </div>
+        <Button variant="default">
+          <Link href="/dashboard/billing">Go To Pricing Page</Link>
+        </Button>
       </div>
     </section>
   );
