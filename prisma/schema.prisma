@@ -15,7 +15,8 @@ model User {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   improvements Improvement[]
-  Plan         Plan[]
+  plans        Plan[]
+  cards        Card[]
 }
 
 model Improvement {
@@ -30,20 +31,35 @@ model Improvement {
 }
 
 model Plan {
-  id                 Int     @id @default(autoincrement())
+  id                 Int      @id @default(autoincrement())
   productId          Int
   productName        String?
-  variantId          Int     @unique
+  variantId          Int      @unique
   name               String
   description        String?
-  price              String
-  isUsageBased       Boolean @default(false)
+  price              String?
+  isUsageBased       Boolean  @default(false)
   interval           String?
   intervalCount      Int?
   trialInterval      String?
   trialIntervalCount Int?
   sort               Int?
-  status             String // Add this line
+  status             String
+  renewsAt           DateTime?
+  lastFour           String?
   userId             String
-  user               User    @relation(fields: [userId], references: [id])
+  user               User     @relation(fields: [userId], references: [id])
+  cardId             Int?
+  card               Card?    @relation(fields: [cardId], references: [id])
+}
+
+model Card {
+  id        Int      @id @default(autoincrement())
+  lastFour  String
+  brand     String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  plans     Plan[]
+  
+  @@unique([lastFour, brand, userId])
 }

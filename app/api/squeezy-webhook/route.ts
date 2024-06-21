@@ -25,10 +25,11 @@ export async function POST(req: any) {
     }
 
     console.log("event type: ", eventType);
+    console.log("body of the request: ", body);
 
     // Extract relevant data from the body
     const { data } = body;
-    const { attributes, relationships } = data;
+    const { attributes } = data;
     const {
       customer_id,
       product_id,
@@ -37,64 +38,106 @@ export async function POST(req: any) {
       status,
       user_email,
       subtotal_formatted,
+      renews_at,
+      card_last_four,
+      card_brand,
     } = attributes;
 
-    // Logic according to event type
+    // Find the user by email
+    const user = await prisma.user.findUnique({
+      where: {
+        email: user_email,
+      },
+    });
+
+    if (!user) {
+      console.log(`User with email ${user_email} not found.`);
+      return new Response(JSON.stringify({ message: "User not found" }), {
+        status: 404,
+      });
+    }
+
+    // Ensure the card details are synced with the user
+    const card = await prisma.card.upsert({
+      where: {
+        lastFour_brand_userId: {
+          lastFour: card_last_four,
+          brand: card_brand,
+          userId: user.id,
+        },
+      },
+      update: {},
+      create: {
+        lastFour: card_last_four,
+        brand: card_brand,
+        user: {
+          connect: {
+            id: user.id,
+          },
+        },
+      },
+    });
+
     if (
       eventType === "subscription_created" ||
       eventType === "subscription_updated"
     ) {
-      // Find the user by email
-      const user = await prisma.user.findUnique({
+      // Update the user's plan
+      await prisma.plan.upsert({
         where: {
-          email: user_email,
+          variantId: variant_id,
+        },
+        update: {
+          productId: product_id,
+          productName: product_name,
+          status: status,
+          renewsAt: new Date(renews_at),
+          lastFour: card_last_four,
+          cardId: card.id,
+        },
+        create: {
+          productId: product_id,
+          productName: product_name,
+          variantId: variant_id,
+          name: product_name,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+          status: status,
+          renewsAt: new Date(renews_at),
+          lastFour: card_last_four,
+          card: {
+            connect: {
+              id: card.id,
+            },
+          },
         },
       });
 
-      if (user) {
-        // Update the user's plan
-        console.log("subtotal_formatted: ", subtotal_formatted);
-        console.log(
-          "body data that I have for event type created || updated: ",
-          body,
-        );
+      console.log(`Subscription ${status} for user ${user_email}`);
+    } else if (eventType === "subscription_payment_success") {
+      // Update the plan price on payment success
+      await prisma.plan.updateMany({
+        where: {
+          variantId: variant_id,
+          userId: user.id,
+        },
+        data: {
+          price: subtotal_formatted,
+        },
+      });
 
-        console.log("relationships: ", JSON.stringify(relationships, null, 2));
-
-        await prisma.plan.upsert({
-          where: {
-            variantId: variant_id,
-          },
-          update: {
-            productId: product_id,
-            productName: product_name,
-            status: status,
-            price: subtotal_formatted,
-          },
-          create: {
-            productId: product_id,
-            productName: product_name,
-            variantId: variant_id,
-            name: product_name,
-            price: subtotal_formatted, // Ensure price is correctly handled
-            user: {
-              connect: {
-                id: user.id,
-              },
-            },
-            status: status,
-          },
-        });
-
-        console.log(`Subscription ${status} for user ${user_email}`);
-      } else {
-        console.log(`User with email ${user_email} not found.`);
-      }
+      console.log(
+        `Plan price updated to ${subtotal_formatted} for user ${user_email}`,
+      );
     } else if (eventType === "subscription_cancelled") {
       // Handle subscription cancellation
       await prisma.plan.deleteMany({
         where: {
           variantId: variant_id,
+          userId: user.id,
         },
       });
 
