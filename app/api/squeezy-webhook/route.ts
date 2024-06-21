@@ -1,4 +1,7 @@
 import crypto from "crypto";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export async function POST(req: any) {
   console.log("WEBHOOK CALLED");
@@ -24,13 +27,76 @@ export async function POST(req: any) {
     console.log("event type: ", eventType);
     console.log("body of the request: ", body);
 
-    // Logic according to event
-    if (eventType === "order_created") {
+    // Extract relevant data from the body
+    const { data } = body;
+    const { attributes } = data;
+    const {
+      customer_id,
+      product_id,
+      product_name,
+      variant_id,
+      status,
+      user_email,
+    } = attributes;
+
+    // Logic according to event type
+    if (
+      eventType === "subscription_created" ||
+      eventType === "subscription_updated"
+    ) {
+      // Find the user by email
+      const user = await prisma.user.findUnique({
+        where: {
+          email: user_email,
+        },
+      });
+
+      if (user) {
+        // Update the user's plan
+        await prisma.plan.upsert({
+          where: {
+            variantId: variant_id,
+          },
+          update: {
+            productId: product_id,
+            productName: product_name,
+            status: status,
+          },
+          create: {
+            productId: product_id,
+            productName: product_name,
+            variantId: variant_id,
+            name: product_name,
+            price: attributes.price_formatted,
+            user: {
+              connect: {
+                id: user.id,
+              },
+            },
+            status: status,
+          },
+        });
+
+        console.log(`Subscription ${status} for user ${user_email}`);
+      } else {
+        console.log(`User with email ${user_email} not found.`);
+      }
+    } else if (eventType === "subscription_cancelled") {
+      // Handle subscription cancellation
+      await prisma.plan.deleteMany({
+        where: {
+          variantId: variant_id,
+        },
+      });
+
+      console.log(`Subscription cancelled for user ${user_email}`);
     }
 
-    return Response.json({ message: "Webhook received" });
+    return new Response(JSON.stringify({ message: "Webhook received" }));
   } catch (err) {
     console.error(err);
-    return Response.json({ message: "Server error" }, { status: 500 });
+    return new Response(JSON.stringify({ message: "Server error" }), {
+      status: 500,
+    });
   }
 }

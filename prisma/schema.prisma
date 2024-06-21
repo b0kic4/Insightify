@@ -7,8 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 model User {
   id           String        @id @default(uuid())
   email        String        @unique
@@ -17,6 +15,7 @@ model User {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   improvements Improvement[]
+  Plan         Plan[]
 }
 
 model Improvement {
@@ -31,17 +30,20 @@ model Improvement {
 }
 
 model Plan {
-  id                  Int      @id @default(autoincrement())
-  productId           Int
-  productName         String?
-  variantId           Int      @unique
-  name                String
-  description         String?
-  price               String
-  isUsageBased        Boolean  @default(false)
-  interval            String?
-  intervalCount       Int?
-  trialInterval       String?
-  trialIntervalCount  Int?
-  sort                Int?
+  id                 Int     @id @default(autoincrement())
+  productId          Int
+  productName        String?
+  variantId          Int     @unique
+  name               String
+  description        String?
+  price              String
+  isUsageBased       Boolean @default(false)
+  interval           String?
+  intervalCount      Int?
+  trialInterval      String?
+  trialIntervalCount Int?
+  sort               Int?
+  status             String // Add this line
+  userId             String
+  user               User    @relation(fields: [userId], references: [id])
 }
