@@ -25,7 +25,6 @@ export async function POST(req: any) {
     }
 
     console.log("event type: ", eventType);
-    console.log("body of the request: ", body);
 
     // Extract relevant data from the body
     const { data } = body;
@@ -54,6 +53,12 @@ export async function POST(req: any) {
 
       if (user) {
         // Update the user's plan
+        console.log("subtotal_formatted: ", subtotal_formatted);
+        console.log(
+          "body data that I have for event type created || updated: ",
+          body,
+        );
+
         await prisma.plan.upsert({
           where: {
             variantId: variant_id,
@@ -62,7 +67,7 @@ export async function POST(req: any) {
             productId: product_id,
             productName: product_name,
             status: status,
-            price: subtotal_formatted, // Ensure price is correctly handled
+            price: subtotal_formatted,
           },
           create: {
             productId: product_id,
