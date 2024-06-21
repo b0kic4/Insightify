@@ -39,6 +39,7 @@ export async function POST(req: any) {
       user_email,
       subtotal_formatted,
       renews_at,
+      created_at,
       card_last_four,
       card_brand,
     } = attributes;
@@ -108,6 +109,7 @@ export async function POST(req: any) {
             },
           },
           status: status,
+          createdAt: new Date(created_at),
           renewsAt: new Date(renews_at),
           lastFour: card_last_four,
           card: {

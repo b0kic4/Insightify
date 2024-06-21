@@ -1,6 +1,12 @@
 import React from "react";
 import DashboardComponent from "@/components/shared/(Application)/(dashboard-components)/Dashboard";
 
+// NOTE: Get users plan
+// 1. Current plan
+// 2. Quick links
+// 3. Display nice card with the last 4 digits
+// 4. Current plan benefits
+
 export default function Dashboard() {
   return (
     <main className="flex-1">
