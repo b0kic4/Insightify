@@ -57,31 +57,33 @@ export async function POST(req: any) {
       });
     }
 
-    // Ensure the card details are synced with the user
-    const card = await prisma.card.upsert({
-      where: {
-        lastFour_brand_userId: {
-          lastFour: card_last_four,
-          brand: card_brand,
-          userId: user.id,
-        },
-      },
-      update: {},
-      create: {
-        lastFour: card_last_four,
-        brand: card_brand,
-        user: {
-          connect: {
-            id: user.id,
-          },
-        },
-      },
-    });
-
     if (
       eventType === "subscription_created" ||
       eventType === "subscription_updated"
     ) {
+      // Create or update card details
+      const card = await prisma.card.upsert({
+        where: {
+          lastFour_brand_userId: {
+            lastFour: card_last_four,
+            brand: card_brand,
+            userId: user.id,
+          },
+        },
+        update: {},
+        create: {
+          lastFour: card_last_four,
+          brand: card_brand,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+        },
+      });
+
+      console.log(`Card created or updated for user ${user_email}`);
+
       // Update the user's plan
       await prisma.plan.upsert({
         where: {
