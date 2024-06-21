@@ -21,12 +21,11 @@ export async function POST(req: any) {
       throw new Error("Invalid signature.");
     }
 
-    console.log(body);
+    console.log("event type: ", eventType);
+    console.log("body of the request: ", body);
 
     // Logic according to event
     if (eventType === "order_created") {
-      const userId = body.meta.custom_data.user_id;
-      const isSuccessful = body.data.attributes.status === "paid";
     }
 
     return Response.json({ message: "Webhook received" });
