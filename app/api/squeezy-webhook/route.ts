@@ -28,7 +28,7 @@ export async function POST(req: any) {
 
     // Extract relevant data from the body
     const { data } = body;
-    const { attributes } = data;
+    const { attributes, relationships } = data;
     const {
       customer_id,
       product_id,
@@ -58,6 +58,8 @@ export async function POST(req: any) {
           "body data that I have for event type created || updated: ",
           body,
         );
+
+        console.log("relationships: ", JSON.stringify(relationships, null, 2));
 
         await prisma.plan.upsert({
           where: {
