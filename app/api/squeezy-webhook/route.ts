@@ -37,6 +37,7 @@ export async function POST(req: any) {
       variant_id,
       status,
       user_email,
+      subtotal_formatted,
     } = attributes;
 
     // Logic according to event type
@@ -61,13 +62,14 @@ export async function POST(req: any) {
             productId: product_id,
             productName: product_name,
             status: status,
+            price: subtotal_formatted, // Ensure price is correctly handled
           },
           create: {
             productId: product_id,
             productName: product_name,
             variantId: variant_id,
             name: product_name,
-            price: attributes.price_formatted,
+            price: subtotal_formatted, // Ensure price is correctly handled
             user: {
               connect: {
                 id: user.id,
