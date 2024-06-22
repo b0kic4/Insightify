@@ -11,6 +11,7 @@ export async function lemonSqueezyFetch(
   options: RequestInit = {},
 ) {
   const response = await fetch(`${LEMON_SQUEEZY_ENDPOINT}${endpoint}`, {
+    cache: "no-cache",
     ...options,
     headers: {
       ...headers,

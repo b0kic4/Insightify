@@ -25,7 +25,7 @@ export default function ListPlans({ products }: any) {
             Choose the plan that works best for you.
           </p>
         </div>
-        <div className="grid sm:grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="flex justify-center content-center items-center">
           {products.map((product: any) => (
             <Card
               key={product.id}
@@ -58,40 +58,48 @@ export default function ListPlans({ products }: any) {
                       /mo
                     </span>
                   </div>
-                  <Button className="bg-blue-500 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-900">
-                    <Link href={product.attributes.buy_now_url}>Buy Now</Link>
-                  </Button>
                 </div>
-                <ul className="space-y-4 text-sm text-gray-500 dark:text-gray-400 mt-6">
-                  <li className="flex items-center gap-3">
-                    <CheckIcon className="w-5 h-5 text-blue-500" />
-                    Website audit and analysis
+                <ul className="space-y-2 text-gray-500 dark:text-gray-400">
+                  <li className="flex items-center gap-2">
+                    <CheckIcon className="w-5 h-5 text-green-500" />
+                    Website Audit and Analysis
                   </li>
-                  <li className="flex items-center gap-3">
-                    <CheckIcon className="w-5 h-5 text-blue-500" />
-                    Conversion rate optimization
+                  <li className="flex items-center gap-2">
+                    <CheckIcon className="w-5 h-5 text-green-500" />
+                    Comprehensive Artistic, Strategic, and Mechanical Evaluation
                   </li>
-                  <li className="flex items-center gap-3">
-                    <CheckIcon className="w-5 h-5 text-blue-500" />
-                    Personalized recommendations
+                  <li className="flex items-center gap-2">
+                    <CheckIcon className="w-5 h-5 text-green-500" />
+                    Content Analysis and Recommendations
                   </li>
-                  {product.attributes.slug === "advanced-subscription" && (
-                    <>
-                      <li className="flex items-center gap-3">
-                        <CheckIcon className="w-5 h-5 text-blue-500" />
-                        Advanced reporting and analytics
-                      </li>
-                      <li className="flex items-center gap-3">
-                        <CheckIcon className="w-5 h-5 text-blue-500" />
-                        A/B testing and experimentation
-                      </li>
-                      <li className="flex items-center gap-3">
-                        <CheckIcon className="w-5 h-5 text-blue-500" />
-                        Dedicated support
-                      </li>
-                    </>
-                  )}
+                  <li className="flex items-center gap-2">
+                    <CheckIcon className="w-5 h-5 text-green-500" />
+                    Text Analysis and Suggestions
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckIcon className="w-5 h-5 text-green-500" />
+                    Image Analysis and Suggestions
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckIcon className="w-5 h-5 text-green-500" />
+                    Website Layout Analysis and Recommendations
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckIcon className="w-5 h-5 text-green-500" />
+                    Personalized Recommendations
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckIcon className="w-5 h-5 text-green-500" />
+                    Reporting and Analytics
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckIcon className="w-5 h-5 text-green-500" />
+                    Usability and Appearance Severity Ratings
+                  </li>
                 </ul>
+                <Button className="bg-blue-500 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-900">
+                  <Link href={product.attributes.buy_now_url}>Buy Now</Link>
+                </Button>
               </CardContent>
             </Card>
           ))}

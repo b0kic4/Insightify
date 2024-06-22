@@ -6,7 +6,6 @@ export const dynamic = "force-dynamic";
 
 export default async function BillingPage() {
   const products = await getProducts();
-  console.log("products: ", products.data);
   return (
     <div className="flex flex-col h-screen">
       <Suspense
