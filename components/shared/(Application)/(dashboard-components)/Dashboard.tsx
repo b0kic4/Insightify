@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  CheckIcon,
   ClockIcon,
   HomeIcon,
   LightbulbIcon,
@@ -54,34 +53,7 @@ export default async function DashboardComponent() {
           </div>
         </CardContent>
       </Card>
-      <Card className="h-full">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <CheckIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-            <CardTitle>Plan Benefits</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-2">
-            <li className="flex items-center gap-2">
-              <CheckIcon className="h-5 w-5 text-green-500" />
-              <span>Unlimited storage</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckIcon className="h-5 w-5 text-green-500" />
-              <span>Unlimited bandwidth</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckIcon className="h-5 w-5 text-green-500" />
-              <span>24/7 support</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckIcon className="h-5 w-5 text-green-500" />
-              <span>Advanced analytics</span>
-            </li>
-          </ul>
-        </CardContent>
-      </Card>
+
       <Card className="h-full">
         <CardHeader>
           <div className="flex items-center gap-2">
