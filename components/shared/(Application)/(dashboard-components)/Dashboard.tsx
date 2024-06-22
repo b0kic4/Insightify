@@ -19,16 +19,14 @@ export default async function DashboardComponent() {
   const user = await getUser();
 
   const planResponse = await retrieveUsersPlan(user?.id as string);
-  console.log("planResponse in DashboardComponent: ", planResponse);
   let plan = null;
 
   if (planResponse.success && "data" in planResponse) {
     plan = planResponse.data.plan;
-    console.log("plan.data.plan: ", plan);
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+    <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">
       <CurrentPlan plan={plan} />
       <Card className="h-full">
         <CardHeader>

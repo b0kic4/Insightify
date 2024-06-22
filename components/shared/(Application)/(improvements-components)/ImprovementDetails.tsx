@@ -60,10 +60,6 @@ export default function ImprovementDetails({
             title: "Success",
             description: response.message,
           });
-
-          if (aiResponse.length <= 0) {
-            window.location.reload();
-          }
         }
       } catch (error) {
         toast({
@@ -164,6 +160,10 @@ export default function ImprovementDetails({
       makeAIRequest(formData, images, user.id);
     }
   }, [cachedAiResponse, formData, images, makeAIRequest, threadId, user]);
+
+  useEffect(() => {
+    console.log("aiResponse updated:", aiResponse);
+  }, [aiResponse]);
 
   const removeLocalStorageData = () => {
     localStorage.removeItem("improvementData");
