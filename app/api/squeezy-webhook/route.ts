@@ -42,6 +42,7 @@ export async function POST(req: any) {
       card_last_four,
       card_brand,
       subscription_id,
+      total_formatted,
     } = attributes;
 
     // Find the user by email
@@ -127,17 +128,21 @@ export async function POST(req: any) {
       let subtotal_formatted_string: string;
       subtotal_formatted_string = String(subtotal_formatted);
 
+      console.log("subtotal_formatted_string: ", subtotal_formatted_string);
+
       console.log("subscription_id: ", subscription_id);
 
-      await prisma.plan.updateMany({
+      const updatedPlan = await prisma.plan.updateMany({
         where: {
           subscriptionId: subscription_id,
           userId: user.id,
         },
         data: {
-          price: subtotal_formatted_string,
+          price: total_formatted || subtotal_formatted_string,
         },
       });
+
+      console.log("updatedPlan: ", updatedPlan);
 
       console.log(
         `Plan price updated to ${subtotal_formatted} for user ${user_email}`,
