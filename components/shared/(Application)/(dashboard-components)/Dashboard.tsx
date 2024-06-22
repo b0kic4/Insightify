@@ -10,28 +10,25 @@ import {
   SettingsIcon,
   TrendingUpIcon,
   List,
-  WalletIcon,
 } from "lucide-react";
-export default function DashboardComponent() {
+import retrieveUsersPlan from "@/lib/utils/actions/db/plans/RetrieveUsersPlan";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import CurrentPlan from "./CurrentPlan";
+
+const { getUser } = getKindeServerSession();
+
+export default async function DashboardComponent() {
+  const user = await getUser();
+  const planResponse = await retrieveUsersPlan(user?.id as string);
+  let plan = null;
+
+  if (planResponse.success && "data" in planResponse) {
+    plan = planResponse.data.plan;
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-      <Card className="h-full">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <WalletIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-            <CardTitle>Your Plan</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-2xl font-bold">Pro</h3>
-              <p className="text-gray-500 dark:text-gray-400">$49 per month</p>
-            </div>
-            <Button variant="outline">Upgrade</Button>
-          </div>
-        </CardContent>
-      </Card>
+      <CurrentPlan plan={plan} />
       <Card className="h-full">
         <CardHeader>
           <div className="flex items-center gap-2">

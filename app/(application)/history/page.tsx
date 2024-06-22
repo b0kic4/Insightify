@@ -3,8 +3,9 @@ import { getWebsitesFromUserCache } from "@/lib/utils/hooks/(redisHooks)/RedisHo
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { HydrationBoundary, QueryClient } from "@tanstack/react-query";
 
+const { getUser } = getKindeServerSession();
+
 export default async function History() {
-  const { getUser } = getKindeServerSession();
   const user = await getUser();
 
   const queryClient = new QueryClient();

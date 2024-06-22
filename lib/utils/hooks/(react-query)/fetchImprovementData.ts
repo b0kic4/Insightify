@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getDataFromThreadID } from "@/lib/utils/hooks/(redisHooks)/GetDataFromThreadId";
-import { retrieveUsersImprovements } from "../../actions/db/RetrieveUsersImprovementByThreadId";
+import { retrieveUsersImprovements } from "../../actions/db/improvements/RetrieveUsersImprovementByThreadId";
 
 const fetchImprovementDetails = async (threadId: string, userId: string) => {
   const responseMessage = await getDataFromThreadID(threadId);

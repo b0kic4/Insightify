@@ -7,7 +7,7 @@ import DashboardComponent from "@/components/shared/(Application)/(dashboard-com
 // 3. Display nice card with the last 4 digits
 // 4. Current plan benefits
 
-export default function Dashboard() {
+export default async function Dashboard() {
   return (
     <main className="flex-1">
       <section className="flex-1 bg-gray-100 dark:bg-gray-900 p-8">
