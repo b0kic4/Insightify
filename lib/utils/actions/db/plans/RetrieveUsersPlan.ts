@@ -33,6 +33,8 @@ export default async function retrieveUsersPlan(userId: string) {
       include: { card: true },
     });
 
+    console.log("plan in retrieveUsersPlan: ", plan);
+
     if (plan) {
       return {
         success: true,

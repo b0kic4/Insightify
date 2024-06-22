@@ -9,6 +9,7 @@ interface CurrentPlanProps {
 }
 
 export default function CurrentPlan({ plan }: CurrentPlanProps) {
+  console.log("current plan plan: ", plan);
   return (
     <Card className="h-full">
       <CardHeader>

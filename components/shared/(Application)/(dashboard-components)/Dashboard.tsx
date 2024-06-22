@@ -20,10 +20,12 @@ const { getUser } = getKindeServerSession();
 export default async function DashboardComponent() {
   const user = await getUser();
   const planResponse = await retrieveUsersPlan(user?.id as string);
+  console.log("planResponse in DashboardComponent: ", planResponse);
   let plan = null;
 
   if (planResponse.success && "data" in planResponse) {
     plan = planResponse.data.plan;
+    console.log("plan.data.plan: ", plan);
   }
 
   return (
