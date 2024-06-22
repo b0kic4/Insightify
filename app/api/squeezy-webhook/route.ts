@@ -124,22 +124,23 @@ export async function POST(req: any) {
       console.log(`Subscription ${status} for user ${user_email}`);
     } else if (eventType === "subscription_payment_success") {
       // Update the plan price on payment success
-      console.log("subtotal_formatted: ", subtotal_formatted as string);
-      let subtotal_formatted_string: string;
-      subtotal_formatted_string = String(subtotal_formatted);
+      const subtotalFormattedString = String(subtotal_formatted);
+      console.log("subtotal_formatted: ", subtotal_formatted);
+      console.log("subtotalFormattedString: ", subtotalFormattedString);
       console.log("total_formatted: ", total_formatted);
+
       await prisma.plan.updateMany({
         where: {
           variantId: variant_id,
           userId: user.id,
         },
         data: {
-          price: subtotal_formatted_string,
+          price: subtotalFormattedString,
         },
       });
 
       console.log(
-        `Plan price updated to ${subtotal_formatted} for user ${user_email}`,
+        `Plan price updated to ${subtotalFormattedString} for user ${user_email}`,
       );
     } else if (eventType === "subscription_cancelled") {
       // Handle subscription cancellation
