@@ -13,6 +13,8 @@ import retrieveUsersPlan from "@/lib/utils/actions/db/plans/RetrieveUsersPlan";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import CurrentPlan from "./CurrentPlan";
 
+export const dynamic = "force-dynamic";
+
 const { getUser } = getKindeServerSession();
 
 export default async function DashboardComponent() {

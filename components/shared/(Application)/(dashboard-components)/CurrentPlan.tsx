@@ -23,10 +23,10 @@ export default function CurrentPlan({ plan }: CurrentPlanProps) {
             <div>
               <h3 className="text-2xl font-bold">{plan.productName}</h3>
               <p className="text-gray-500 dark:text-gray-400">
-                ${plan.price ? plan.price : "N/A"} per month
+                {plan.price ? plan.price : "N/A"} per month
               </p>
             </div>
-            <div className="max-h-48 overflow-y-auto">
+            <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-transparent">
               <ul className="space-y-2 text-gray-500 dark:text-gray-400">
                 <li className="flex items-center gap-2">
                   <CheckIcon className="w-5 h-5 text-green-500" />
