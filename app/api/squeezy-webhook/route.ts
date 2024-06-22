@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 
 export async function POST(req: any) {
   console.log("WEBHOOK CALLED");
+  // NOTE: Go through the logs and configure the functionality
   try {
     // Catch the event type
     const clonedReq = req.clone();
@@ -132,13 +133,26 @@ export async function POST(req: any) {
 
       console.log("subscription_id: ", subscription_id);
 
-      const updatedPlan = await prisma.plan.updateMany({
+      const foundPlan = await prisma.plan.findFirst({
         where: {
           subscriptionId: subscription_id,
           userId: user.id,
         },
+      });
+
+      console.log("foundPlan: ", foundPlan);
+
+      if (!foundPlan) {
+        console.log("No found plan");
+        return;
+      }
+
+      const updatedPlan = await prisma.plan.update({
+        where: {
+          id: foundPlan.id,
+        },
         data: {
-          price: total_formatted || subtotal_formatted_string,
+          price: subtotal_formatted_string,
         },
       });
 
