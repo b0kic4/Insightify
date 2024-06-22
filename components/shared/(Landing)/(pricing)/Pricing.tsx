@@ -34,7 +34,7 @@ export default function Pricing() {
                 Subscription Plan
               </CardTitle>
               <CardDescription className="text-purple-700 dark:text-purple-300 mt-2">
-                Insightify's subscription plan
+                Insightify&apos;s subscription plan
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4 p-6">
