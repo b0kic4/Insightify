@@ -161,6 +161,8 @@ export async function POST(req: any) {
       console.log(
         `Plan price updated to ${subtotal_formatted} for user ${user_email}`,
       );
+
+      return updatedPlan;
     } else if (eventType === "subscription_cancelled") {
       // Handle subscription cancellation
       await prisma.plan.deleteMany({
