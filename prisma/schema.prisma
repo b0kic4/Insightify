@@ -35,6 +35,7 @@ model Plan {
   productId          Int
   productName        String?
   variantId          Int       @unique
+  subscriptionId     Int?
   name               String
   description        String?
   price              String?

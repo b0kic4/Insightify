@@ -27,13 +27,10 @@ export async function POST(req: any) {
     console.log("event type: ", eventType);
     console.log("body of the request: ", body);
 
-    let savedVariantId: number = 0;
-
     // Extract relevant data from the body
     const { data } = body;
     const { attributes } = data;
     const {
-      customer_id,
       product_id,
       product_name,
       variant_id,
@@ -44,7 +41,7 @@ export async function POST(req: any) {
       created_at,
       card_last_four,
       card_brand,
-      total_formatted,
+      subscription_id,
     } = attributes;
 
     // Find the user by email
@@ -87,8 +84,7 @@ export async function POST(req: any) {
       });
 
       console.log(`Card created or updated for user ${user_email}`);
-
-      savedVariantId = variant_id;
+      console.log("data.id: ", data.id);
 
       // Update the user's plan
       await prisma.plan.upsert({
@@ -107,6 +103,7 @@ export async function POST(req: any) {
           productId: product_id,
           productName: product_name,
           variantId: variant_id,
+          subscriptionId: Number(data.id),
           name: product_name,
           user: {
             connect: {
@@ -130,11 +127,11 @@ export async function POST(req: any) {
       let subtotal_formatted_string: string;
       subtotal_formatted_string = String(subtotal_formatted);
 
-      console.log("savedVariantId: ", savedVariantId);
+      console.log("subscription_id: ", subscription_id);
 
       await prisma.plan.updateMany({
         where: {
-          variantId: savedVariantId,
+          subscriptionId: subscription_id,
           userId: user.id,
         },
         data: {
