@@ -124,7 +124,9 @@ export async function POST(req: any) {
       console.log(`Subscription ${status} for user ${user_email}`);
     } else if (eventType === "subscription_payment_success") {
       // Update the plan price on payment success
-      console.log("subtotal_formatted: ", subtotal_formatted);
+      console.log("subtotal_formatted: ", subtotal_formatted as string);
+      let subtotal_formatted_string: string;
+      subtotal_formatted_string = String(subtotal_formatted);
       console.log("total_formatted: ", total_formatted);
       await prisma.plan.updateMany({
         where: {
@@ -132,7 +134,7 @@ export async function POST(req: any) {
           userId: user.id,
         },
         data: {
-          price: subtotal_formatted,
+          price: subtotal_formatted_string,
         },
       });
 
