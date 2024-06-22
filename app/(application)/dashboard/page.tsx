@@ -1,6 +1,8 @@
 import React from "react";
 import DashboardComponent from "@/components/shared/(Application)/(dashboard-components)/Dashboard";
 
+export const dynamic = "force-dynamic";
+
 // NOTE: Get users plan
 // 1. Current plan
 // 2. Quick links
