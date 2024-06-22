@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { PrismaClient } from "@prisma/client";
+import { Plan, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -43,6 +43,7 @@ export async function POST(req: any) {
       card_last_four,
       card_brand,
       total_formatted,
+      subscription_id,
     } = attributes;
 
     // Find the user by email
@@ -87,7 +88,7 @@ export async function POST(req: any) {
       console.log(`Card created or updated for user ${user_email}`);
 
       // Update the user's plan
-      await prisma.plan.upsert({
+      const createdPlan = await prisma.plan.upsert({
         where: {
           variantId: variant_id,
         },
@@ -121,9 +122,42 @@ export async function POST(req: any) {
         },
       });
 
+      // Store the subscription_id and variant_id mapping
+      await prisma.subscription.upsert({
+        where: {
+          subscriptionId: subscription_id,
+        },
+        update: {
+          variantId: variant_id,
+        },
+        create: {
+          subscriptionId: subscription_id,
+          variantId: variant_id,
+        },
+      });
+
       console.log(`Subscription ${status} for user ${user_email}`);
     } else if (eventType === "subscription_payment_success") {
-      // Update the plan price on payment success
+      // Retrieve the variant_id using the subscription_id
+      const subscription = await prisma.subscription.findUnique({
+        where: {
+          subscriptionId: subscription_id,
+        },
+      });
+
+      if (!subscription) {
+        console.log(
+          `Subscription not found for subscription ID ${subscription_id}`,
+        );
+        return new Response(
+          JSON.stringify({ message: "Subscription not found" }),
+          {
+            status: 404,
+          },
+        );
+      }
+
+      const variant_id = subscription.variantId;
       const subtotalFormattedString = String(subtotal_formatted);
       console.log("subtotalFormattedString: ", subtotalFormattedString);
 
