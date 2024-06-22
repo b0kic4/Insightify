@@ -1,3 +1,4 @@
+"use server";
 import { Plan, PrismaClient } from "@prisma/client";
 
 interface ResponseSuccess {
