@@ -64,9 +64,3 @@ model Card {
 
   @@unique([lastFour, brand, userId])
 }
-
-model Subscription {
-  id             Int    @id @default(autoincrement())
-  subscriptionId Int    @unique
-  variantId      Int
-}

@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { Plan, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -27,6 +27,8 @@ export async function POST(req: any) {
     console.log("event type: ", eventType);
     console.log("body of the request: ", body);
 
+    let savedVariantId: number = 0;
+
     // Extract relevant data from the body
     const { data } = body;
     const { attributes } = data;
@@ -43,7 +45,6 @@ export async function POST(req: any) {
       card_last_four,
       card_brand,
       total_formatted,
-      subscription_id,
     } = attributes;
 
     // Find the user by email
@@ -87,8 +88,10 @@ export async function POST(req: any) {
 
       console.log(`Card created or updated for user ${user_email}`);
 
+      savedVariantId = variant_id;
+
       // Update the user's plan
-      const createdPlan = await prisma.plan.upsert({
+      await prisma.plan.upsert({
         where: {
           variantId: variant_id,
         },
@@ -122,64 +125,26 @@ export async function POST(req: any) {
         },
       });
 
-      // Store the subscription_id and variant_id mapping
-      await prisma.subscription.upsert({
-        where: {
-          subscriptionId: subscription_id,
-        },
-        update: {
-          variantId: variant_id,
-        },
-        create: {
-          subscriptionId: subscription_id,
-          variantId: variant_id,
-        },
-      });
-
       console.log(`Subscription ${status} for user ${user_email}`);
     } else if (eventType === "subscription_payment_success") {
-      // Retrieve the variant_id using the subscription_id
-      const subscription = await prisma.subscription.findUnique({
+      let subtotal_formatted_string: string;
+      subtotal_formatted_string = String(subtotal_formatted);
+
+      console.log("savedVariantId: ", savedVariantId);
+
+      await prisma.plan.updateMany({
         where: {
-          subscriptionId: subscription_id,
+          variantId: savedVariantId,
+          userId: user.id,
+        },
+        data: {
+          price: subtotal_formatted_string,
         },
       });
 
-      if (!subscription) {
-        console.log(
-          `Subscription not found for subscription ID ${subscription_id}`,
-        );
-        return new Response(
-          JSON.stringify({ message: "Subscription not found" }),
-          {
-            status: 404,
-          },
-        );
-      }
-
-      const variant_id = subscription.variantId;
-      const subtotalFormattedString = String(subtotal_formatted);
-      console.log("subtotalFormattedString: ", subtotalFormattedString);
-
-      try {
-        const updateResult = await prisma.plan.updateMany({
-          where: {
-            variantId: variant_id,
-            userId: user.id,
-          },
-          data: {
-            price: subtotalFormattedString,
-          },
-        });
-
-        console.log(
-          `Plan price updated to ${subtotalFormattedString} for user ${user_email}`,
-        );
-
-        console.log("Update result: ", updateResult);
-      } catch (error) {
-        console.error("Error updating plan price: ", error);
-      }
+      console.log(
+        `Plan price updated to ${subtotal_formatted} for user ${user_email}`,
+      );
     } else if (eventType === "subscription_cancelled") {
       // Handle subscription cancellation
       await prisma.plan.deleteMany({
