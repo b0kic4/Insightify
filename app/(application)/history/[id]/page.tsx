@@ -40,7 +40,7 @@ export default function Improvement({ params }: { params: { id: string } }) {
             Screenshots might not be sorted properly so pay attention :)
           </p>
         </section>
-        <div className="flex justify-center items-center animate-spin rounded-full h-7 w-7 border-b-2 border-white/50 mx-auto my-2"></div>
+        <div className="animate-spin rounded-full h-7 w-7 mx-auto my-2 border-b-2 border-gray-700 dark:border-white/50"></div>
       </main>
     );
   }

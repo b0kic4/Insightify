@@ -84,7 +84,7 @@ export default function Sidebar() {
       </nav>
       <div className="flex flex-col items-center p-4 border-t border-gray-800 dark:border-gray-800 w-full transition-all">
         {isLoading && !(pathname === "/") && (
-          <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-white/50 mx-auto my-2"></div>
+          <div className="animate-spin rounded-full h-7 w-7 mx-auto my-2 border-b-2 border-gray-700 dark:border-white/50"></div>
         )}
         {user?.picture && (
           <Image
