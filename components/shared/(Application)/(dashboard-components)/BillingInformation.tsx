@@ -18,13 +18,18 @@ const formatCardNumber = (lastFour: string) => {
 };
 
 export default function BillingInfo({ plan, card }: Props) {
-  const formattedDatePurchasedAt = plan.createdAt
-    ? new Date(plan.createdAt).toLocaleDateString()
-    : "N/A";
+  let formattedDateRenewsAt = "N/A";
+  let formattedDatePurchasedAt = "N/A";
 
-  const formattedDateRenewsAt = plan.renewsAt
-    ? new Date(plan.renewsAt).toLocaleDateString()
-    : "N/A";
+  if (plan && plan.createdAt && plan.renewsAt) {
+    formattedDatePurchasedAt = plan.createdAt
+      ? new Date(plan.createdAt).toLocaleDateString()
+      : "N/A";
+
+    formattedDateRenewsAt = plan.renewsAt
+      ? new Date(plan.renewsAt).toLocaleDateString()
+      : "N/A";
+  }
 
   return (
     <Card className="h-[450px] p-4 bg-white shadow-md rounded-lg dark:bg-gray-800 flex flex-col justify-between">
@@ -57,10 +62,10 @@ export default function BillingInfo({ plan, card }: Props) {
           </div>
           <div className="text-right">
             <div className="font-bold text-gray-900 dark:text-gray-100">
-              {card.brand}
+              {card?.brand ? card.brand : ""}
             </div>
             <div className="font-bold text-gray-900 dark:text-gray-100">
-              {formatCardNumber(card.lastFour)}
+              {formatCardNumber(card?.lastFour ? card.lastFour : "")}
             </div>
           </div>
         </div>
@@ -72,7 +77,7 @@ export default function BillingInfo({ plan, card }: Props) {
             </span>
           </div>
           <span className="font-bold text-gray-900 dark:text-gray-100">
-            {plan.price}
+            {plan?.price ? plan.price : ""}
           </span>
         </div>
         <div className="flex items-center justify-between bg-red-100 p-3 rounded-lg shadow-inner dark:bg-red-900 hover:shadow-lg transition-shadow">

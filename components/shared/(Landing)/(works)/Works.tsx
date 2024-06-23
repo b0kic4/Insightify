@@ -33,7 +33,7 @@ export default function Works() {
               </h3>
               <p className="text-gray-700 dark:text-gray-300">
                 Our AI-powered application thoroughly analyzes your website from
-                provided URL, looking at design, layout, and content.
+                provided URL, looking at design, layout and content.
               </p>
             </div>
           </div>
