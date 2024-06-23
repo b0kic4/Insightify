@@ -18,7 +18,7 @@ export default async function Dashboard() {
           Welcome to your Dashboard. Here you can preview your information.
         </p>
       </section>
-      <p className="flex justify-start text-2xl font-semibold p-4">
+      <p className="flex justify-center text-2xl font-semibold py-4">
         Welcome back{" "}
         <span className="relative text-purple-600 dark:text-purple-400 font-shadows mx-1">
           {user?.given_name}
