@@ -35,6 +35,7 @@ export async function POST(req: any): Promise<void | Response> {
       status,
       user_email,
       subtotal_formatted,
+      total_formatted,
       renews_at,
       created_at,
       card_last_four,
@@ -116,11 +117,11 @@ export async function POST(req: any): Promise<void | Response> {
 
       await prisma.plan.update({
         where: { id: foundPlan.id },
-        data: { price: String(subtotal_formatted) },
+        data: { price: String(total_formatted), isActive: true },
       });
 
       console.log(
-        `Plan price updated to ${subtotal_formatted} for user ${user_email}`,
+        `Plan price updated to ${total_formatted} for user ${user_email}`,
       );
     } else if (eventType === "subscription_cancelled") {
       await prisma.plan.deleteMany({
