@@ -1,10 +1,12 @@
 "use server";
-import { Plan, PrismaClient } from "@prisma/client";
+import { Card, Plan, PrismaClient } from "@prisma/client";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 interface ResponseSuccess {
   success: true;
   data: {
     plan: Plan;
+    card: Card;
   };
 }
 
@@ -19,15 +21,20 @@ interface ResponseFailed {
 }
 
 const prisma = new PrismaClient();
+const { getUser } = getKindeServerSession();
 
-export default async function retrieveUsersPlan(userId: string) {
+export default async function retrieveUsersPlan() {
+  const user = await getUser();
   try {
-    if (!userId) {
+    if (!user) {
+      console.log("user not auth");
       return {
         success: false,
         error: "User not authenticated",
       } as ResponseFailed;
     }
+
+    const userId = user.id;
 
     const plan = await prisma.plan.findFirst({
       where: { userId: userId },
@@ -38,10 +45,8 @@ export default async function retrieveUsersPlan(userId: string) {
       return {
         success: true,
         data: {
-          plan: {
-            ...plan,
-            cardBrand: plan.card?.brand || null,
-          },
+          plan: plan,
+          card: plan.card,
         },
       } as ResponseSuccess;
     } else {

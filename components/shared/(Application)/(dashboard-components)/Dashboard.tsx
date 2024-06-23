@@ -10,18 +10,15 @@ import {
   List,
 } from "lucide-react";
 import retrieveUsersPlan from "@/lib/utils/actions/db/plans/RetrieveUsersPlan";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import CurrentPlan from "./CurrentPlan";
 
-const { getUser } = getKindeServerSession();
-
 export default async function DashboardComponent() {
-  const user = await getUser();
-
-  const planResponse = await retrieveUsersPlan(user?.id as string);
+  const planResponse = await retrieveUsersPlan();
+  console.log("planResponse: ", planResponse);
   let plan = null;
 
   if (planResponse.success && "data" in planResponse) {
+    console.log("planRepsonse data: ", planResponse.data.plan);
     plan = planResponse.data.plan;
   }
 
