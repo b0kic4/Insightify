@@ -9,26 +9,29 @@ interface CurrentPlanProps {
 }
 
 export default function CurrentPlan({ plan }: CurrentPlanProps) {
-  console.log("current plan plan: ", plan);
   return (
-    <Card className="h-full">
-      <CardHeader>
+    <Card className="h-[450px] p-4 bg-white shadow-md rounded-lg dark:bg-gray-800 flex flex-col justify-between">
+      <CardHeader className="pb-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-2">
-          <WalletIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-          <CardTitle>Your Plan</CardTitle>
+          <WalletIcon className="h-6 w-6 text-blue-500" />
+          <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
+            Your Plan
+          </CardTitle>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-grow p-2">
         {plan ? (
           <div className="flex flex-col space-y-4">
-            <div>
-              <h3 className="text-2xl font-bold">{plan.productName}</h3>
-              <p className="text-gray-500 dark:text-gray-400">
+            <div className="bg-green-100 p-4 rounded-lg shadow-inner dark:bg-green-900">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                {plan.productName}
+              </h3>
+              <p className="text-gray-800 font-semibold dark:text-gray-300">
                 {plan.price ? plan.price : "N/A"} per month
               </p>
             </div>
-            <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-transparent">
-              <ul className="space-y-2 text-gray-500 dark:text-gray-400">
+            <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-transparent p-4 rounded-lg shadow-inner bg-white dark:bg-gray-700">
+              <ul className="space-y-2 text-gray-800 dark:text-gray-300">
                 <li className="flex items-center gap-2">
                   <CheckIcon className="w-5 h-5 text-green-500" />
                   Website Audit and Analysis
@@ -69,14 +72,19 @@ export default function CurrentPlan({ plan }: CurrentPlanProps) {
             </div>
           </div>
         ) : (
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between bg-red-100 p-4 rounded-lg shadow-inner dark:bg-red-900">
             <div>
-              <h3 className="text-2xl font-bold">No Plan Found</h3>
-              <p className="text-gray-500 dark:text-gray-400">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                No Plan Found
+              </h3>
+              <p className="text-gray-800 dark:text-gray-300">
                 Please manage your subscription
               </p>
             </div>
-            <Button variant="outline">
+            <Button
+              variant="outline"
+              className="text-gray-800 dark:text-gray-300"
+            >
               <Link href="/dashboard/billing">Explore</Link>
             </Button>
           </div>
