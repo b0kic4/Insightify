@@ -77,7 +77,7 @@ export default function CurrentPlan({ plan }: CurrentPlanProps) {
               <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 No Plan Found
               </h3>
-              <div className="mt-2 p-2 bg-red-200 rounded-lg dark:bg-red-800">
+              <div className="mt-2 p-2 bg-red-200 rounded-lg dark:bg-red-950">
                 <p className="text-gray-800 dark:text-gray-300">
                   <strong>Note:</strong> After a successful purchase, it may
                   take a few seconds to a minute for the application to update.

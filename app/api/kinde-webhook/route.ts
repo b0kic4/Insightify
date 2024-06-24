@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import jwksClient from "jwks-rsa";
 import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/prisma/client";
 
 // The Kinde issuer URL should already be in your `.env` file
 // from when you initially set up Kinde. This will fetch your
@@ -9,8 +9,6 @@ import { PrismaClient } from "@prisma/client";
 const client = jwksClient({
   jwksUri: `${process.env.KINDE_ISSUER_URL}/.well-known/jwks.json`,
 });
-
-const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
@@ -31,23 +29,41 @@ export async function POST(req: Request) {
     // Handle various events
     switch (event?.type) {
       case "user.updated":
-        // handle user updated event
-        // e.g update database with event.data
+        // Handle user updated event
         console.log(event.data);
-        break;
-      case "user.created":
-        console.log(event.data);
-        await prisma?.user.create({
+        await prisma.user.update({
+          where: { id: event.data.user.id },
           data: {
-            id: event.data.user.id,
             email: event.data.user.email,
             firstName: event.data.user.first_name,
             lastName: event.data.user.last_name,
           },
         });
         break;
+
+      case "user.created":
+        console.log(event.data);
+        // Check if the user already exists
+        const existingUser = await prisma.user.findUnique({
+          where: { id: event.data.user.id },
+        });
+
+        if (!existingUser) {
+          await prisma.user.create({
+            data: {
+              id: event.data.user.id,
+              email: event.data.user.email,
+              firstName: event.data.user.first_name,
+              lastName: event.data.user.last_name,
+            },
+          });
+        } else {
+          console.log(`User with ID ${event.data.user.id} already exists`);
+        }
+        break;
+
       default:
-        // other events that we don't handle
+        // Handle other events that we don't handle
         break;
     }
   } catch (err) {
