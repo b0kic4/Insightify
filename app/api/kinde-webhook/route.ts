@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import jwksClient from "jwks-rsa";
 import jwt from "jsonwebtoken";
-import prisma from "@/prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 // The Kinde issuer URL should already be in your `.env` file
 // from when you initially set up Kinde. This will fetch your
@@ -9,6 +9,8 @@ import prisma from "@/prisma/client";
 const client = jwksClient({
   jwksUri: `${process.env.KINDE_ISSUER_URL}/.well-known/jwks.json`,
 });
+
+const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
