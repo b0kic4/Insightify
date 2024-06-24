@@ -73,12 +73,18 @@ export default function CurrentPlan({ plan }: CurrentPlanProps) {
           </div>
         ) : (
           <div className="flex items-center justify-between bg-red-100 p-4 rounded-lg shadow-inner dark:bg-red-900">
-            <div>
+            <div className="p-1">
               <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 No Plan Found
               </h3>
-              <p className="text-gray-800 dark:text-gray-300">
-                Please manage your subscription
+              <div className="mt-2 p-2 bg-red-200 rounded-lg dark:bg-red-800">
+                <p className="text-gray-800 dark:text-gray-300">
+                  <strong>Note:</strong> After a successful purchase, it may
+                  take a few seconds to a minute for the application to update.
+                </p>
+              </div>
+              <p className="mt-2 text-gray-800 dark:text-gray-300">
+                Please manage your subscription.
               </p>
             </div>
             <Button

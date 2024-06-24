@@ -11,6 +11,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useWebSocket } from "@/lib/utils/hooks/websockets-hooks/useWebSockets";
+import isUsersPlanActive from "@/lib/utils/hooks/db/IsActivePlanHook";
+import {
+  ResponseSuccess,
+  ResponseFailed,
+} from "@/lib/utils/hooks/db/IsActivePlanHook";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Form() {
   const {
@@ -38,6 +44,8 @@ export default function Form() {
     setAnalysisCompleted,
   } = useWebSocket();
 
+  const { toast } = useToast();
+
   React.useEffect(() => {
     // Load data from localStorage
     const savedData = localStorage.getItem("improvementData");
@@ -57,6 +65,17 @@ export default function Form() {
     formDataRef.current = data;
 
     if (user?.id && formDataRef.current?.websiteUrl) {
+      const response = await isUsersPlanActive();
+
+      if (!isResponseSuccess(response) || !response.isActive) {
+        toast({
+          title: "Error",
+          description: "No Active Plan Found",
+        });
+        console.error("User does not have an active plan:", "Inactive plan");
+        return;
+      }
+
       const cachedData = await getSingleWebsiteFromUserCache(
         user.id,
         formDataRef.current.websiteUrl,
@@ -222,4 +241,10 @@ export default function Form() {
       </div>
     </section>
   );
+}
+
+function isResponseSuccess(
+  response: ResponseSuccess | ResponseFailed,
+): response is ResponseSuccess {
+  return (response as ResponseSuccess).isActive !== undefined;
 }
