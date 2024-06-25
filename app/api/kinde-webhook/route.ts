@@ -32,7 +32,7 @@ export async function POST(req: Request) {
         // Handle user updated event
         console.log(event.data);
         await prisma.user.update({
-          where: { email: event.data.user.email },
+          where: { id: event.data.user.id },
           data: {
             email: event.data.user.email,
             firstName: event.data.user.first_name,
@@ -43,12 +43,27 @@ export async function POST(req: Request) {
 
       case "user.created":
         console.log(event.data);
-        // Check if the user already exists
-        const existingUser = await prisma.user.findUnique({
+
+        // Check if a user with the given email exists
+        const existingUserByEmail = await prisma.user.findUnique({
           where: { email: event.data.user.email },
         });
 
-        if (!existingUser) {
+        if (existingUserByEmail) {
+          // Update the existing user with the new ID if the email matches
+          await prisma.user.update({
+            where: { email: event.data.user.email },
+            data: {
+              id: event.data.user.id,
+              firstName: event.data.user.first_name,
+              lastName: event.data.user.last_name,
+            },
+          });
+          console.log(
+            `User with email ${event.data.user.email} already exists and has been updated`,
+          );
+        } else {
+          // Create new user if it doesn't exist
           await prisma.user.create({
             data: {
               id: event.data.user.id,
@@ -57,8 +72,7 @@ export async function POST(req: Request) {
               lastName: event.data.user.last_name,
             },
           });
-        } else {
-          console.log(`User with ID ${event.data.user.id} already exists`);
+          console.log(`User with ID ${event.data.user.id} has been created`);
         }
         break;
 
