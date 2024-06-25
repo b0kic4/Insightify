@@ -32,7 +32,7 @@ export async function POST(req: Request) {
         // Handle user updated event
         console.log(event.data);
         await prisma.user.update({
-          where: { id: event.data.user.id },
+          where: { email: event.data.user.email },
           data: {
             email: event.data.user.email,
             firstName: event.data.user.first_name,

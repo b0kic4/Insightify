@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import Image from "next/image";
-import { FaPlayCircle } from "react-icons/fa";
 
 export default async function Landing() {
   const { isAuthenticated } = getKindeServerSession();
@@ -11,17 +9,16 @@ export default async function Landing() {
     <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gray-50 dark:bg-gray-900">
       <div className="container px-4 md:px-6">
         <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-          <div className="relative mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last lg:aspect-square">
-            <Image
-              alt="Hero"
-              src="/placeholder.svg"
-              layout="fill"
-              objectFit="cover"
-              className="rounded-xl"
-            />
-            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-              <FaPlayCircle className="text-white text-6xl" />
-            </div>
+          <div className="relative mx-auto w-full pb-[calc(93.23962516733602%+41px)] h-0 overflow-hidden rounded-xl lg:order-last">
+            <iframe
+              src="https://demo.arcade.software/AmeyJ8PkyzbMZFlfH42U?embed&show_copy_link=true"
+              title="Insightify"
+              frameBorder="0"
+              loading="lazy"
+              allowFullScreen
+              allow="clipboard-write"
+              className="absolute top-0 left-0 w-full h-full"
+            ></iframe>
           </div>
           <div className="flex flex-col justify-center space-y-4">
             <div className="space-y-2">
