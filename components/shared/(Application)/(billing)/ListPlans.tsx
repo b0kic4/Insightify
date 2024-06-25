@@ -97,7 +97,10 @@ export default function ListPlans({ products }: any) {
                     Usability and Appearance Severity Ratings
                   </li>
                 </ul>
-                <Button className="bg-blue-500 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-900">
+                <Button
+                  variant="link"
+                  className="bg-blue-500 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-900"
+                >
                   <Link href={product.attributes.buy_now_url}>Buy Now</Link>
                 </Button>
               </CardContent>

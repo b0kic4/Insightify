@@ -3,15 +3,8 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// NOTE:
-// Need to work on this webhook
-// implement functions for checking the plan state
-// subscription_cancelled should just remove
-// renewsAt date
-
 export async function POST(req: any): Promise<void | Response> {
   console.log("WEBHOOK CALLED");
-
   try {
     const clonedReq = req.clone();
     const eventType = req.headers.get("X-Event-Name");
@@ -41,7 +34,7 @@ export async function POST(req: any): Promise<void | Response> {
       variant_id,
       status,
       user_email,
-      total_formatted,
+      subtotal_formatted,
       renews_at,
       created_at,
       card_last_four,
@@ -49,92 +42,93 @@ export async function POST(req: any): Promise<void | Response> {
       subscription_id,
     } = attributes;
 
-    // Execute database operations within a transaction
-    await prisma.$transaction(async (prisma) => {
-      const user = await prisma.user.findUnique({
-        where: { email: user_email },
+    const user = await prisma.user.findUnique({
+      where: { email: user_email },
+    });
+
+    if (!user) {
+      console.log(`User with email ${user_email} not found.`);
+      return new Response(JSON.stringify({ message: "User not found" }), {
+        status: 404,
       });
+    }
 
-      if (!user) {
-        console.log(`User with email ${user_email} not found.`);
-        throw new Error("User not found");
-      }
-
-      if (
-        eventType === "subscription_created" ||
-        eventType === "subscription_updated"
-      ) {
-        const card = await prisma.card.upsert({
-          where: {
-            lastFour_brand_userId: {
-              lastFour: card_last_four,
-              brand: card_brand,
-              userId: user.id,
-            },
-          },
-          update: {},
-          create: {
+    if (
+      eventType === "subscription_created" ||
+      eventType === "subscription_updated"
+    ) {
+      const card = await prisma.card.upsert({
+        where: {
+          lastFour_brand_userId: {
             lastFour: card_last_four,
             brand: card_brand,
-            user: { connect: { id: user.id } },
+            userId: user.id,
           },
+        },
+        update: {},
+        create: {
+          lastFour: card_last_four,
+          brand: card_brand,
+          user: { connect: { id: user.id } },
+        },
+      });
+
+      console.log(`Card created or updated for user ${user_email}`);
+      console.log("data.id: ", data.id);
+
+      await prisma.plan.upsert({
+        where: { variantId: variant_id },
+        update: {
+          productId: product_id,
+          productName: product_name,
+          status: status,
+          renewsAt: new Date(renews_at),
+          lastFour: card_last_four,
+          cardId: card.id,
+        },
+        create: {
+          productId: product_id,
+          productName: product_name,
+          variantId: variant_id,
+          subscriptionId: Number(data.id),
+          name: product_name,
+          user: { connect: { id: user.id } },
+          status: status,
+          createdAt: new Date(created_at),
+          renewsAt: new Date(renews_at),
+          lastFour: card_last_four,
+          card: { connect: { id: card.id } },
+        },
+      });
+
+      console.log(`Subscription ${status} for user ${user_email}`);
+    } else if (eventType === "subscription_payment_success") {
+      const foundPlan = await prisma.plan.findFirst({
+        where: { subscriptionId: subscription_id, userId: user.id },
+      });
+
+      if (!foundPlan) {
+        console.log("No found plan");
+        return new Response(JSON.stringify({ message: "Plan not found" }), {
+          status: 404,
         });
-
-        console.log(`Card created or updated for user ${user_email}`);
-        console.log("data.id: ", data.id);
-
-        await prisma.plan.upsert({
-          where: { variantId: variant_id },
-          update: {
-            productId: product_id,
-            productName: product_name,
-            status: status,
-            renewsAt: new Date(renews_at),
-            lastFour: card_last_four,
-            cardId: card.id,
-          },
-          create: {
-            productId: product_id,
-            productName: product_name,
-            variantId: variant_id,
-            subscriptionId: Number(data.id),
-            name: product_name,
-            user: { connect: { id: user.id } },
-            status: status,
-            createdAt: new Date(created_at),
-            renewsAt: new Date(renews_at),
-            lastFour: card_last_four,
-            card: { connect: { id: card.id } },
-          },
-        });
-
-        console.log(`Subscription ${status} for user ${user_email}`);
-      } else if (eventType === "subscription_payment_success") {
-        const foundPlan = await prisma.plan.findFirst({
-          where: { subscriptionId: subscription_id, userId: user.id },
-        });
-
-        if (!foundPlan) {
-          console.log("No found plan");
-          throw new Error("Plan not found");
-        }
-
-        await prisma.plan.update({
-          where: { id: foundPlan.id },
-          data: { price: String(total_formatted), isActive: true },
-        });
-
-        console.log(
-          `Plan price updated to ${total_formatted} for user ${user_email}`,
-        );
-      } else if (eventType === "subscription_cancelled") {
-        await prisma.plan.deleteMany({
-          where: { variantId: variant_id, userId: user.id },
-        });
-
-        console.log(`Subscription cancelled for user ${user_email}`);
       }
-    });
+
+      await prisma.plan.update({
+        where: { id: foundPlan.id },
+        data: { price: String(subtotal_formatted) },
+      });
+
+      console.log(
+        `Plan price updated to ${subtotal_formatted} for user ${user_email}`,
+      );
+    } else if (eventType === "subscription_cancelled") {
+      await prisma.plan.deleteMany({
+        where: { variantId: variant_id, userId: user.id },
+      });
+
+      console.log(`Subscription cancelled for user ${user_email}`);
+    }
 
     return new Response(JSON.stringify({ message: "Webhook received" }), {
       status: 200,
