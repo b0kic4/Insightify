@@ -8,10 +8,10 @@ export default async function Landing() {
   return (
     <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gray-50 dark:bg-gray-900">
       <div className="container px-4 md:px-6">
-        <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-          <div className="relative mx-auto w-full pb-[calc(93.23962516733602%+41px)] h-0 overflow-hidden rounded-xl lg:order-last">
+        <div className="grid gap-6 lg:grid-cols-[1fr_500px] lg:gap-12 xl:grid-cols-[1fr_700px]">
+          <div className="relative mx-auto w-full pb-[calc(54.020435362061306%+41px)] h-0 overflow-hidden rounded-xl lg:order-last">
             <iframe
-              src="https://demo.arcade.software/AmeyJ8PkyzbMZFlfH42U?embed&show_copy_link=true"
+              src="https://demo.arcade.software/mSV62e34uJY2n9sbZ12p?embed&show_copy_link=true"
               title="Insightify"
               frameBorder="0"
               loading="lazy"
