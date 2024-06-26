@@ -32,38 +32,53 @@ model Improvement {
 }
 
 model Plan {
-  id                 Int       @id @default(autoincrement())
-  productId          Int
-  productName        String?
-  variantId          Int       @unique
-  subscriptionId     Int?
-  isActive           Boolean   @default(false)
-  name               String
-  description        String?
-  price              String?
-  isUsageBased       Boolean   @default(false)
-  interval           String?
-  intervalCount      Int?
-  trialInterval      String?
-  trialIntervalCount Int?
-  sort               Int?
-  status             String
-  createdAt          DateTime?
-  renewsAt           DateTime?
-  lastFour           String?
-  userId             String
-  user               User      @relation(fields: [userId], references: [id])
-  cardId             Int?
-  card               Card?     @relation(fields: [cardId], references: [id])
+  id                     Int       @id @default(autoincrement())
+  sellerId               String
+  productId              String
+  productName            String
+  permalink              String
+  productPermalink       String
+  shortProductId         String
+  email                  String
+  price                  Int
+  gumroadFee             Int
+  currency               String
+  quantity               Int
+  discoverFeeCharged     Boolean
+  canContact             Boolean
+  referrer               String
+  renewsAt               DateTime?
+  orderNumber            Int
+  saleId                 String    @unique
+  saleTimestamp          DateTime
+  purchaserId            String
+  subscriptionId         String    @unique
+  variant                String?
+  test                   Boolean
+  ipCountry              String
+  recurrence             String
+  isGiftReceiverPurchase Boolean
+  refunded             Boolean   @default(false)
+  disputed             Boolean   @default(false)
+  disputeWon           Boolean   @default(false)
+  userId                 String
+  user                   User      @relation(fields: [userId], references: [id])
+  cardId                 Int?
+  card                   Card?     @relation(fields: [cardId], references: [id])
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
 }
 
 model Card {
-  id       Int    @id @default(autoincrement())
-  lastFour String
-  brand    String
-  userId   String
-  user     User   @relation(fields: [userId], references: [id])
-  plans    Plan[]
+  id          Int    @id @default(autoincrement())
+  visual      String
+  type        String
+  bin         String
+  expiryMonth String
+  expiryYear  String
+  userId      String
+  user        User   @relation(fields: [userId], references: [id])
+  plans       Plan[]
 
-  @@unique([lastFour, brand, userId])
+  @@unique([bin, userId])
 }

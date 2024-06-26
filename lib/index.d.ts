@@ -60,3 +60,36 @@ export interface Message {
   role: "user" | "assistant";
   content: Content[];
 }
+
+export interface PlanData {
+  sellerId: string;
+  productId: string;
+  productName: string;
+  permalink: string;
+  productPermalink: string;
+  shortProductId: string;
+  email: string;
+  price: number;
+  gumroadFee: number;
+  currency: string;
+  quantity: number;
+  discoverFeeCharged: boolean;
+  canContact: boolean;
+  referrer: string;
+  renewsAt: Date | null;
+  orderNumber: number;
+  saleId: string;
+  saleTimestamp: Date;
+  purchaserId: string;
+  subscriptionId: string;
+  variant: string;
+  test: boolean;
+  ipCountry: string;
+  recurrence: string;
+  isGiftReceiverPurchase: boolean;
+  refunded: boolean;
+  disputed: boolean;
+  disputeWon: boolean;
+  userId: string;
+  cardId?: number;
+}
