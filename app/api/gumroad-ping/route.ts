@@ -77,6 +77,7 @@ export async function POST(req: Request) {
           recurrence: recurrence,
           isGiftReceiverPurchase:
             (payload["is_gift_receiver_purchase"] as string) === "true",
+          isActive: true,
           refunded: refunded === "true",
           disputed: (payload["disputed"] as string) === "true",
           disputeWon: (payload["dispute_won"] as string) === "true",

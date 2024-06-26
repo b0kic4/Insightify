@@ -58,9 +58,10 @@ model Plan {
   ipCountry              String
   recurrence             String
   isGiftReceiverPurchase Boolean
-  refunded             Boolean   @default(false)
-  disputed             Boolean   @default(false)
-  disputeWon           Boolean   @default(false)
+  isActive               Boolean   @default(false)
+  refunded               Boolean   @default(false)
+  disputed               Boolean   @default(false)
+  disputeWon             Boolean   @default(false)
   userId                 String
   user                   User      @relation(fields: [userId], references: [id])
   cardId                 Int?

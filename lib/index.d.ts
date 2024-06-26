@@ -87,6 +87,7 @@ export interface PlanData {
   ipCountry: string;
   recurrence: string;
   isGiftReceiverPurchase: boolean;
+  isActive: boolean;
   refunded: boolean;
   disputed: boolean;
   disputeWon: boolean;
