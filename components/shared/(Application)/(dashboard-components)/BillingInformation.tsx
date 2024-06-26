@@ -73,7 +73,7 @@ export default function BillingInfo({ plan, card }: Props) {
             </span>
           </div>
           <span className="font-bold text-gray-900 dark:text-gray-100">
-            {plan?.price ? plan.price : ""}
+            ${plan?.price ? (plan.price / 100).toFixed(2) : "N/A"}
           </span>
         </div>
         <div className="flex items-center justify-between bg-red-100 p-3 rounded-lg shadow-inner dark:bg-red-900 hover:shadow-lg transition-shadow">

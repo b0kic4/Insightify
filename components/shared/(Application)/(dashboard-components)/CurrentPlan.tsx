@@ -27,7 +27,7 @@ export default function CurrentPlan({ plan }: CurrentPlanProps) {
                 {plan.productName}
               </h3>
               <p className="text-gray-800 font-semibold dark:text-gray-300">
-                {plan.price ? plan.price : "N/A"} per month
+                ${plan.price ? (plan.price / 100).toFixed(2) : "N/A"} per month
               </p>
             </div>
             <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-transparent p-4 rounded-lg shadow-inner bg-white dark:bg-gray-700">
