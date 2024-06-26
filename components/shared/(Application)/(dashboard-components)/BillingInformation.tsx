@@ -13,10 +13,6 @@ interface Props {
   card: BillingCard;
 }
 
-const formatCardNumber = (lastFour: string) => {
-  return `**** **** **** ${lastFour}`;
-};
-
 export default function BillingInfo({ plan, card }: Props) {
   let formattedDateRenewsAt = "N/A";
   let formattedDatePurchasedAt = "N/A";
@@ -62,10 +58,10 @@ export default function BillingInfo({ plan, card }: Props) {
           </div>
           <div className="text-right">
             <div className="font-bold text-gray-900 dark:text-gray-100">
-              {card?.brand ? card.brand : ""}
+              {card?.type ? card.type : ""}
             </div>
             <div className="font-bold text-gray-900 dark:text-gray-100">
-              {formatCardNumber(card?.lastFour ? card.lastFour : "")}
+              {card?.visual ? card.visual : ""}
             </div>
           </div>
         </div>
