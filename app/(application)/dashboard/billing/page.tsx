@@ -5,7 +5,9 @@ import ListPlans from "@/components/shared/(Application)/(billing)/ListPlans";
 export const dynamic = "force-dynamic";
 
 export default async function BillingPage() {
-  const products = await getProducts();
+  const productsResponse = await getProducts();
+  const products = productsResponse?.products || [];
+
   return (
     <div className="flex flex-col h-screen">
       <Suspense
@@ -13,7 +15,7 @@ export default async function BillingPage() {
           <div className="animate-spin rounded-full h-7 w-7 mx-auto my-2 border-b-2 border-gray-700 dark:border-white/50"></div>
         }
       >
-        <ListPlans products={products.data} />
+        <ListPlans products={products} />
       </Suspense>
     </div>
   );

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { FaRocket, FaCrown } from "react-icons/fa";
+import { FaRocket } from "react-icons/fa";
 
 export default function ListPlans({ products }: any) {
   return (
@@ -34,25 +34,19 @@ export default function ListPlans({ products }: any) {
               <CardHeader className="p-8">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-3xl font-bold text-gray-900 dark:text-gray-50">
-                    {product.attributes.name}
+                    {product.name}
                   </CardTitle>
-                  {product.attributes.slug === "advanced-subscription" ? (
-                    <FaCrown className="text-yellow-500 w-8 h-8" />
-                  ) : (
-                    <FaRocket className="text-blue-500 w-8 h-8" />
-                  )}
+                  <FaRocket className="text-blue-500 w-8 h-8" />
                 </div>
                 <CardDescription className="text-gray-600 dark:text-gray-400 mt-4">
-                  {product.attributes.slug === "advanced-subscription"
-                    ? "For growing businesses and marketing teams."
-                    : "For small businesses and startups."}
+                  {/* {product.description.replace(/<[^>]+>/g, "")} */}
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-8 grid gap-6">
                 <div className="flex justify-between items-end">
                   <div>
                     <span className="text-5xl font-bold text-gray-900 dark:text-gray-50">
-                      {product.attributes.price_formatted}
+                      {product.formatted_price}
                     </span>
                     <span className="text-gray-500 dark:text-gray-400">
                       /mo
@@ -101,7 +95,7 @@ export default function ListPlans({ products }: any) {
                   variant="link"
                   className="bg-blue-500 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-900"
                 >
-                  <Link href={product.attributes.buy_now_url}>Buy Now</Link>
+                  <Link href={product.short_url}>Buy Now</Link>
                 </Button>
               </CardContent>
             </Card>

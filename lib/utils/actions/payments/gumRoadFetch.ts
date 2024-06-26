@@ -1,16 +1,16 @@
-export const LEMON_SQUEEZY_ENDPOINT = "https://api.lemonsqueezy.com/v1/";
+export const GUMROAD_ENDPOINT = "https://api.gumroad.com/v2/";
 
 const headers = {
   Accept: "application/vnd.api+json",
   "Content-Type": "application/vnd.api+json",
-  Authorization: `Bearer ${process.env.LEMONSQUEEZY_API_KEY}`,
+  Authorization: `Bearer ${process.env.ACCESS_TOKEN_PROD}`,
 };
 
-export async function lemonSqueezyFetch(
+export async function gumRoadFetch(
   endpoint: string,
   options: RequestInit = {},
 ) {
-  const response = await fetch(`${LEMON_SQUEEZY_ENDPOINT}${endpoint}`, {
+  const response = await fetch(`${GUMROAD_ENDPOINT}${endpoint}`, {
     cache: "no-cache",
     ...options,
     headers: {
