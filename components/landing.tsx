@@ -37,10 +37,14 @@ export default async function Landing() {
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row">
               <Link
-                className="inline-flex h-10 items-center justify-center rounded-md bg-blue-600 px-8 text-sm font-medium text-white shadow transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:pointer-events-none disabled:opacity-50"
-                href={`${isAuth ? "/dashboard" : "/welcome"}`}
+                className={`inline-flex h-10 items-center justify-center rounded-md px-8 text-sm font-medium text-white shadow transition-colors focus-visible:outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 ${
+                  isAuth
+                    ? "bg-green-600 hover:bg-green-700 focus-visible:ring-green-600"
+                    : "bg-blue-600 hover:bg-blue-700 focus-visible:ring-blue-600"
+                }`}
+                href={isAuth ? "/dashboard" : "/welcome"}
               >
-                Get Started
+                {isAuth ? "Go To Dashboard" : "Get Started"}
               </Link>
               <Link
                 className="inline-flex h-10 items-center justify-center rounded-md border border-gray-200 bg-white px-8 text-sm font-medium text-gray-900 shadow-sm transition-colors hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-200 disabled:pointer-events-none disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-50 dark:hover:bg-gray-700 dark:focus-visible:ring-gray-600"
