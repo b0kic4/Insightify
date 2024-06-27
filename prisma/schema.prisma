@@ -32,42 +32,46 @@ model Improvement {
 }
 
 model Plan {
-  id                     Int       @id @default(autoincrement())
-  sellerId               String
-  productId              String
-  productName            String
-  permalink              String
-  productPermalink       String
-  shortProductId         String
-  email                  String
-  price                  Int
-  gumroadFee             Int
-  currency               String
-  quantity               Int
-  discoverFeeCharged     Boolean
-  canContact             Boolean
-  referrer               String
-  renewsAt               DateTime?
-  orderNumber            Int
-  saleId                 String    @unique
-  saleTimestamp          DateTime
-  purchaserId            String
-  subscriptionId         String    @unique
-  variant                String?
-  test                   Boolean
-  ipCountry              String
-  recurrence             String
-  isGiftReceiverPurchase Boolean
-  isActive               Boolean   @default(false)
-  refunded               Boolean   @default(false)
-  disputed               Boolean   @default(false)
-  disputeWon             Boolean   @default(false)
-  userId                 String
-  user                   User      @relation(fields: [userId], references: [id])
-  cardId                 Int?
-  card                   Card?     @relation(fields: [cardId], references: [id])
-  createdAt              DateTime  @default(now())
-  updatedAt              DateTime  @updatedAt
+  id                      Int       @id @default(autoincrement())
+  sellerId                String
+  productId               String    @unique
+  productName             String
+  permalink               String
+  productPermalink        String
+  shortProductId          String
+  email                   String
+  price                   Int
+  gumroadFee              Int
+  currency                String
+  quantity                Int
+  discoverFeeCharged      Boolean
+  canContact              Boolean
+  referrer                String
+  renewsAt                DateTime?
+  orderNumber             Int
+  saleId                  String    @unique
+  saleTimestamp           DateTime
+  purchaserId             String
+  subscriptionId          String    @unique
+  variant                 String?
+  test                    Boolean
+  ipCountry               String
+  recurrence              String
+  isGiftReceiverPurchase  Boolean
+  isActive                Boolean   @default(false)
+  refunded                Boolean   @default(false)
+  disputed                Boolean   @default(false)
+  disputeWon              Boolean   @default(false)
+  userId                  String
+  user                    User      @relation(fields: [userId], references: [id])
+  cardId                  Int?
+  card                    Card?     @relation(fields: [cardId], references: [id])
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  canceledAt              DateTime?
+  subscriptionEndedAt     DateTime?
+  subscriptionRestartedAt DateTime?
+  subscriptionRefundedAt  DateTime?
 }
 
 model Card {

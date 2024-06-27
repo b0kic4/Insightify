@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 import { PlanData } from "@/lib";
 
+// NOTE:
+// IMplement scripts that checks for the canceledAt date and schedule the task for
+// setting the isActive to false
+
 export async function POST(req: Request) {
   // NOTE:
   // resource_name -> determines the type of the Resource subscriptions
@@ -45,6 +49,8 @@ export async function POST(req: Request) {
         { status: 404 },
       );
     }
+
+    console.log("type in coming for webhook: ", resourceName);
 
     switch (resourceName) {
       case "sale":
@@ -99,10 +105,113 @@ export async function POST(req: Request) {
           create: cardData,
         });
 
-        planData["cardId"] = card.id;
+        planData.cardId = card.id;
 
-        await prisma.plan.create({
-          data: planData,
+        await prisma.plan.upsert({
+          where: { productId: planData.productId },
+          update: {
+            ...planData,
+            updatedAt: new Date(),
+          },
+          create: {
+            ...planData,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        });
+        break;
+
+      case "dispute":
+        await prisma.plan.update({
+          where: {
+            subscriptionId: payload["subscription_id"] as string,
+            saleId: payload["sale_id"] as string,
+            productId: payload["product_id"] as string,
+          },
+          data: {
+            disputed: true,
+            updatedAt: new Date(),
+          },
+        });
+        break;
+
+      case "dispute_won":
+        await prisma.plan.update({
+          where: {
+            subscriptionId: payload["subscription_id"] as string,
+            saleId: payload["sale_id"] as string,
+            productId: payload["product_id"] as string,
+          },
+          data: {
+            disputeWon: true,
+            disputed: false,
+            updatedAt: new Date(),
+          },
+        });
+        break;
+
+      case "refund":
+        await prisma.plan.update({
+          where: {
+            subscriptionId: payload["subscription_id"] as string,
+            saleId: payload["sale_id"] as string,
+            productId: payload["product_id"] as string,
+          },
+          data: {
+            refunded: true,
+            isActive: false,
+            updatedAt: new Date(),
+            subscriptionRefundedAt: new Date(),
+          },
+        });
+        break;
+
+      case "cancellation":
+        const cancellationDate = new Date(payload["cancelled_at"] as string);
+        await prisma.plan.update({
+          where: {
+            subscriptionId: payload["subscription_id"] as string,
+            saleId: payload["sale_id"] as string,
+            productId: payload["product_id"] as string,
+          },
+          data: {
+            canceledAt: cancellationDate,
+            renewsAt: null,
+            isActive: true,
+            updatedAt: new Date(),
+          },
+        });
+        break;
+
+      case "subscription_ended":
+        await prisma.plan.update({
+          where: {
+            subscriptionId: payload["subscription_id"] as string,
+            saleId: payload["sale_id"] as string,
+            productId: payload["product_id"] as string,
+          },
+          data: {
+            isActive: false,
+            updatedAt: new Date(payload["ended_at"] as string),
+            subscriptionEndedAt: new Date(payload["ended_at"] as string),
+          },
+        });
+        break;
+
+      case "subscription_restarted":
+        await prisma.plan.update({
+          where: {
+            subscriptionId: payload["subscription_id"] as string,
+            saleId: payload["sale_id"] as string,
+            productId: payload["product_id"] as string,
+          },
+          data: {
+            isActive: true,
+            updatedAt: new Date(payload["restarted_at"] as string),
+            subscriptionRestartedAt: new Date(
+              payload["restarted_at"] as string,
+            ),
+          },
         });
         break;
     }
