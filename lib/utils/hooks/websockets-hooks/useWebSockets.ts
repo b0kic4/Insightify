@@ -29,7 +29,7 @@ export const useWebSocket = () => {
   const baseWsUrl =
     env === "development"
       ? "ws://localhost:4000/analysis/ws"
-      : "wss://insightify-backend-3caf92991e4a.herokuapp.com/analysis/ws";
+      : process.env.SCRAPER_MICROSERVICE_URL_WS!;
 
   const initializeWebSocket = React.useCallback(async () => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
