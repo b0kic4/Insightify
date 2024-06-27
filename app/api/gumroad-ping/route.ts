@@ -2,14 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 import { PlanData } from "@/lib";
 
-// NOTE:
-// IMplement scripts that checks for the canceledAt date and schedule the task for
-// setting the isActive to false
-
 export async function POST(req: Request) {
-  // NOTE:
-  // resource_name -> determines the type of the Resource subscriptions
-  // recurrence -> determines when is the new renewal
   try {
     const data = await req.formData();
     const payload = Object.fromEntries(data.entries());
@@ -27,10 +20,9 @@ export async function POST(req: Request) {
     }
 
     const userEmail = payload["email"] as string;
-
     const resourceName = payload["resource_name"] as string;
     const recurrence = payload["recurrence"] as string;
-    const refunded = payload["refunded"] as string;
+    const refunded = payload["refunded"] === "true";
 
     const user = await prisma.user.findUnique({
       where: {
@@ -39,7 +31,7 @@ export async function POST(req: Request) {
     });
 
     if (!user) {
-      console.log("user not found");
+      console.log("User not found");
       return NextResponse.json(
         {
           status: "failed",
@@ -50,11 +42,12 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log("type in coming for webhook: ", resourceName);
+    console.log("Resource name in incoming webhook: ", resourceName);
+
+    const saleTimestamp = new Date(payload["sale_timestamp"] as string);
 
     switch (resourceName) {
-      case "sale":
-        const saleTimestamp = new Date(payload["sale_timestamp"] as string);
+      case "sale": {
         const planData: PlanData = {
           sellerId: payload["seller_id"] as string,
           productId: payload["product_id"] as string,
@@ -84,7 +77,7 @@ export async function POST(req: Request) {
           isGiftReceiverPurchase:
             (payload["is_gift_receiver_purchase"] as string) === "true",
           isActive: true,
-          refunded: refunded === "true",
+          refunded: refunded,
           disputed: (payload["disputed"] as string) === "true",
           disputeWon: (payload["dispute_won"] as string) === "true",
           userId: user.id,
@@ -120,6 +113,7 @@ export async function POST(req: Request) {
           },
         });
         break;
+      }
 
       case "dispute":
         await prisma.plan.update({
@@ -160,6 +154,7 @@ export async function POST(req: Request) {
           data: {
             refunded: true,
             isActive: false,
+            renewsAt: null,
             updatedAt: new Date(),
             subscriptionRefundedAt: new Date(),
           },
@@ -192,6 +187,7 @@ export async function POST(req: Request) {
           },
           data: {
             isActive: false,
+            renewsAt: null,
             updatedAt: new Date(payload["ended_at"] as string),
             subscriptionEndedAt: new Date(payload["ended_at"] as string),
           },
@@ -199,6 +195,12 @@ export async function POST(req: Request) {
         break;
 
       case "subscription_restarted":
+        const restartDate = new Date(payload["restarted_at"] as string);
+        const renewsAtDate = calculateNextRenewal(
+          restartDate,
+          payload["recurrence"] as string,
+        );
+
         await prisma.plan.update({
           where: {
             subscriptionId: payload["subscription_id"] as string,
@@ -208,12 +210,16 @@ export async function POST(req: Request) {
           data: {
             isActive: true,
             updatedAt: new Date(payload["restarted_at"] as string),
+            renewsAt: renewsAtDate,
             subscriptionRestartedAt: new Date(
               payload["restarted_at"] as string,
             ),
           },
         });
         break;
+
+      default:
+        console.log(`Unhandled resource name: ${resourceName}`);
     }
 
     return NextResponse.json({ status: "success" }, { status: 200 });
