@@ -174,15 +174,17 @@ export default function ImprovementDetails({
     <div className="overflow-auto">
       <div className="max-w-7xl mx-auto p-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-col gap-8 lg:gap-12 items-center">
-          <Button className="relative group" size="icon" variant="ghost">
-            <BiReset
-              onClick={removeLocalStorageData}
-              className="h-8 w-8 text-red-500"
-            />
-            <span className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity text-sm bg-gray-800 text-white rounded-md px-2 py-1 shadow-lg">
-              Reset
-            </span>
-          </Button>
+          {savedData && (
+            <Button className="relative group" size="icon" variant="ghost">
+              <BiReset
+                onClick={removeLocalStorageData}
+                className="h-8 w-8 text-red-500"
+              />
+              <span className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity text-sm bg-gray-800 text-white rounded-md px-2 py-1 shadow-lg">
+                Reset
+              </span>
+            </Button>
+          )}
           {images.length > 0 && (
             <ImageCarousel
               images={images}
