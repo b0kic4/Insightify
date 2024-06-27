@@ -1,11 +1,8 @@
-// useWebSocket.js
 "use client";
 import React from "react";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { saveScreenshotsToRedis } from "@/lib/utils/hooks/(redisHooks)/RedisHooks";
 import { FormValues } from "@/lib";
-import isUsersPlanActive from "../db/IsActivePlanHook";
-import { ResponseSuccess, ResponseFailed } from "../db/IsActivePlanHook";
 import { useToast } from "@/components/ui/use-toast";
 
 export const useWebSocket = () => {
@@ -31,24 +28,13 @@ export const useWebSocket = () => {
       ? "ws://localhost:4000/analysis/ws"
       : "wss://insightify-chromedp-scraper-109c108ba8e1.herokuapp.com/analysis/ws";
 
-  const initializeWebSocket = React.useCallback(async () => {
+  const initializeWebSocket = React.useCallback(() => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       return;
     }
 
     if (!token) {
       console.error("Token is null or undefined");
-      return;
-    }
-
-    const response = await isUsersPlanActive();
-
-    if (!isResponseSuccess(response) || !response.isActive) {
-      toast({
-        title: "Error",
-        description: "No Active Plan Found",
-      });
-      console.error("User does not have an active plan:", "Inactive plan");
       return;
     }
 
@@ -150,9 +136,3 @@ export const useWebSocket = () => {
     setAnalysisCompleted,
   };
 };
-
-function isResponseSuccess(
-  response: ResponseSuccess | ResponseFailed,
-): response is ResponseSuccess {
-  return (response as ResponseSuccess).isActive !== undefined;
-}

@@ -12,11 +12,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useWebSocket } from "@/lib/utils/hooks/websockets-hooks/useWebSockets";
 import isUsersPlanActive from "@/lib/utils/hooks/db/IsActivePlanHook";
+import { useToast } from "@/components/ui/use-toast";
 import {
   ResponseSuccess,
   ResponseFailed,
 } from "@/lib/utils/hooks/db/IsActivePlanHook";
-import { useToast } from "@/components/ui/use-toast";
 
 export default function Form() {
   const {
@@ -70,7 +70,7 @@ export default function Form() {
       if (!isResponseSuccess(response) || !response.isActive) {
         toast({
           title: "Error",
-          description: "No Active Plan Found",
+          description: "No Active Plan Found. Please make a purchase.",
         });
         console.error("User does not have an active plan:", "Inactive plan");
         return;
@@ -161,7 +161,6 @@ export default function Form() {
               placeholder="https://example.com"
               {...register("websiteUrl", { required: true })}
               type="url"
-              onFocus={initializeWebSocket}
             />
             {errors.websiteUrl && (
               <span className="text-red-500">Website URL is required</span>
@@ -179,7 +178,6 @@ export default function Form() {
               id="targeted-audience"
               placeholder="Describe your target audience"
               {...register("targetedAudience", { required: true })}
-              onFocus={initializeWebSocket}
             />
             {errors.targetedAudience && (
               <span className="text-red-500">
@@ -199,7 +197,6 @@ export default function Form() {
               id="targeted-market"
               placeholder="Describe your target market"
               {...register("targetedMarket", { required: true })}
-              onFocus={initializeWebSocket}
             />
             {errors.targetedMarket && (
               <span className="text-red-500">Targeted Market is required</span>
@@ -217,7 +214,6 @@ export default function Form() {
               id="website-insights"
               placeholder="Provide any insights about your website"
               {...register("websiteInsights", { required: true })}
-              onFocus={initializeWebSocket}
             />
             {errors.websiteInsights && (
               <span className="text-red-500">
