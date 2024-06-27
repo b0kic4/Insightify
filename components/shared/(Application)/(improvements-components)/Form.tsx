@@ -161,6 +161,7 @@ export default function Form() {
               placeholder="https://example.com"
               {...register("websiteUrl", { required: true })}
               type="url"
+              onFocus={initializeWebSocket}
             />
             {errors.websiteUrl && (
               <span className="text-red-500">Website URL is required</span>
@@ -178,6 +179,7 @@ export default function Form() {
               id="targeted-audience"
               placeholder="Describe your target audience"
               {...register("targetedAudience", { required: true })}
+              onFocus={initializeWebSocket}
             />
             {errors.targetedAudience && (
               <span className="text-red-500">
@@ -197,6 +199,7 @@ export default function Form() {
               id="targeted-market"
               placeholder="Describe your target market"
               {...register("targetedMarket", { required: true })}
+              onFocus={initializeWebSocket}
             />
             {errors.targetedMarket && (
               <span className="text-red-500">Targeted Market is required</span>
@@ -214,6 +217,7 @@ export default function Form() {
               id="website-insights"
               placeholder="Provide any insights about your website"
               {...register("websiteInsights", { required: true })}
+              onFocus={initializeWebSocket}
             />
             {errors.websiteInsights && (
               <span className="text-red-500">
