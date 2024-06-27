@@ -21,14 +21,15 @@ model User {
 }
 
 model Improvement {
-  id       Int    @id @default(autoincrement())
-  threadId String
-  userId   String
-  user     User   @relation(fields: [userId], references: [id])
-  url      String @default("")
-  market   String @default("")
-  audience String @default("")
-  insights String @default("")
+  id        Int      @id @default(autoincrement())
+  threadId  String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  url       String   @default("")
+  market    String   @default("")
+  audience  String   @default("")
+  insights  String   @default("")
+  createdAt DateTime @default(now())
 }
 
 model Plan {
