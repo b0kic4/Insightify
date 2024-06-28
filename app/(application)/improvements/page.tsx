@@ -8,7 +8,7 @@ export default function Improvements() {
           Welcome to the Improvements
         </h1>
         <p className="mt-4 text-gray-600 dark:text-gray-400">
-          This is the content area of the application where magic happens.
+          Here is the content area of the application where magic happens.
         </p>
       </section>
       <Form />

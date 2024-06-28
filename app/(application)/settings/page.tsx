@@ -5,7 +5,7 @@ export default function Settings() {
         Welcome to Settings
       </h1>
       <p className="mt-4 text-gray-600 dark:text-gray-400">
-        This is the main content area of the application.
+        Welcome to your Settings. This is where you configure your settings.
       </p>
     </main>
   );

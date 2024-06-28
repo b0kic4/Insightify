@@ -171,7 +171,6 @@ export async function POST(req: Request) {
           },
           data: {
             canceledAt: cancellationDate,
-            renewsAt: null,
             isActive: true,
             updatedAt: new Date(),
           },

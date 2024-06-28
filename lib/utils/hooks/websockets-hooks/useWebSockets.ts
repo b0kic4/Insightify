@@ -3,12 +3,9 @@ import React from "react";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { saveScreenshotsToRedis } from "@/lib/utils/hooks/(redisHooks)/RedisHooks";
 import { FormValues } from "@/lib";
-import { useToast } from "@/components/ui/use-toast";
 
 export const useWebSocket = () => {
   const { getToken, user } = useKindeBrowserClient();
-
-  const { toast } = useToast();
 
   const [messages, setMessages] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(false);
