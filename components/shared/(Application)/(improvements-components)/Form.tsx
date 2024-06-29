@@ -230,6 +230,7 @@ export default function Form() {
               className="transition-all duration-300 ease-in-out bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-400 dark:focus:ring-offset-gray-900"
               type="submit"
               disabled={loading}
+              onFocus={initializeWebSocket}
             >
               Analyze
             </Button>
