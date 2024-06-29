@@ -40,8 +40,8 @@ export default function AnalysisModal({ messages, progress }: any) {
               className="text-center"
             >
               <span className="text-lg font-semibold text-red-600 dark:text-red-400">
-                Please stay on this page while the analysis is in progress to
-                avoid losing your improvements.
+                Please stay on this page while the content capturing is in
+                progress to avoid losing your improvements.
               </span>
             </motion.div>
           </AnimatePresence>

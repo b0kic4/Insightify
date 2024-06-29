@@ -112,6 +112,10 @@ export default function Form() {
       }
 
       if (cachedData === null) {
+        toast({
+          title: "Preparing your data",
+          description: "Sending the request...",
+        });
         initializeWebSocket();
         sendMessage({
           url: data.websiteUrl,
