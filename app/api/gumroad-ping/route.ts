@@ -245,7 +245,7 @@ function calculateNextRenewal(
     case "quarterly":
       nextDate.setMonth(nextDate.getMonth() + 3);
       break;
-    case "every 6 months":
+    case "biannually":
       nextDate.setMonth(nextDate.getMonth() + 6);
       break;
     case "yearly":
