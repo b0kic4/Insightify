@@ -1,8 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogHeader,
+  DialogContent,
+  DialogOverlay,
+} from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
-import LinearWithValueLabel from "./LinearProgress";
 import { Progress } from "@/components/ui/progress";
 
 export default function AnalysisModal({ messages, progress }: any) {
@@ -25,6 +29,23 @@ export default function AnalysisModal({ messages, progress }: any) {
     <Dialog open={open} onOpenChange={() => {}}>
       <DialogOverlay className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" />
       <DialogContent className="sm:max-w-[450px] p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg transform transition-all duration-300 ease-in-out">
+        <DialogHeader>
+          <AnimatePresence>
+            <motion.div
+              key="warning-message"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5 }}
+              className="text-center"
+            >
+              <span className="text-lg font-semibold text-red-600 dark:text-red-400">
+                Please stay on this page while the analysis is in progress to
+                avoid losing your improvements.
+              </span>
+            </motion.div>
+          </AnimatePresence>
+        </DialogHeader>
         <div className="relative h-[200px] overflow-hidden flex flex-col items-center justify-center space-y-4">
           <AnimatePresence>
             {messages.map((message: any, index: any) =>
@@ -49,8 +70,8 @@ export default function AnalysisModal({ messages, progress }: any) {
         </div>
         {progress > 0 && (
           <div className="flex items-center justify-center mt-4">
-            <Progress value={progress} />
-            <p>{progress}%</p>
+            <Progress value={progress} className="w-full" />
+            <p className="ml-2 text-gray-800 dark:text-gray-200">{progress}%</p>
           </div>
         )}
       </DialogContent>
