@@ -13,7 +13,7 @@ import { RequestToAI } from "@/lib/utils/actions/ai/RequestToAI";
 import increaseUsageOfFreePlan from "@/lib/utils/hooks/db/freePlanUsageCalc";
 
 interface ResponseProps {
-  isFreePlanInUse: boolean;
+  isFreePlanInUse?: boolean | null;
   formData: FormValues | null;
   images: string[];
   cachedAiResponse?: AIResponse[][] | undefined;
