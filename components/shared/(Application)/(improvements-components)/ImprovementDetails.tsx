@@ -193,7 +193,12 @@ export default function ImprovementDetails({
       <div className="max-w-7xl mx-auto p-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-col gap-8 lg:gap-12 items-center">
           {savedData && (
-            <Button className="relative group" size="icon" variant="ghost">
+            <Button
+              disabled={loading}
+              className="relative group"
+              size="icon"
+              variant="ghost"
+            >
               <BiReset
                 onClick={removeLocalStorageData}
                 className="h-8 w-8 text-red-500"

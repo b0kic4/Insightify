@@ -73,7 +73,11 @@ export default function Form() {
           (response as ResponseSuccess).isActive ||
           (response as ResponseFreePlanSucceed).isFreePlanAvailable
         ) {
-          // Active plan found
+          // Active plan or free trial found
+          toast({
+            title: "Preparing your data",
+            description: "Sending the request...",
+          });
           const cachedData = await getSingleWebsiteFromUserCache(
             user.id,
             formDataRef.current.websiteUrl,
@@ -114,10 +118,6 @@ export default function Form() {
               );
             }
 
-            toast({
-              title: "Preparing your data",
-              description: "Sending the request...",
-            });
             initializeWebSocket();
             sendMessage({
               url: data.websiteUrl,
