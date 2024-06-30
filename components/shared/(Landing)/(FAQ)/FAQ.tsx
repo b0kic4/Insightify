@@ -20,7 +20,7 @@ export default function FAQ() {
     {
       question: "Can I try Insightify for free?",
       answer:
-        "Yes, Insightify offers a free improvement for new users. Each user is limited to one free improvement per verified phone number.",
+        "Yes, Insightify offers a free improvements for users. Each user gets 2 free improvements on every 6 hours.",
     },
     {
       question: "What types of websites can use Insightify?",
