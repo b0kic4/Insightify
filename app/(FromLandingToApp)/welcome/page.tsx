@@ -9,7 +9,7 @@ export default function Welcome() {
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-lg dark:bg-gray-800">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            Welcome to our Application
+            Welcome to Insightify
           </h1>
           <p className="mt-4 text-gray-600 dark:text-gray-400">
             To access the application, you need to be logged in. If you
