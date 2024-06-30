@@ -9,16 +9,17 @@ datasource db {
 }
 
 model User {
-  id                      String        @id @default(uuid())
-  email                   String        @unique
-  firstName               String
-  lastName                String
-  createdAt               DateTime      @default(now())
-  updatedAt               DateTime      @updatedAt
-  daily_free_improvements Int           @default(2)
-  improvements            Improvement[]
-  plans                   Plan[]
-  cards                   Card[]
+  id                             String        @id @default(uuid())
+  email                          String        @unique
+  firstName                      String
+  lastName                       String
+  createdAt                      DateTime      @default(now())
+  updatedAt                      DateTime      @updatedAt
+  daily_free_improvements        Int           @default(2)
+  free_improvement_lastTime_used DateTime?
+  improvements                   Improvement[]
+  plans                          Plan[]
+  cards                          Card[]
 }
 
 model Improvement {

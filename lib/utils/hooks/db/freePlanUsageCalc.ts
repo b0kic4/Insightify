@@ -44,6 +44,7 @@ export default async function increaseUsageOfFreePlan() {
         daily_free_improvements: {
           decrement: 1,
         },
+        free_improvement_lastTime_used: new Date(),
       },
     });
 
