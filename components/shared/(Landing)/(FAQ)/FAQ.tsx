@@ -28,7 +28,7 @@ export default function FAQ() {
         "Insightify is designed to work with a wide range of websites, including e-commerce sites, blogs, corporate websites, and more.",
     },
     {
-      question: "How to get started ?",
+      question: "How to get started?",
       answer:
         "To get started with Insightify, simply click on the 'Get Started' button and follow the instructions to set up your account and start optimizing your website.",
     },
