@@ -20,15 +20,15 @@ export default function FAQ() {
     {
       question: "Can I try Insightify for free?",
       answer:
-        "Yes, Insightify offers a free improvements for users. Each user gets 2 free improvements on every 6 hours.",
+        "Yes, Insightify offers free improvements for users. Each user gets 2 free improvements every 6 hours.",
     },
     {
-      question: "What types of websites can use Insightify?",
+      question: "Which websites can use Insightify?",
       answer:
         "Insightify is designed to work with a wide range of websites, including e-commerce sites, blogs, corporate websites, and more.",
     },
     {
-      question: "How can I get started with Insightify?",
+      question: "How to get started with Insightify?",
       answer:
         "To get started with Insightify, simply click on the 'Get Started' button and follow the instructions to set up your account and start optimizing your website.",
     },
