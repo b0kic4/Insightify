@@ -194,13 +194,13 @@ export default function ImprovementDetails({
         <div className="flex flex-col lg:flex-col gap-8 lg:gap-12 items-center">
           {savedData && (
             <Button
-              disabled={loading}
+              // disabled={loading}
+              onClick={removeLocalStorageData}
               className="relative group"
               size="icon"
               variant="ghost"
             >
               <BiReset
-                onClick={removeLocalStorageData}
                 className="h-8 w-8 text-red-500"
               />
               <span className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity text-sm bg-gray-800 text-white rounded-md px-2 py-1 shadow-lg">
