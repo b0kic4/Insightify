@@ -8,6 +8,21 @@ interface CurrentPlanProps {
   plan: Plan | null;
 }
 
+const getIntervalDisplay = (interval: string) => {
+  switch (interval.toLowerCase()) {
+    case "monthly":
+      return "per month";
+    case "quarterly":
+      return "per quarter";
+    case "biannually":
+      return "per half-year";
+    case "yearly":
+      return "per year";
+    default:
+      return "";
+  }
+};
+
 export default function CurrentPlan({ plan }: CurrentPlanProps) {
   return (
     <Card className="h-[450px] p-4 bg-white shadow-md rounded-lg dark:bg-gray-800 flex flex-col justify-between">
@@ -27,7 +42,8 @@ export default function CurrentPlan({ plan }: CurrentPlanProps) {
                 {plan.productName}
               </h3>
               <p className="text-gray-800 font-semibold dark:text-gray-300">
-                ${plan.price ? (plan.price / 100).toFixed(2) : "N/A"} per month
+                ${plan.price ? (plan.price / 100).toFixed(2) : "N/A"}{" "}
+                {getIntervalDisplay(plan.recurrence ? plan.recurrence : "")}
               </p>
             </div>
             <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-transparent p-4 rounded-lg shadow-inner bg-white dark:bg-gray-700">
