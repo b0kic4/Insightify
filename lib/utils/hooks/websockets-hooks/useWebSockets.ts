@@ -48,7 +48,7 @@ export const useWebSocket = () => {
     ws.onmessage = async (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log("data: ", data);
+        // console.log("data: ", data);
         if (typeof data === "object" && data !== null && "type" in data) {
           switch (data.type) {
             case "status":

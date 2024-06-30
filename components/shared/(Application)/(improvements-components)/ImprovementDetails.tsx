@@ -92,7 +92,6 @@ export default function ImprovementDetails({
 
   const makeAIRequest = useCallback(
     async (formData: FormValues, images: string[], userId: string) => {
-      console.log("Make AI Request is called");
       try {
         if (!formData || images.length === 0) {
           console.log("formData or images are missing");
@@ -138,7 +137,6 @@ export default function ImprovementDetails({
 
         saveImprovement(response.data.threadId, userId);
 
-        console.log("request completed");
         setRequestCompleted(true);
         setLoading(false);
       } catch (error) {
@@ -179,9 +177,6 @@ export default function ImprovementDetails({
     }
   }, [cachedAiResponse, formData, images, makeAIRequest, threadId, user]);
 
-  useEffect(() => {
-    console.log("aiResponse updated:", aiResponse);
-  }, [aiResponse]);
 
   const removeLocalStorageData = () => {
     localStorage.removeItem("improvementData");

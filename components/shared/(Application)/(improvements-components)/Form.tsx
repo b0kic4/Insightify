@@ -53,7 +53,6 @@ export default function Form() {
     const savedData = localStorage.getItem("improvementData");
     if (savedData) {
       const parsedData = JSON.parse(savedData);
-      console.log("parsedData: ", parsedData);
       setAnalysisCompleted(true);
       formDataRef.current = parsedData.formData;
       images.current = parsedData.images;
