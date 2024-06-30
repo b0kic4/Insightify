@@ -41,7 +41,7 @@ export default function AnalysisModal({ messages, progress }: any) {
             >
               <span className="text-lg font-semibold text-red-600 dark:text-red-400">
                 Please stay on this page while the content capturing is in
-                progress to avoid losing your improvements.
+                progress to avoid losing your improvement.
               </span>
             </motion.div>
           </AnimatePresence>

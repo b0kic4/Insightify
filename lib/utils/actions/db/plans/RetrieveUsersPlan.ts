@@ -13,6 +13,7 @@ interface ResponseSuccess {
 interface ResponseSuccessButNoPlan {
   success: true;
   message: string;
+  freeImprovementsLeft: number;
 }
 
 interface ResponseFailed {
@@ -27,7 +28,7 @@ export default async function retrieveUsersPlan() {
   const user = await getUser();
   try {
     if (!user) {
-      console.log("user not auth");
+      console.log("User not authenticated");
       return {
         success: false,
         error: "User not authenticated",
@@ -36,23 +37,35 @@ export default async function retrieveUsersPlan() {
 
     const userId = user.id;
 
-    const plan = await prisma.plan.findFirst({
-      where: { userId: userId },
-      include: { card: true },
+    const foundUser = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { plans: true, cards: true },
     });
+
+    if (!foundUser) {
+      return {
+        success: false,
+        error: "User not found",
+      } as ResponseFailed;
+    }
+
+    const plan = foundUser.plans[0] || null;
+    const card = foundUser.cards[0] || null;
+    const dailyFreeImprovements = foundUser.daily_free_improvements;
 
     if (plan) {
       return {
         success: true,
         data: {
           plan: plan,
-          card: plan.card,
+          card: card,
         },
       } as ResponseSuccess;
     } else {
       return {
         success: true,
         message: "No plan found for the user",
+        freeImprovementsLeft: dailyFreeImprovements,
       } as ResponseSuccessButNoPlan;
     }
   } catch (error) {
@@ -60,5 +73,7 @@ export default async function retrieveUsersPlan() {
       success: false,
       error: (error as Error).message,
     } as ResponseFailed;
+  } finally {
+    await prisma.$disconnect();
   }
 }

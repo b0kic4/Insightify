@@ -10,14 +10,17 @@ import { FormDataDisplay } from "./utils/FormDataDisplay";
 import { ImageCarousel } from "./utils/ImageCarousel";
 import { AIResponseDisplay } from "./utils/AIResponseDisplay";
 import { RequestToAI } from "@/lib/utils/actions/ai/RequestToAI";
+import increaseUsageOfFreePlan from "@/lib/utils/hooks/db/freePlanUsageCalc";
 
 interface ResponseProps {
+  isFreePlanInUse: boolean;
   formData: FormValues | null;
   images: string[];
   cachedAiResponse?: AIResponse[][] | undefined;
 }
 
 export default function ImprovementDetails({
+  isFreePlanInUse,
   formData,
   cachedAiResponse,
   images,
@@ -60,6 +63,21 @@ export default function ImprovementDetails({
             title: "Success",
             description: response.message,
           });
+
+          if (isFreePlanInUse) {
+            const response = await increaseUsageOfFreePlan();
+            if (response.success) {
+              toast({
+                title: "Free Plan",
+                description: `You have ${response.data} free improvements left.`,
+              });
+            } else {
+              toast({
+                title: "Error",
+                description: response.error,
+              });
+            }
+          }
         }
       } catch (error) {
         toast({
@@ -69,7 +87,7 @@ export default function ImprovementDetails({
         console.log("Error saving improvement: ", error);
       }
     },
-    [formData, toast, user],
+    [formData, toast, isFreePlanInUse],
   );
 
   const makeAIRequest = useCallback(

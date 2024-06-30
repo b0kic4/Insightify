@@ -15,8 +15,24 @@ export interface ResponseFailed {
   error: string;
 }
 
+export interface ResponseFreePlanSucceed {
+  success: true;
+  isActive: false;
+  isFreePlanAvailable: true;
+}
+
+export interface ResponseFreePlanFailed {
+  success: false;
+  isActive: false;
+  isFreePlanAvailable: false;
+  error: string;
+}
+
 export default async function isUsersPlanActive(): Promise<
-  ResponseSuccess | ResponseFailed
+  | ResponseSuccess
+  | ResponseFailed
+  | ResponseFreePlanSucceed
+  | ResponseFreePlanFailed
 > {
   try {
     const user = await getUser();
@@ -28,6 +44,20 @@ export default async function isUsersPlanActive(): Promise<
       };
     }
 
+    const foundUser = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+    });
+
+    if (!foundUser) {
+      console.log("User not found");
+      return {
+        success: false,
+        error: "User not found",
+      };
+    }
+
     const subscription = await prisma.plan.findFirst({
       where: {
         userId: user.id,
@@ -35,10 +65,28 @@ export default async function isUsersPlanActive(): Promise<
       },
     });
 
-    return {
-      success: true,
-      isActive: !!subscription,
-    };
+    if (subscription && subscription.isActive === true) {
+      return {
+        success: true,
+        isActive: !!subscription,
+      };
+    }
+
+    // Check if daily_free_improvements is less than 2
+    if (!subscription && foundUser.daily_free_improvements > 0) {
+      return {
+        success: true,
+        isActive: false,
+        isFreePlanAvailable: true,
+      };
+    } else {
+      return {
+        success: false,
+        isActive: false,
+        isFreePlanAvailable: false,
+        error: "No improvements left",
+      };
+    }
   } catch (error) {
     console.error("Error checking user plan:", error);
     return {

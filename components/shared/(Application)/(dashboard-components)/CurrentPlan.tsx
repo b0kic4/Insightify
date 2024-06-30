@@ -6,6 +6,7 @@ import Link from "next/link";
 
 interface CurrentPlanProps {
   plan: Plan | null;
+  freeImprovementsLeft: number | null;
 }
 
 const getIntervalDisplay = (interval: string) => {
@@ -23,7 +24,10 @@ const getIntervalDisplay = (interval: string) => {
   }
 };
 
-export default function CurrentPlan({ plan }: CurrentPlanProps) {
+export default function CurrentPlan({
+  plan,
+  freeImprovementsLeft,
+}: CurrentPlanProps) {
   return (
     <Card className="h-[450px] p-4 bg-white shadow-md rounded-lg dark:bg-gray-800 flex flex-col justify-between">
       <CardHeader className="pb-4 border-b border-gray-200 dark:border-gray-700">
@@ -102,6 +106,17 @@ export default function CurrentPlan({ plan }: CurrentPlanProps) {
               <p className="mt-2 text-gray-800 dark:text-gray-300">
                 Please manage your subscription.
               </p>
+              {freeImprovementsLeft !== null && (
+                <div className="mt-4 p-2 bg-green-100 rounded-lg dark:bg-green-950">
+                  <p className="text-gray-800 dark:text-gray-300">
+                    <strong>Free Improvements Left:</strong>{" "}
+                    {freeImprovementsLeft}
+                  </p>
+                  <p className="text-gray-800 dark:text-gray-300">
+                    These reset every 6 hours.
+                  </p>
+                </div>
+              )}
             </div>
             <Button
               variant="outline"

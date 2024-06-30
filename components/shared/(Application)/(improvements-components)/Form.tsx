@@ -11,12 +11,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useWebSocket } from "@/lib/utils/hooks/websockets-hooks/useWebSockets";
-import isUsersPlanActive from "@/lib/utils/hooks/db/IsActivePlanHook";
-import { useToast } from "@/components/ui/use-toast";
-import {
+import isUsersPlanActive, {
   ResponseSuccess,
   ResponseFailed,
+  ResponseFreePlanSucceed,
+  ResponseFreePlanFailed,
 } from "@/lib/utils/hooks/db/IsActivePlanHook";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Form() {
   const {
@@ -30,6 +31,8 @@ export default function Form() {
   const [aiResponse, setAiResponse] = React.useState<
     AIResponse[][] | undefined
   >([]);
+
+  const [isFreePlanAvailable, setIsFreePlanAvailable] = React.useState(false);
 
   const {
     messages,
@@ -47,7 +50,6 @@ export default function Form() {
   const { toast } = useToast();
 
   React.useEffect(() => {
-    // Load data from localStorage
     const savedData = localStorage.getItem("improvementData");
     if (savedData) {
       const parsedData = JSON.parse(savedData);
@@ -61,65 +63,80 @@ export default function Form() {
 
   const onSubmit = async (data: FormValues) => {
     setAnalysisCompleted(false);
-
     formDataRef.current = data;
 
     if (user?.id && formDataRef.current?.websiteUrl) {
       const response = await isUsersPlanActive();
 
-      if (!isResponseSuccess(response) || !response.isActive) {
+      if (response.success) {
+        if (
+          (response as ResponseSuccess).isActive ||
+          (response as ResponseFreePlanSucceed).isFreePlanAvailable
+        ) {
+          // Active plan found
+          const cachedData = await getSingleWebsiteFromUserCache(
+            user.id,
+            formDataRef.current.websiteUrl,
+          );
+
+          if (cachedData !== null) {
+            if (
+              cachedData.screenshots &&
+              cachedData.market &&
+              cachedData.audience &&
+              cachedData.insights
+            ) {
+              images.current = cachedData.screenshots;
+              formDataRef.current = {
+                ...formDataRef.current,
+                websiteInsights: cachedData.insights,
+                targetedAudience: cachedData.audience,
+                targetedMarket: cachedData.market,
+              };
+              if (
+                cachedData.aiResponse &&
+                cachedData.aiResponse.length > 0 &&
+                cachedData.type
+              ) {
+                setAiResponse(cachedData.aiResponse);
+                setAnalysisCompleted(true);
+                return;
+              }
+              setAnalysisCompleted(true);
+              return;
+            }
+          }
+
+          if (cachedData === null) {
+            if (response as ResponseFreePlanSucceed) {
+              setIsFreePlanAvailable(
+                (response as ResponseFreePlanSucceed).isFreePlanAvailable,
+              );
+            }
+
+            toast({
+              title: "Preparing your data",
+              description: "Sending the request...",
+            });
+            initializeWebSocket();
+            sendMessage({
+              url: data.websiteUrl,
+            });
+          }
+        }
+      } else {
+        const failedResponse = response as
+          | ResponseFailed
+          | ResponseFreePlanFailed;
         toast({
           title: "Error",
-          description: "No Active Plan Found. Please make a purchase.",
+          description: failedResponse.error,
         });
-        console.error("User does not have an active plan:", "Inactive plan");
+        console.error(
+          "User does not have an active plan:",
+          failedResponse.error,
+        );
         return;
-      }
-
-      const cachedData = await getSingleWebsiteFromUserCache(
-        user.id,
-        formDataRef.current.websiteUrl,
-      );
-
-      if (cachedData !== null) {
-        console.log("Cached data found in Redis, using cached data");
-        console.log("cachedData: ", cachedData);
-        if (
-          cachedData.screenshots &&
-          cachedData.market &&
-          cachedData.audience &&
-          cachedData.insights
-        ) {
-          images.current = cachedData.screenshots;
-          formDataRef.current = {
-            ...formDataRef.current,
-            websiteInsights: cachedData.insights,
-            targetedAudience: cachedData.audience,
-            targetedMarket: cachedData.market,
-          };
-          if (
-            cachedData.aiResponse &&
-            cachedData.aiResponse.length > 0 &&
-            cachedData.type
-          ) {
-            setAiResponse(cachedData.aiResponse);
-            setAnalysisCompleted(true);
-            return;
-          }
-          setAnalysisCompleted(true);
-          return;
-        }
-      }
-
-      if (cachedData === null) {
-        toast({
-          title: "Preparing your data",
-          description: "Sending the request...",
-        });
-        initializeWebSocket();
-        sendMessage({
-          url: data.websiteUrl,
-        });
       }
     }
 
@@ -129,6 +146,7 @@ export default function Form() {
   if (analysisCompleted) {
     return (
       <ImprovementDetails
+        isFreePlanInUse={isFreePlanAvailable}
         formData={formDataRef.current}
         images={images.current as string[]}
         cachedAiResponse={aiResponse}
@@ -241,15 +259,8 @@ export default function Form() {
           ) : (
             <AnalysisModal messages={messages} progress={progress} />
           )}
-          {/* {error && <p className="text-red-500">{error}</p>} */}
         </form>
       </div>
     </section>
   );
-}
-
-function isResponseSuccess(
-  response: ResponseSuccess | ResponseFailed,
-): response is ResponseSuccess {
-  return (response as ResponseSuccess).isActive !== undefined;
 }
