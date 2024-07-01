@@ -3,6 +3,7 @@ import "./globals.css";
 import { Libre_Franklin } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Toaster } from "@/components/ui/toaster";
 import Providers from "./providers";
 
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Analytics />
+      <SpeedInsights/>
       <body className={`${libre.className}`}>
         <ThemeProvider
           attribute="class"
