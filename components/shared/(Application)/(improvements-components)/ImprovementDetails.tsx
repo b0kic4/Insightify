@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
+import React  from "react";
 import { Button } from "@/components/ui/button";
 import { AIResponse, FormValues } from "@/lib";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
@@ -25,21 +25,21 @@ export default function ImprovementDetails({
   cachedAiResponse,
   images,
 }: ResponseProps) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [imageLoading, setImageLoading] = useState(true);
-  const [aiResponse, setAiResponse] = useState<AIResponse[][]>(
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+  const [imageLoading, setImageLoading] = React.useState(true);
+  const [aiResponse, setAiResponse] = React.useState<AIResponse[][]>(
     cachedAiResponse || [],
   );
-  const [threadId, setThreadId] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
-  const [requestCompleted, setRequestCompleted] = useState<boolean>(false);
+  const [threadId, setThreadId] = React.useState<string>("");
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const [requestCompleted, setRequestCompleted] = React.useState<boolean>(false);
 
   const { user } = useKindeBrowserClient();
   const { toast } = useToast();
 
   const savedData = localStorage.getItem("improvementData");
 
-  const saveImprovement = useCallback(
+  const saveImprovement = React.useCallback(
     async (threadId: string, userId: string) => {
       if (!threadId) {
         return console.log("no threadId");
@@ -90,7 +90,7 @@ export default function ImprovementDetails({
     [formData, toast, isFreePlanInUse],
   );
 
-  const makeAIRequest = useCallback(
+  const makeAIRequest = React.useCallback(
     async (formData: FormValues, images: string[], userId: string) => {
       try {
         if (!formData || images.length === 0) {
@@ -148,7 +148,7 @@ export default function ImprovementDetails({
     [saveImprovement],
   );
 
-  useEffect(() => {
+  React.useEffect(() => {
     const parsedData = savedData ? JSON.parse(savedData) : null;
 
     if (parsedData && parsedData.threadId) {

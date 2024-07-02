@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import React from "react";
 import {
   Dialog,
   DialogHeader,
@@ -10,10 +10,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 
 export default function AnalysisModal({ messages, progress }: any) {
-  const [open, setOpen] = useState(true);
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  const [open, setOpen] = React.useState(true);
+  const [currentMessageIndex, setCurrentMessageIndex] = React.useState(0);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const completedMessage = messages.find(
       (message: any) =>
         message.type === "status" && message.content === "Analysis completed",
