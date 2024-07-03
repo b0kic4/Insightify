@@ -39,7 +39,7 @@ export default function CurrentPlan({
         </div>
       </CardHeader>
       <CardContent className="flex-grow p-2">
-        {plan ? (
+        {plan && !plan.refunded ? (
           <div className="flex flex-col space-y-4">
             <div className="bg-green-100 p-4 rounded-lg shadow-inner dark:bg-green-900">
               <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
