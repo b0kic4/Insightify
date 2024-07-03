@@ -48,6 +48,7 @@ export default function Form() {
   } = useWebSocket();
 
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = React.useState(false); // Loading state
 
   React.useEffect(() => {
     const savedData = localStorage.getItem("improvementData");
@@ -65,6 +66,7 @@ export default function Form() {
     formDataRef.current = data;
 
     if (user?.id && formDataRef.current?.websiteUrl) {
+      setIsLoading(true); // Set loading state to true
       const response = await isUsersPlanActive();
 
       if (response.success) {
@@ -73,10 +75,6 @@ export default function Form() {
           (response as ResponseFreePlanSucceed).isFreePlanAvailable
         ) {
           // Active plan or free trial found
-          toast({
-            title: "Preparing your data",
-            description: "Sending the request...",
-          });
           const cachedData = await getSingleWebsiteFromUserCache(
             user.id,
             formDataRef.current.websiteUrl,
@@ -103,9 +101,11 @@ export default function Form() {
               ) {
                 setAiResponse(cachedData.aiResponse);
                 setAnalysisCompleted(true);
+                setIsLoading(false); // Reset loading state
                 return;
               }
               setAnalysisCompleted(true);
+              setIsLoading(false); // Reset loading state
               return;
             }
           }
@@ -135,11 +135,13 @@ export default function Form() {
           "User does not have an active plan:",
           failedResponse.error,
         );
+        setIsLoading(false); // Reset loading state
         return;
       }
     }
 
     reset();
+    setIsLoading(false); // Reset loading state
   };
 
   if (analysisCompleted) {
@@ -250,10 +252,10 @@ export default function Form() {
             <Button
               className="transition-all duration-300 ease-in-out bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-400 dark:focus:ring-offset-gray-900"
               type="submit"
-              disabled={loading}
+              disabled={isLoading} // Disable button when loading
               onFocus={initializeWebSocket}
             >
-              Analyze
+              {isLoading ? "Loading..." : "Analyze"}
             </Button>
           ) : (
             <AnalysisModal messages={messages} progress={progress} />
