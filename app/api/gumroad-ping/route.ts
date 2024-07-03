@@ -101,7 +101,11 @@ export async function POST(req: Request) {
         planData.cardId = card.id;
 
         await prisma.plan.upsert({
-          where: { productId: planData.productId },
+          where: {
+            subscriptionId: planData.subscriptionId,
+            saleId: planData.saleId,
+            productId: planData.productId,
+          },
           update: {
             ...planData,
             updatedAt: new Date(),
