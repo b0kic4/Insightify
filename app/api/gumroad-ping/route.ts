@@ -104,7 +104,6 @@ export async function POST(req: Request) {
           where: {
             subscriptionId: planData.subscriptionId,
             saleId: planData.saleId,
-            productId: planData.productId,
           },
           update: {
             ...planData,
