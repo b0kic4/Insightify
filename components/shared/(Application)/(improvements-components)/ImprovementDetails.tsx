@@ -1,5 +1,5 @@
 "use client";
-import React  from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { AIResponse, FormValues } from "@/lib";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
@@ -10,7 +10,7 @@ import { FormDataDisplay } from "./utils/FormDataDisplay";
 import { ImageCarousel } from "./utils/ImageCarousel";
 import { AIResponseDisplay } from "./utils/AIResponseDisplay";
 import { RequestToAI } from "@/lib/utils/actions/ai/RequestToAI";
-import increaseUsageOfFreePlan from "@/lib/utils/hooks/db/freePlanUsageCalc";
+import { useIncreaseUsageRefetchPlan } from "@/lib/utils/hooks/(react-query)/increaseUsageRefetchPlan";
 
 interface ResponseProps {
   isFreePlanInUse?: boolean | null;
@@ -32,9 +32,11 @@ export default function ImprovementDetails({
   );
   const [threadId, setThreadId] = React.useState<string>("");
   const [loading, setLoading] = React.useState<boolean>(true);
-  const [requestCompleted, setRequestCompleted] = React.useState<boolean>(false);
+  const [requestCompleted, setRequestCompleted] =
+    React.useState<boolean>(false);
 
   const { user } = useKindeBrowserClient();
+  const { handleIncreaseUsage } = useIncreaseUsageRefetchPlan();
   const { toast } = useToast();
 
   const savedData = localStorage.getItem("improvementData");
@@ -65,18 +67,7 @@ export default function ImprovementDetails({
           });
 
           if (isFreePlanInUse) {
-            const response = await increaseUsageOfFreePlan();
-            if (response.success) {
-              toast({
-                title: "Free Plan",
-                description: `You have ${response.data} free improvements left.`,
-              });
-            } else {
-              toast({
-                title: "Error",
-                description: response.error,
-              });
-            }
+            handleIncreaseUsage(); // Use the hook here instead of direct function call
           }
         }
       } catch (error) {
@@ -177,7 +168,6 @@ export default function ImprovementDetails({
     }
   }, [cachedAiResponse, formData, images, makeAIRequest, threadId, user]);
 
-
   const removeLocalStorageData = () => {
     localStorage.removeItem("improvementData");
     window.location.reload();
@@ -195,9 +185,7 @@ export default function ImprovementDetails({
               size="icon"
               variant="ghost"
             >
-              <BiReset
-                className="h-8 w-8 text-red-500"
-              />
+              <BiReset className="h-8 w-8 text-red-500" />
               <span className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity text-sm bg-gray-800 text-white rounded-md px-2 py-1 shadow-lg">
                 Reset
               </span>
