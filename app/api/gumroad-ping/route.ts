@@ -48,6 +48,7 @@ export async function POST(req: Request) {
 
     switch (resourceName) {
       case "sale": {
+        const activePlanValue = !refunded ? true : false;
         const planData: PlanData = {
           sellerId: payload["seller_id"] as string,
           productId: payload["product_id"] as string,
@@ -76,7 +77,7 @@ export async function POST(req: Request) {
           recurrence: recurrence,
           isGiftReceiverPurchase:
             (payload["is_gift_receiver_purchase"] as string) === "true",
-          isActive: true,
+          isActive: activePlanValue,
           refunded: refunded,
           disputed: (payload["disputed"] as string) === "true",
           disputeWon: (payload["dispute_won"] as string) === "true",
