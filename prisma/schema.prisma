@@ -37,7 +37,7 @@ model Improvement {
 model Plan {
   id                      Int       @id @default(autoincrement())
   sellerId                String
-  productId               String    @unique
+  productId               String
   productName             String
   permalink               String
   productPermalink        String

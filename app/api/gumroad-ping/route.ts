@@ -137,7 +137,6 @@ export async function POST(req: Request) {
           where: {
             subscriptionId: payload["subscription_id"] as string,
             saleId: payload["sale_id"] as string,
-            productId: payload["product_id"] as string,
           },
           data: {
             disputeWon: true,
@@ -152,7 +151,6 @@ export async function POST(req: Request) {
           where: {
             subscriptionId: payload["subscription_id"] as string,
             saleId: payload["sale_id"] as string,
-            productId: payload["product_id"] as string,
           },
           data: {
             refunded: true,
@@ -170,7 +168,6 @@ export async function POST(req: Request) {
           where: {
             subscriptionId: payload["subscription_id"] as string,
             saleId: payload["sale_id"] as string,
-            productId: payload["product_id"] as string,
           },
           data: {
             canceledAt: cancellationDate,
@@ -185,7 +182,6 @@ export async function POST(req: Request) {
           where: {
             subscriptionId: payload["subscription_id"] as string,
             saleId: payload["sale_id"] as string,
-            productId: payload["product_id"] as string,
           },
           data: {
             isActive: false,
@@ -207,7 +203,6 @@ export async function POST(req: Request) {
           where: {
             subscriptionId: payload["subscription_id"] as string,
             saleId: payload["sale_id"] as string,
-            productId: payload["product_id"] as string,
           },
           data: {
             isActive: true,
