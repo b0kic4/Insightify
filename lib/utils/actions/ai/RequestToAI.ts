@@ -53,22 +53,23 @@ export async function RequestToAI({
 4. Focus on providing actionable improvements without mentioning the analysis process.
 
 **Guidelines:**
-- **Current Design**: Detect the current design style and provide information about the layout's current state, including a creative rating.
+  - **Current State** 🖥️: Describe the current state.
+- **Current Design** 🖌️: Detect the current design style and provide information about the layout's current state, including a creative rating.
 - Use Markdown to format the response with the following sections:
-  - **Current State**: Describe the current state of the section.
-  - **Improvements**: Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
-  - **Examples**: Provide concrete examples with sources to help visualize the suggested improvements. If the example is link make it look like a link.
-  - **Severity**: Provide severity ratings for usability and appearance.
+  - **Improvements** 🚀: Suggest specific changes, including design tweaks, text revisions, and user experience enhancements.
+  - **Examples** 🌐: Provide concrete examples with sources to help visualize the suggested improvements. If the example is a link, make it look like a link with [🔗](example link).
+  - **Severity** ⚠️: Provide severity ratings for usability and appearance.
 - Frame your suggestions in an engaging, creative manner, and use descriptive language to make the recommendations lively.
 
 Add a horizontal line after each section for clear separation like this: **---**.
 
 **Example Response Structure:**
 - **Identified Section** (e.g., Screenshot 1):
-  - **Current State**: Describe the current state.
-  - **Improvements**: Suggest specific changes.
-  - **Examples**: Provide examples, if they are links make them look like links.
-  - **Severity**: Rate usability and appearance.
+  - **Current State** 🖥️: Describe the current state.
+  - **Current Design** 🖌️: Detect the current design style and provide information about the layout's current state, including a creative rating.
+  - **Improvements** 🚀: Suggest specific changes.
+  - **Examples** 🌐: Provide examples, if they are links make them look like links with [🔗](example link).
+  - **Severity** ⚠️: Rate usability and appearance.
 
 Add a horizontal line after each section for clear separation like this: **---**.
 
@@ -79,10 +80,11 @@ Connect the provided screenshots (sections) with the respective parts of the web
 
 **Example Response Structure:**
 - **Identified Section** (e.g., Screenshot 1):
-  - **Current State**: Describe the current state.
-  - **Improvements**: Suggest specific changes.
-  - **Examples**: Provide examples, if they are links make them look like links.
-  - **Severity**: Rate usability and appearance.
+  - **Current State** 🖥️: Describe the current state.
+  - **Current Design** 🖌️: Detect the current design style and provide information about the layout's current state, including a creative rating.
+  - **Improvements** 🚀: Suggest specific changes.
+  - **Examples** 🌐: Provide examples, if they are links make them look like links with [🔗](example link).
+  - **Severity** ⚠️: Rate usability and appearance.
 
 Add a horizontal line after each section for clear separation like this: **---**.`,
   };
@@ -98,10 +100,11 @@ Add a horizontal line after each section for clear separation like this: **---**
 
 **Example Response Structure:**
 - **Identified Section**:
-  - **Current State**: Describe the current state.
-  - **Improvements**: Suggest specific changes.
-  - **Examples**: Provide examples, if they are links make them look like links.
-  - **Severity**: Rate usability and appearance.
+  - **Current State** 🖥️: Describe the current state.
+  - **Current Design** 🖌️: Detect the current design style and provide information about the layout's current state, including a creative rating.
+  - **Improvements** 🚀: Suggest specific changes.
+  - **Examples** 🌐: Provide examples, if they are links make them look like links with [🔗](example link).
+  - **Severity** ⚠️: Rate usability and appearance.
 
 Add a horizontal line after each section for clear separation like this: **---**.`,
   };
