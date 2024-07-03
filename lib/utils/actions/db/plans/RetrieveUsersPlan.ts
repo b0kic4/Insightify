@@ -53,7 +53,7 @@ export default async function retrieveUsersPlan() {
     const card = foundUser.cards[0] || null;
     const dailyFreeImprovements = foundUser.daily_free_improvements;
 
-    if (plan) {
+    if (plan && !plan.refunded) {
       return {
         success: true,
         data: {
@@ -61,6 +61,12 @@ export default async function retrieveUsersPlan() {
           card: card,
         },
       } as ResponseSuccess;
+    } else if (plan && plan.refunded) {
+      return {
+        success: true,
+        message: "Your plan has been refunded",
+        freeImprovementsLeft: dailyFreeImprovements,
+      } as ResponseSuccessButNoPlan;
     } else {
       return {
         success: true,
