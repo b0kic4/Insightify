@@ -1,3 +1,4 @@
+import React from "react";
 import ReactMarkdown from "react-markdown";
 import { FaRobot } from "react-icons/fa";
 import SkeletonLoaderAIResponse from "@/components/ui/AIResponseSkeletonLoader";
@@ -15,7 +16,7 @@ export const AIResponseDisplay = ({
       <FaRobot className="text-blue-500" />
       AI Response
     </h3>
-    {loading ? (
+    {loading && aiResponseContent.length === 0 ? (
       <>
         <p className="text-lg font-bold text-gray-900 dark:text-gray-50 mb-6">
           AI is looking for improvements, please be patient...

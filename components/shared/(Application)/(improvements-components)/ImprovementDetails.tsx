@@ -9,7 +9,6 @@ import { BiReset } from "react-icons/bi";
 import { FormDataDisplay } from "./utils/FormDataDisplay";
 import { ImageCarousel } from "./utils/ImageCarousel";
 import { AIResponseDisplay } from "./utils/AIResponseDisplay";
-import { RequestToAI } from "@/lib/utils/actions/ai/RequestToAI";
 import { useIncreaseUsageRefetchPlan } from "@/lib/utils/hooks/(react-query)/increaseUsageRefetchPlan";
 
 interface ResponseProps {
@@ -67,7 +66,7 @@ export default function ImprovementDetails({
           });
 
           if (isFreePlanInUse) {
-            handleIncreaseUsage(); // Use the hook here instead of direct function call
+            handleIncreaseUsage();
           }
         }
       } catch (error) {
@@ -97,39 +96,42 @@ export default function ImprovementDetails({
           }),
         );
 
-        const response = await RequestToAI({
-          url: formData.websiteUrl,
-          audience: formData.targetedAudience,
-          market: formData.targetedMarket,
-          insights: formData.websiteInsights,
-          imageUrls: images,
-        });
+        const eventSource = new EventSource("/api/stream-response");
+        console.log("event source: ", eventSource);
+        eventSource.onmessage = function (event) {
+          const response = JSON.parse(event.data);
 
-        if (!response.success) {
+          if (response.success) {
+            setAiResponse(response.data.aiResponse as AIResponse[][]);
+            setThreadId(response.data.threadId);
+
+            localStorage.setItem(
+              "improvementData",
+              JSON.stringify({
+                formData,
+                images,
+                type: response.data.type,
+                aiResponse: response.data.aiResponse,
+                threadId: response.data.threadId,
+                aiResLoading: false,
+              }),
+            );
+
+            saveImprovement(response.data.threadId, userId);
+
+            setRequestCompleted(true);
+            setLoading(false);
+          } else {
+            setLoading(false);
+            setRequestCompleted(true);
+          }
+        };
+
+        eventSource.onerror = function (error) {
+          console.log("EventSource error: ", error);
           setLoading(false);
-          console.log("error occurred: ", response);
-          return;
-        }
-
-        setAiResponse(response.data.aiResponse as AIResponse[][]);
-        setThreadId(response.data.threadId);
-
-        localStorage.setItem(
-          "improvementData",
-          JSON.stringify({
-            formData,
-            images,
-            type: response.data.type,
-            aiResponse: response.data.aiResponse,
-            threadId: response.data.threadId,
-            aiResLoading: false,
-          }),
-        );
-
-        saveImprovement(response.data.threadId, userId);
-
-        setRequestCompleted(true);
-        setLoading(false);
+          setRequestCompleted(true);
+        };
       } catch (error) {
         console.log("error: ", error);
         setLoading(false);
@@ -191,6 +193,13 @@ export default function ImprovementDetails({
               </span>
             </Button>
           )}
+          <Button
+            onClick={() =>
+              makeAIRequest(formData as FormValues, images, user?.id as string)
+            }
+          >
+            Call
+          </Button>
           {images.length > 0 && (
             <ImageCarousel
               images={images}
