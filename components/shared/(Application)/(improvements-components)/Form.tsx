@@ -3,7 +3,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { getSingleWebsiteFromUserCache } from "@/lib/utils/hooks/(redisHooks)/RedisHooks";
-import { FormValues, AIResponse } from "@/lib";
+import { FormValues } from "@/lib";
 import ImprovementDetails from "@/components/shared/(Application)/(improvements-components)/ImprovementDetails";
 import AnalysisModal from "@/components/ui/AnalysisModal";
 import { Button } from "@/components/ui/button";
@@ -28,9 +28,7 @@ export default function Form() {
   } = useForm<FormValues>();
 
   const { user } = useKindeBrowserClient();
-  const [aiResponse, setAiResponse] = React.useState<
-    AIResponse[][] | undefined
-  >([]);
+  const [aiResponse, setAiResponse] = React.useState<string[]>([]);
 
   const [isFreePlanAvailable, setIsFreePlanAvailable] = React.useState(false);
 

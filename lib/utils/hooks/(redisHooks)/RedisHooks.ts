@@ -49,7 +49,7 @@ export async function getSingleWebsiteFromUserCache(
   audience?: string;
   insights?: string;
   type?: string;
-  aiResponse?: AIResponse[][];
+  aiResponse?: string[];
 } | null> {
   const redis = await getRedisInstance();
   const key = `${userId}:${url}`;

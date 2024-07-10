@@ -79,7 +79,7 @@ export default function Improvement({ params }: { params: { id: string } }) {
       <ImprovementDetails
         formData={data?.formData as FormValues}
         images={data?.images as string[]}
-        cachedAiResponse={data?.cachedAiResponse}
+        cachedAiResponse={data?.cachedAiResponse as string[]}
       />
     </main>
   );

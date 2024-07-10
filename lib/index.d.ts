@@ -20,7 +20,7 @@ export interface AIResponse {
 }
 
 export interface ResponseData {
-  aiResponse: AIResponse[][];
+  aiResponse: string[];
   threadId: string;
   type: string;
   market: string;
@@ -29,7 +29,7 @@ export interface ResponseData {
 }
 
 export interface CachedAIResponse {
-  aiResponse: AIResponse[][];
+  aiResponse: string[];
   screenshots: string[];
   threadId: string;
   type: string;

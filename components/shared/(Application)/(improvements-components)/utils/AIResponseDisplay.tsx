@@ -2,13 +2,12 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import { FaRobot } from "react-icons/fa";
 import SkeletonLoaderAIResponse from "@/components/ui/AIResponseSkeletonLoader";
-import { AIResponse } from "@/lib";
 
 export const AIResponseDisplay = ({
   aiResponseContent,
   loading,
 }: {
-  aiResponseContent: AIResponse[][];
+  aiResponseContent: string[];
   loading: boolean;
 }) => (
   <div className="flex-grow bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 lg:p-10 max-h-96 lg:max-h-[30rem] overflow-y-auto w-full lg:w-full lg:px-4">
@@ -24,13 +23,13 @@ export const AIResponseDisplay = ({
         <SkeletonLoaderAIResponse />
       </>
     ) : (
-      aiResponseContent.flat().map((content, index) => (
+      aiResponseContent.map((content, index) => (
         <div
           key={index}
           className="bg-gray-100 dark:bg-gray-900 rounded-lg p-4 mb-4 shadow-md"
         >
           <ReactMarkdown className="prose dark:prose-invert text-lg text-gray-600 dark:text-gray-400">
-            {content?.text?.value ?? ""}
+            {content}
           </ReactMarkdown>
         </div>
       ))

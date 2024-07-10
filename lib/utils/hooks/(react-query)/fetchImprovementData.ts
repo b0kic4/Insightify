@@ -15,10 +15,14 @@ const fetchImprovementDetails = async (threadId: string, userId: string) => {
       targetedMarket: improvement.market,
     };
 
+    const cachedAiResponse = responseMessage.aiResponse.map(
+      (item: any) => item.text,
+    );
+
     return {
       formData,
       images: responseMessage.images.sort(),
-      cachedAiResponse: responseMessage.aiResponse,
+      cachedAiResponse,
     };
   } else {
     throw new Error(

@@ -1,7 +1,7 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { AIResponse, FormValues } from "@/lib";
+import { FormValues } from "@/lib";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { saveImprovementsWithUser } from "@/lib/utils/actions/db/improvements/SaveImprovementsToUser";
 import { useToast } from "@/components/ui/use-toast";
@@ -10,12 +10,13 @@ import { FormDataDisplay } from "./utils/FormDataDisplay";
 import { ImageCarousel } from "./utils/ImageCarousel";
 import { AIResponseDisplay } from "./utils/AIResponseDisplay";
 import { useIncreaseUsageRefetchPlan } from "@/lib/utils/hooks/(react-query)/increaseUsageRefetchPlan";
+import { structureRequest } from "@/lib/utils/actions/ai/RequestToAI";
 
 interface ResponseProps {
   isFreePlanInUse?: boolean | null;
   formData: FormValues | null;
   images: string[];
-  cachedAiResponse?: AIResponse[][] | undefined;
+  cachedAiResponse?: string[];
 }
 
 export default function ImprovementDetails({
@@ -24,15 +25,14 @@ export default function ImprovementDetails({
   cachedAiResponse,
   images,
 }: ResponseProps) {
-  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
-  const [imageLoading, setImageLoading] = React.useState(true);
-  const [aiResponse, setAiResponse] = React.useState<AIResponse[][]>(
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imageLoading, setImageLoading] = useState(true);
+  const [aiResponse, setAiResponse] = useState<string[]>(
     cachedAiResponse || [],
   );
-  const [threadId, setThreadId] = React.useState<string>("");
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [requestCompleted, setRequestCompleted] =
-    React.useState<boolean>(false);
+  const [threadId, setThreadId] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [requestCompleted, setRequestCompleted] = useState<boolean>(false);
 
   const { user } = useKindeBrowserClient();
   const { handleIncreaseUsage } = useIncreaseUsageRefetchPlan();
@@ -40,7 +40,7 @@ export default function ImprovementDetails({
 
   const savedData = localStorage.getItem("improvementData");
 
-  const saveImprovement = React.useCallback(
+  const saveImprovement = useCallback(
     async (threadId: string, userId: string) => {
       if (!threadId) {
         return console.log("no threadId");
@@ -80,7 +80,7 @@ export default function ImprovementDetails({
     [formData, toast, isFreePlanInUse],
   );
 
-  const makeAIRequest = React.useCallback(
+  const makeAIRequest = useCallback(
     async (formData: FormValues, images: string[], userId: string) => {
       try {
         if (!formData || images.length === 0) {
@@ -96,42 +96,60 @@ export default function ImprovementDetails({
           }),
         );
 
-        const eventSource = new EventSource("/api/stream-response");
-        console.log("event source: ", eventSource);
-        eventSource.onmessage = function (event) {
-          const response = JSON.parse(event.data);
+        const promptData = await structureRequest({
+          url: formData.websiteUrl,
+          audience: formData.targetedAudience,
+          market: formData.targetedMarket,
+          insights: formData.websiteInsights,
+          imageUrls: images,
+        });
 
-          if (response.success) {
-            setAiResponse(response.data.aiResponse as AIResponse[][]);
-            setThreadId(response.data.threadId);
+        if (!promptData.success) {
+          console.log("Prompt structuring failed");
+          return;
+        }
 
-            localStorage.setItem(
-              "improvementData",
-              JSON.stringify({
-                formData,
-                images,
-                type: response.data.type,
-                aiResponse: response.data.aiResponse,
-                threadId: response.data.threadId,
-                aiResLoading: false,
-              }),
-            );
+        const response = await fetch("/api/stream-openai-response", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            prompt: promptData.data.messages,
+            formData: formData,
+            images: images,
+          }),
+        });
 
-            saveImprovement(response.data.threadId, userId);
+        if (!response.body) {
+          console.error("ReadableStream not supported");
+          return;
+        }
 
-            setRequestCompleted(true);
-            setLoading(false);
-          } else {
-            setLoading(false);
-            setRequestCompleted(true);
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        const processStream = async () => {
+          let aiResponseData = "";
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            aiResponseData += decoder.decode(value, { stream: true });
           }
+
+          // Here we parse the accumulated data
+          const cleanedResponse = aiResponseData
+            .split("\n\n")
+            .filter(Boolean)
+            .map((line) => line.replace(/^data: /, ""))
+            .join("");
+
+          setAiResponse([cleanedResponse]);
+          setRequestCompleted(true);
+          setLoading(false);
         };
 
-        eventSource.onerror = function (error) {
-          console.log("EventSource error: ", error);
-          setLoading(false);
-          setRequestCompleted(true);
-        };
+        processStream();
       } catch (error) {
         console.log("error: ", error);
         setLoading(false);
@@ -141,7 +159,7 @@ export default function ImprovementDetails({
     [saveImprovement],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     const parsedData = savedData ? JSON.parse(savedData) : null;
 
     if (parsedData && parsedData.threadId) {
@@ -181,7 +199,6 @@ export default function ImprovementDetails({
         <div className="flex flex-col lg:flex-col gap-8 lg:gap-12 items-center">
           {savedData && (
             <Button
-              // disabled={loading}
               onClick={removeLocalStorageData}
               className="relative group"
               size="icon"
