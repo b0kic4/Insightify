@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import amqplib, { Channel } from "amqplib";
+import amqplib, { Channel, ConsumeMessage } from "amqplib";
 
 let channel: Channel;
+let temporaryStore: Notification[] = [];
 
 interface Notification {
   userId: string;
@@ -29,16 +30,21 @@ const fetchMessages = async (userId: string): Promise<Notification[]> => {
       (msg) => {
         if (msg !== null) {
           const content = JSON.parse(msg.content.toString());
-          if (content.userId === userId) {
-            messages.push(content);
+          console.log("content: ", content);
+          if (content.data.userId === userId) {
+            messages.push(content.data);
           }
-          channel.ack(msg);
-        } else {
-          resolve(messages);
+          // Do not acknowledge here to simulate storing messages
         }
       },
-      { noAck: false },
+      { noAck: true }, // Ensure we do not ack automatically
     );
+
+    setTimeout(() => {
+      // Save messages to temporary store
+      temporaryStore = messages;
+      resolve(messages);
+    }, 5000); // Fetch messages for 500 ms and then resolve
   });
 };
 
@@ -64,4 +70,9 @@ export async function GET(request: Request) {
       { status: 500 },
     );
   }
+}
+
+export async function DELETE(request: Request) {
+  temporaryStore = [];
+  return NextResponse.json({ success: true });
 }

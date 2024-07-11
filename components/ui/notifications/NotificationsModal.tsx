@@ -5,12 +5,14 @@ interface NotificationModalProps {
   isOpen: boolean;
   onClose: () => void;
   notifications: { message: string }[];
+  onClear: () => void;
 }
 
 const NotificationModal: React.FC<NotificationModalProps> = ({
   isOpen,
   onClose,
   notifications,
+  onClear,
 }) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -52,6 +54,12 @@ const NotificationModal: React.FC<NotificationModalProps> = ({
             </li>
           ))}
         </ul>
+        <button
+          onClick={onClear}
+          className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg"
+        >
+          Clear Notifications
+        </button>
       </motion.div>
     </div>
   );
