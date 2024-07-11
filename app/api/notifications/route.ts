@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import amqplib, { Channel, ConsumeMessage } from "amqplib";
+import prisma from "@/prisma/client";
 
 let channel: Channel;
-let temporaryStore: Notification[] = [];
 
 interface Notification {
   userId: string;
@@ -19,32 +19,37 @@ const connectRabbitMQ = async (): Promise<Channel> => {
   return channel;
 };
 
-const fetchMessages = async (userId: string): Promise<Notification[]> => {
+const consumeMessages = async (userId: string): Promise<void> => {
   const channel = await connectRabbitMQ();
 
-  return new Promise((resolve) => {
-    const messages: Notification[] = [];
-
+  return new Promise((resolve, reject) => {
     channel.consume(
       "notifications_queue",
-      (msg) => {
-        if (msg !== null) {
-          const content = JSON.parse(msg.content.toString());
-          console.log("content: ", content);
-          if (content.data.userId === userId) {
-            messages.push(content.data);
+      async (msg: ConsumeMessage | null) => {
+        try {
+          if (msg !== null) {
+            const content = JSON.parse(msg.content.toString());
+            console.log("content: ", content);
+            if (content.data.userId === userId) {
+              await prisma.notification.create({
+                data: {
+                  userId: content.data.userId,
+                  message: content.data.message,
+                },
+              });
+            }
+            channel.ack(msg);
           }
-          // Do not acknowledge here to simulate storing messages
+        } catch (error) {
+          reject(error);
         }
       },
-      { noAck: true }, // Ensure we do not ack automatically
+      { noAck: false },
     );
 
     setTimeout(() => {
-      // Save messages to temporary store
-      temporaryStore = messages;
-      resolve(messages);
-    }, 5000); // Fetch messages for 500 ms and then resolve
+      resolve();
+    }, 5000);
   });
 };
 
@@ -61,18 +66,37 @@ export async function GET(request: Request) {
   }
 
   try {
-    const messages = await fetchMessages(userId);
-    console.log("messages: ", messages);
-    return NextResponse.json(messages);
+    await consumeMessages(userId);
+
+    const notifications = await prisma.notification.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+    });
+
+    console.log("notifications: ", notifications);
+    return NextResponse.json(notifications);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch messages" },
+      { error: "Failed to fetch notifications" },
       { status: 500 },
     );
   }
 }
 
 export async function DELETE(request: Request) {
-  temporaryStore = [];
+  const { searchParams } = new URL(request.url);
+  const userId = searchParams.get("userId");
+
+  if (!userId) {
+    return NextResponse.json(
+      { error: "userId query parameter is required" },
+      { status: 400 },
+    );
+  }
+
+  await prisma.notification.deleteMany({
+    where: { userId },
+  });
+
   return NextResponse.json({ success: true });
 }

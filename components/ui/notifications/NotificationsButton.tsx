@@ -3,38 +3,13 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { IoIosNotifications } from "react-icons/io";
 import NotificationModal from "./NotificationsModal";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  fetchNotifications,
-  clearNotifications,
-  Notification,
-} from "@/lib/utils/hooks/(react-query)/fetchNotifications";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
 const NotificationsButton: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const queryClient = useQueryClient();
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
-
-  const { user } = useKindeBrowserClient();
-
-  const { data: notifications = [] } = useQuery<Notification[]>({
-    queryKey: ["notifications", user?.id],
-    queryFn: () => fetchNotifications(user?.id as string),
-    enabled: !!user?.id,
-  });
-
-  const clearMutation = useMutation<void, Error, void>({
-    mutationFn: clearNotifications,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["notifications", user?.id as string],
-      });
-    },
-  });
 
   return (
     <>
@@ -48,12 +23,7 @@ const NotificationsButton: React.FC = () => {
           Alerts
         </span>
       </Button>
-      <NotificationModal
-        isOpen={isModalOpen}
-        onClose={toggleModal}
-        notifications={notifications}
-        onClear={() => clearMutation.mutate()}
-      />
+      <NotificationModal isOpen={isModalOpen} onClose={toggleModal} />
     </>
   );
 };

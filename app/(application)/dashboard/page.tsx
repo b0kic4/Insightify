@@ -3,6 +3,7 @@ import DashboardComponent from "@/components/shared/(Application)/(dashboard-com
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import NotificationsButton from "@/components/ui/notifications/NotificationsButton";
 import { QueryClient } from "@tanstack/react-query";
+import { fetchNotifications } from "@/lib/utils/hooks/(react-query)/fetchNotifications";
 
 export const dynamic = "force-dynamic";
 
@@ -13,10 +14,10 @@ export default async function Dashboard() {
   const user = await getUser();
 
   // Prefetch messages
-  // await queryClient.prefetchQuery({
-  //   queryKey: ["notifications", user?.id as string],
-  //   queryFn: ({ queryKey }) => listenForMessages(queryKey[1] as string),
-  // });
+  await queryClient.prefetchQuery({
+    queryKey: ["notifications", user?.id as string],
+    queryFn: ({ queryKey }) => fetchNotifications(queryKey[1] as string),
+  });
 
   return (
     <main className="flex flex-col h-screen">
