@@ -14,8 +14,8 @@ export const fetchNotifications = async (
   return response.json();
 };
 
-export const clearNotifications = async (): Promise<void> => {
-  const response = await fetch(`/api/notifications`, {
+export const clearNotifications = async (userId: string): Promise<void> => {
+  const response = await fetch(`/api/notifications?userId=${userId}`, {
     method: "DELETE",
   });
   if (!response.ok) {

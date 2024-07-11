@@ -29,7 +29,8 @@ const NotificationModal: React.FC<NotificationModalProps> = ({
   });
 
   const clearMutation = useMutation<void, Error, void>({
-    mutationFn: clearNotifications,
+    mutationKey: ["clearNotifications", user?.id],
+    mutationFn: () => clearNotifications(user?.id as string),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["notifications", user?.id as string],
