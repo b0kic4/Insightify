@@ -1,5 +1,6 @@
 "use server";
-import { Card, Plan, PrismaClient } from "@prisma/client";
+import { Card, Plan } from "@prisma/client";
+import prisma from "@/prisma/client";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 interface ResponseSuccess {
@@ -21,7 +22,6 @@ interface ResponseFailed {
   error: string;
 }
 
-const prisma = new PrismaClient();
 const { getUser } = getKindeServerSession();
 
 export default async function retrieveUsersPlan() {

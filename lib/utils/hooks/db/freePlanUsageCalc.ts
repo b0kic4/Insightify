@@ -1,9 +1,8 @@
 "use server";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/prisma/client";
 
 const { getUser } = getKindeServerSession();
-const prisma = new PrismaClient();
 
 export default async function increaseUsageOfFreePlan() {
   const user = await getUser();

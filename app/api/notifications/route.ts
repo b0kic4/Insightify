@@ -10,6 +10,7 @@ interface Notification {
 }
 
 const connectRabbitMQ = async (): Promise<Channel> => {
+  console.log("connecting to rabbitmq");
   if (channel) return channel;
 
   const connection = await amqplib.connect(process.env.CLOUDAMQP_URL!);
@@ -22,6 +23,7 @@ const connectRabbitMQ = async (): Promise<Channel> => {
 const consumeMessages = async (userId: string): Promise<void> => {
   const channel = await connectRabbitMQ();
 
+  console.log("consuming messages");
   return new Promise((resolve, reject) => {
     channel.consume(
       "notifications_queue",
@@ -54,7 +56,7 @@ const consumeMessages = async (userId: string): Promise<void> => {
 };
 
 export async function GET(request: Request) {
-  console.log("I am called");
+  console.log("Route called");
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get("userId");
 
@@ -74,6 +76,7 @@ export async function GET(request: Request) {
     });
 
     console.log("notifications: ", notifications);
+
     return NextResponse.json(notifications);
   } catch (error) {
     return NextResponse.json(

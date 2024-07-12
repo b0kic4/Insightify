@@ -24,17 +24,42 @@ const NotificationModal: React.FC<NotificationModalProps> = ({
 
   const { data: notifications = [], isLoading } = useQuery<Notification[]>({
     queryKey: ["notifications", user?.id],
-    queryFn: () => fetchNotifications(user?.id as string),
+    queryFn: ({ queryKey }) => fetchNotifications(queryKey[1] as string),
     enabled: !!user?.id,
   });
 
-  const clearMutation = useMutation<void, Error, void>({
+  type ClearNotificationsContext = { previousNotifications: Notification[] };
+
+  const clearMutation = useMutation<
+    void,
+    Error,
+    void,
+    ClearNotificationsContext
+  >({
     mutationKey: ["clearNotifications", user?.id],
     mutationFn: () => clearNotifications(user?.id as string),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["notifications", user?.id as string],
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: ["notifications", user?.id],
       });
+
+      const previousNotifications = queryClient.getQueryData<Notification[]>([
+        "notifications",
+        user?.id,
+      ]);
+
+      queryClient.setQueryData(["notifications", user?.id], () => []);
+
+      return { previousNotifications: previousNotifications || [] };
+    },
+    onError: (err, variables, context) => {
+      queryClient.setQueryData(
+        ["notifications", user?.id],
+        context?.previousNotifications,
+      );
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications", user?.id] });
     },
   });
 
@@ -98,10 +123,13 @@ const NotificationModal: React.FC<NotificationModalProps> = ({
               ))}
             </ul>
             <Button
+              disabled={clearMutation.isPending}
               onClick={() => clearMutation.mutate()}
               className="mt-6 w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
             >
-              Clear All Notifications
+              {clearMutation.isPending && isLoading
+                ? "Clearing..."
+                : "Clear All Notifications"}
             </Button>
           </>
         )}

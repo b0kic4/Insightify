@@ -7,7 +7,6 @@ export const fetchNotifications = async (
   userId: string,
 ): Promise<Notification[]> => {
   const response = await fetch(`/api/notifications?userId=${userId}`);
-  console.log("response: ", response);
   if (!response.ok) {
     throw new Error("Failed to fetch notifications");
   }
