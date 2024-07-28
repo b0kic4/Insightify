@@ -1,4 +1,4 @@
-# 🌟 Insightify: Your AI-Powered Website Optimization Tool 🌟
+# 🌟 Insightify: AI-Powered Website Optimization Tool 🌟
 
 ## Project Name: Insightify
 
